@@ -1,0 +1,107 @@
+#!/usr/bin/perl
+
+use File::Find;
+use strict;
+use warnings;
+no warnings 'File::Find';
+
+my $app_dir = "{{ portmanager_app_dir }}/";
+my $tmp_dir = "/tmp/ports-tmp";
+
+my @dirs_to_check = ($app_dir, $tmp_dir);
+my @portfiles;
+my @ports_in_use;
+my @assigned;
+my $range;
+
+# First arg is optionally an application directory to check for existing port
+# assignment. When redeploying the same version of an app, use the same port as
+# before.
+# -----------------------------------------------------------------------------
+my $first_dir = ((@ARGV && $ARGV[0] ne '') ? $ARGV[0] : 0);
+
+# Allow the number of ports needed to be optionally set as the second argument.
+# default to 1
+# -----------------------------------------------------------------------------
+my $needed = ((@ARGV && $ARGV[1] && $ARGV[1] =~ m|^\d+$|) ? $ARGV[1] : 1);
+
+# Clear out any old files in our temp directory
+# ---------------------------------------------
+if (! -d $tmp_dir) { mkdir $tmp_dir; chmod 0777, $tmp_dir; }
+my $epoch_time = time();
+if (opendir my $dir, $tmp_dir) {
+  while(readdir $dir) {
+    next unless (-f "$tmp_dir/$_");
+    my @stats = stat("$tmp_dir/$_");
+    if (($epoch_time - $stats[10]) > 300) { unlink "$tmp_dir/$_"; }
+  }
+}
+
+# Check first_dir
+# ---------------
+if (-d "$app_dir/$first_dir/") {
+  find(\&wanted, "$app_dir/$first_dir/");
+  if (my $port = pop(@portfiles)) {
+    $port =~ s|.*port:(\d+)|$1|;
+    print "$port\n";
+    exit;
+  }
+}
+
+# Find range and all port files
+# -----------------------------
+find(\&wanted, @dirs_to_check);
+
+# Get the port range
+# ------------------
+if ($range && $range !~ m|.*range:\d+\-\d+|) { die "Range file not found!" }
+$range =~ s|.*range:(\d+\-\d+)|$1|;
+my ($first, $last) = split("-", $range);
+
+# Make a list of all ports that are in use
+# ----------------------------------------
+foreach (@portfiles) {
+  $_ =~ s|.*port:(\d+)|$1|;
+  push(@ports_in_use, $_);
+  #print "in use: >$_<\n";
+}
+
+# Check for the lowest available port(s)
+# --------------------------------------
+my $found = 0;
+my $port = $first;
+while ($found < $needed && $port <= $last) {
+  if (grep(/^$port$/,@ports_in_use)) {
+    $port++;
+  }
+  else {
+    push(@assigned, $port);
+    #print "assigning: $port\n";
+    $found++;
+    $port++;
+  }
+}
+if ($found < $needed) {
+  die "Failed to assign port(s)!"
+}
+
+# In order to prevent possible collisions, temporarily mark the selected
+# port(s) as in use.  
+# ----------------------------------------------------------------------
+foreach (@assigned) {
+  open HANDLE, ">>$tmp_dir/port:$_";
+  close HANDLE;
+  chmod 0666, "$tmp_dir/port:$_";
+}
+my $return_string = join(":", @assigned);
+print "$return_string\n";
+
+exit;
+
+
+sub wanted {
+  return unless (-f $_);
+  (/^port:\d+$/) && push(@portfiles, $File::Find::name);
+  (/^range:\d+\-\d+$/) && ($range = $File::Find::name);
+}
+

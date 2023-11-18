@@ -1,0 +1,32 @@
+---
+
+- name: GET artifact info
+  uri:
+    url: "{{ artifactory_api }}/search/checksum?sha1={{ inner_item.sha1 }}&project={{ artifactory_project }}"
+    return_content: yes
+    force_basic_auth: yes
+    url_username: "{{ artifactory_username }}"
+    url_password: "{{ artifactory_password }}"
+  register: artifactInfoReq
+
+- name: Set artifact info facts
+  when: artifactInfoReq.json.results | length > 0
+  set_fact:
+    artifact_key: "{{ artifactId }}.{{ inner_item.type }}"
+    uri: "{{ artifactInfoReq.json.results[0].uri | regex_replace('/api/storage/', '/') }}"
+    repo: "{{ artifactInfoReq.json.results[0].uri | regex_search('/api/storage/([^/]*)') | regex_replace('^(/api/storage/)') }}"
+    path: "{{ artifactInfoReq.json.results[0].uri | regex_search('/api/storage/[^/]*/(.*)') | regex_replace('^(/api/storage/[^/]*/)') }}"
+
+- name: Set artifact info with results
+  when: artifactInfoReq.json.results | length > 0
+  set_fact:
+    artifact: "{{ inner_item | combine({'uri': uri, 'repo': repo, 'path': path })}}"
+
+- name: Set artifact info whenout results
+  when: artifactInfoReq.json.results | length == 0
+  set_fact:
+    artifact: "{{ inner_item }}"
+
+- name: Extract modules from artifactory build info
+  set_fact:
+    mod_artifacts: "{{ mod_artifacts | combine({ artifact_key: artifact }) }}"

@@ -1,0 +1,28 @@
+---
+# roles/jdk/defaults/main.yml
+
+# Required
+jdk_install_root:       '{{ cd_app_install | default("/sw_ux") }}'
+
+# Optional
+jdk_version_number:     'default'
+jdk_version:            '{{ jdk_versions[jdk_version_number] }}'
+jdk_type:               'openjdk'
+jdk_install_dir:        'jdk'
+jdk_install_as:         '{{ install_user | default("wwwadm") }}'
+
+# Derived
+jdk_jce_archive:        'java-jce-{{ jdk_version.major_version }}-2020.zip'
+jdk_jce_download_url:   '{{ artifactory_url }}/ext-binaries-local/com.oracle/jdk{{ jdk_version.major_version }}/{{ jdk_jce_archive }}'
+jdk_home:               '{{ jdk_install_root }}/{{ jdk_install_dir }}'
+jdk_cacerts_file:       '{{ jdk_home }}/jre/lib/security/cacerts'
+jdk_keytool:            '{{ jdk_home }}/bin/keytool'
+jdk_cacerts_pass:       "{{ lookup('ansible.builtin.env', 'PODMAN_JDK_CACERTS_PASS') }}"
+
+jdk_certs:
+  - { name: IDIR_Infrastructure_Authority1.cer, url: '{{ artifactory_url }}/ext-binaries-local/certs/IDIR_Infrastructure_Authority1.cer' }
+  - { name: IDIR_Infrastructure_Authority2.cer, url: '{{ artifactory_url }}/ext-binaries-local/certs/IDIR_Infrastructure_Authority2.cer' }
+  - { name: IDIR_Infrastructure_Authority3.cer, url: '{{ artifactory_url }}/ext-binaries-local/certs/IDIR_Infrastructure_Authority3.cer' }
+  - { name: IDIR_Infrastructure_Authority4.cer, url: '{{ artifactory_url }}/ext-binaries-local/certs/IDIR_Infrastructure_Authority4.cer' }
+  - { name: wildcard.nrs.bcgov.cer,             url: '{{ artifactory_url }}/ext-binaries-local/certs/wildcard.nrs.bcgov.cer' }
+  - { name: lets-encrypt-x3-cross-signed.der,   url: '{{ artifactory_url }}/ext-binaries-local/certs/lets-encrypt-x3-cross-signed.der' }

@@ -1,0 +1,95 @@
+---
+- debug:
+    msg: '{{ ansible_os_family }} {{ ansible_architecture }} {{ jdk_version }} {{ jdk_type }}'
+
+- name: 'Include parameters for {{ ansible_os_family }} {{ ansible_architecture }} JDK type:{{ jdk_type }}'
+  include_vars:
+    file: '{{ ansible_os_family }}_{{ ansible_architecture }}_{{ jdk_type }}.yml'
+
+- debug:
+    msg: 'jdk_version_number: {{ jdk_version_number }}'
+
+- name: 'Set jdk_version_updated based on jdk_version_number'
+  set_fact:
+    jdk_version_updated: '{{ jdk_version | default(jdk_versions[jdk_version_number]) }}'
+
+- name: 'jdk_cacerts_file'
+  set_fact:
+    jdk_cacerts_file: '{{ jdk_home }}/{{ jdk_version_updated.cacerts_path }}'
+
+- name: 'Directory {{ jdk_home }}'
+  file:
+    path: "{{ jdk_home }}"
+    state: directory
+    mode: 0755
+  become:  yes
+  become_user: "{{ jdk_install_as }}"
+
+- name: Show JDK package info
+  debug:
+    var: jdk_version_updated
+
+- name: Show JDK url
+  debug:
+    var: jdk_version_updated.url
+
+- name: Download JDK archive
+  get_url:
+    url: "{{ jdk_version_updated.url }}"
+    dest: "/tmp/{{ jdk_version_updated.url | basename }}"
+    checksum: "{{ jdk_version_updated.checksum }}"
+    validate_certs: false
+    timeout: 1000
+  environment:
+    https_proxy: "{{ 'http://test-forwardproxy.nrs.bcgov:23128' if use_proxy else '' }}"
+  become: yes
+  become_user: "{{ jdk_install_as }}"
+
+- name: 'Extract JDK archive'
+  unarchive:
+    src: "/tmp/{{ jdk_version_updated.url | basename }}"
+    dest: "{{ jdk_install_root }}"
+    extra_opts: ['--transform=s,/*[^/]*,{{ jdk_install_dir | basename }},i', '--show-stored-names']
+    remote_src: yes
+  become: yes
+  become_user: "{{ jdk_install_as }}"
+
+- name: 'Download IMB trust certs'
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ jdk_home }}"
+    validate_certs: false
+    timeout: 100
+  with_items: "{{ jdk_certs }}"
+  become: yes
+  become_user: "{{ jdk_install_as }}"
+
+- name: 'Import certs'
+  java_cert:
+    cert_path: "{{ jdk_home }}/{{ item.name }}"
+    cert_alias: "{{ item.alias | default(item.name) }}"
+    executable: "{{ jdk_keytool }}"
+    keystore_pass: "{{ jdk_cacerts_pass }}"
+    keystore_path: "{{ jdk_cacerts_file }}"
+  with_items: "{{ jdk_certs }}"
+  become: yes
+  become_user: "{{ jdk_install_as }}"
+
+- name: 'Download JCE to /tmp/{{ jdk_jce_archive }}'
+  get_url:
+    url: "{{ jdk_jce_download_url }}"
+    dest: "/tmp/{{ jdk_jce_archive }}"
+    validate_certs: false
+    timeout: 100
+    mode: 0777
+  become: yes
+  become_user: "{{ jdk_install_as }}"
+  when: jdk_version_updated.major_version == '8'
+
+- name: 'Extract JCE JARs to {{ jdk_home }}/jre/lib/security/'
+  shell: unzip -j -o /tmp/{{ jdk_jce_archive }} '*.jar'
+  args:
+    chdir: "{{ jdk_home }}/jre/lib/security/"
+  become: yes
+  become_user: "{{ jdk_install_as }}"
+  when: jdk_version_updated.major_version == '8'

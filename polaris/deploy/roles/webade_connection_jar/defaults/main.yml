@@ -1,0 +1,15 @@
+# roles/webade-connection-jar/defaults/main.yml
+
+# Required
+webade_java_home:      "{{ cd_app_install }}/jdk"
+webade_install_dir:
+webade_env:
+webade_jdbc_url:
+webade_db_user:
+webade_db_pass:
+
+# Optional
+webade_build_dir: "/tmp/{{ ansible_date_time.iso8601_basic }}"
+webade_min_connections: 0
+webade_max_connections: 10
+webade_datastore: "ca.bc.gov.webade.DefaultWebADEDatabaseDatastore"

@@ -1,0 +1,24 @@
+---
+# defaults file for self-signed-cert
+ssc_dir:                        "{{ cd_app_install }}/.keys"
+ssc_java_home:                  "{{ cd_app_install }}/jdk"
+ssc_user:                       "{{ install_user | default('wwwadm') }}"
+ssc_format:                     'pkcs12'
+
+ssc_keystore:                   "{{ ssc_dir }}/key.jks" #"{{ ssc_java_home }}/jre/lib/security/cacerts"
+# this is now set in the main.yml file using set_fact
+# ssc_keystore_pass:              "{{ ansible_fqdn | to_uuid | password_hash('sha512') }}"
+
+ssc_key_filename:               "key.pem"
+ssc_key:                        "{{ ssc_dir }}/{{ ssc_key_filename }}"
+ssc_separate_key_pass:          false
+# this is now set in main.yml using set_fact
+# ssc_key_pass:                   "{{ ansible_fqdn | to_uuid | password_hash('sha512') }}"
+
+ssc_certificate_alias:          "{{ ansible_fqdn }}"
+ssc_certificate_age:            3650
+ssc_certificate_common_name:    "{{ ansible_fqdn }}"
+ssc_certificate_subject:        "/C=CA/ST=BC/L=Victoria/O=IMB/OU=CSNR/CN={{ ssc_certificate_common_name }}"
+ssc_certificate_options:        "-x509 -sha256 -nodes -x509 -subj \"{{ ssc_certificate_subject }}\" -days {{ ssc_certificate_age }}"
+ssc_certificate_filename:       'cert.pem'
+ssc_certificate:                "{{ ssc_dir }}/{{ ssc_certificate_filename }}"

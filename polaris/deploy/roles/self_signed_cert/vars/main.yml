@@ -1,0 +1,6 @@
+---
+# vars file for self-signed-cert
+ssc_supported_formats:
+  - 'pkcs5'
+  - 'pkcs8'
+  - 'pkcs12'

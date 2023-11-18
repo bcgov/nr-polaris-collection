@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration>
+    <appender name="file" class="org.apache.log4j.rolling.RollingFileAppender">
+        <!-- The active file to log to -->
+        <param name="file" value="{{ webapp_log_dir }}/{{ webapp_component }}.log" />
+        <param name="append" value="true" />
+        <param name="encoding" value="UTF-8" />
+        <rollingPolicy class="org.apache.log4j.rolling.TimeBasedRollingPolicy">
+            <param name="FileNamePattern" value="{{ webapp_log_dir }}/{{ webapp_component }}.%d.log.gz" />
+        </rollingPolicy>
+        <layout class="org.apache.log4j.PatternLayout">
+            <!-- The log message pattern -->
+            <param name="ConversionPattern" value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
+        </layout>
+    </appender>
+
+    {% for logger in webapp_loggers %}
+    <logger name="{{ logger.name }}">
+		<level value="{{ logger.level | default('INFO') }}" />
+	</logger>
+    {% endfor %}
+
+     {% if quartzdesk_log_enabled %}
+     <!--
+     Appender that passes all received log events to the QuartzDesk JVM Agent for
+     processing. Log events that are not produced by Quartz scheduler threads are
+     silently ignored.
+    -->
+    <appender name="QUARTZDESK_JVM_AGENT" class="com.quartzdesk.api.agent.log.log4j.Log4jInterceptionAppender">
+        <param name="threshold" value="{{ quartzdesk_log_level }}"/>
+        <layout class="org.apache.log4j.EnhancedPatternLayout">
+            <param name="conversionPattern" value="[%d{ISO8601}] %!.1p [%t] [%C:%L] - %m%n"/>
+        </layout>
+    </appender>
+     {% endif %}
+
+    <root>
+        <priority value="{{ webapp_root_log_level }}" />
+        <appender-ref ref="file" />
+     {% if quartzdesk_log_enabled %}
+        <appender-ref ref="QUARTZDESK_JVM_AGENT"/>
+     {% endif %}
+    </root>
+</log4j:configuration>

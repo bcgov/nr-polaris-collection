@@ -1,0 +1,176 @@
+---
+- name: Set alt app dir name
+  set_fact:
+    webapp_app_dir_name: "{{ alt_app_dir_name }}"
+  when: alt_app_dir_name is defined
+
+- name: Set standard app dir name
+  set_fact:
+    webapp_app_dir_name: "{{ webapp_war.context }}"
+  when: alt_app_dir_name is not defined
+
+- name: "undeploy {{ webapp_app_dir_name }} from {{ webapp_tomcat_webapps_dir }}"
+  file:
+    path: "{{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
+    state: absent
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+- name: "download {{ webapp_war.url | basename }}"
+  get_url:
+    url: "{{ webapp_war.url }}"
+    url_username: "{{ webapp_war.username | default(artifactory_username) }}"
+    url_password: "{{ webapp_war.password | default(artifactory_password) }}"
+    dest: "{{ webapp_staging_dir }}/{{ webapp_war.url | basename }}"
+    checksum: "md5:{{ webapp_war.md5 }}"
+    timeout: 100
+    mode: 0755
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+- name: ""
+  file:
+    path: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
+    state: directory
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+- name: "extract {{ webapp_war.url | basename }}"
+  unarchive:
+    src: "{{ webapp_staging_dir }}/{{ webapp_war.url | basename }}"
+    dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
+    remote_src: yes
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+- name: 'remove superfluous logging files'
+  file:
+    path: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/classes/log4j.properties"
+    state: 'absent'
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+# - name: find bundled logging configuration
+#   find:
+#     paths: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
+#     patterns: 'log(ging|4j)\.(properties|xml)' # match log4j.properties, log4j.xml, logging.properties
+#     use_regex: yes
+#     recurse: yes
+#   register: logging_config
+#   become: yes
+#   become_user: "{{ webapp_user }}"
+
+# - name: remove bundled logging configuration
+#   file:
+#     path: "{{ logfile.path }}"
+#     state: absent
+#   when: logging_config.files
+#   with_items: "{{ logging_config.files | default([]) }}"
+#   loop_control:
+#     loop_var: logfile
+#   become: yes
+#   become_user: "{{ webapp_user }}"
+
+- name: 'configure logging log4j v1'
+  template:
+    src: 'log4j.xml.j2'
+    dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/classes/log4j.xml"
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+- name: 'configure logging log4j v2'
+  template:
+    src: 'log4j2.xml.j2'
+    dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/classes/log4j2.xml"
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+- name: 'configure context (general)'
+  template:
+    src: 'context.xml.j2'
+    dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/META-INF/context.xml"
+  become: yes
+  become_user: "{{ webapp_user }}"
+  when: wfone_quartzdesk_war is not defined
+
+- name: 'configure context (for wfone-quartzdesk-war)'
+  template:
+    src: 'wfone-quartzdesk-war-context.xml.j2'
+    dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/META-INF/context.xml"
+  become: yes
+  become_user: "{{ webapp_user }}"
+  when: wfone_quartzdesk_war is defined and wfone_quartzdesk_war
+
+# If this app will have a symbolic link pointing to a document directory that
+# is on a network drive, we must enable the following up symlinks in Tomcat.
+# ---------------------------------------------------------------------------
+- name: Allow Tomcat to follow symlinks, if requested
+  lineinfile:
+    path: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/META-INF/context.xml"
+    insertafter: '^<Context'
+    line: '    <Resources allowLinking="true" />'
+  when: webapp_document_symlinks is defined
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+# Default ojdbc version set in role defaults, but can be overridden in playbook or
+# sdk-config. Target ojdbc URL needs to be IIT Artifactory and file needs to exist there.
+- name: install ojdbc
+  get_url:
+    url: "{{ ojdbc_url }}/{{ ojdbc_file }}"
+    dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/lib/{{ ojdbc_file }}"
+    timeout: 100
+  become: yes
+  become_user: "{{ webapp_user }}"
+  ignore_errors: yes
+
+- name: show installed ojdbc source and version for reference purposes
+  debug:
+    msg: "{{ ojdbc_url }}/{{ ojdbc_file }}"
+
+# Library jars added through this mechanism are a bit of a hack; they should be included in the build process
+- name: custom lib jars
+  get_url:
+    url: "{{ item.url }}"
+    url_username: "{{ item.username | default() }}"
+    url_password: "{{ item.password | default() }}"
+    dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/lib/{{ item.url | basename }}"
+  become: yes
+  become_user: "{{ webapp_user }}"
+  with_items: "{{ webapp_library_jars }}"
+
+- name: "directory {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
+  file:
+    path: "{{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
+    state: 'directory'
+    mode: 0755
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+- name: "deploy {{ webapp_app_dir_name }}"
+  command: "cp -a {{ webapp_staging_dir }}/.{{ webapp_war.context }}/. {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+# Optionally create symlinks under the webapp for documents
+# ---------------------------------------------------------
+- name: Create document symlinks, if requested
+  file:
+    src: "{{ item.server_full_path }}"
+    dest: "{{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}/{{ item.app_relative_path }}"
+    state: link
+  become: yes
+  become_user: "{{ webapp_user }}"
+  when: webapp_document_symlinks is defined
+  with_items: "{{ webapp_document_symlinks }}"
+
+- name: 'clean up staging assets'
+  file:
+    path: "{{ item }}"
+    state: 'absent'
+  become: yes
+  become_user: "{{ webapp_user }}"
+  with_items:
+    - "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
+    - "{{ webapp_staging_dir }}/{{ webapp_war.url | basename }}"
+

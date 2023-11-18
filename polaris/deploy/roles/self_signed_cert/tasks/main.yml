@@ -1,0 +1,38 @@
+---
+# tasks file for self-signed-cert
+- fail:
+    msg: "{{ ssc_format }} is not a supported format"
+  when: ssc_format not in ssc_supported_formats
+
+# this will generate a random password like "YpsuraEkxxYjqQS" and store it as a fact, to prevent it from being
+# re-generated each time the variable is called
+- name: 'generate random keystore password'
+  set_fact:
+    ssc_keystore_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
+  run_once: no
+- name: 'generate random key password'
+  set_fact:
+    ssc_key_pass: "{{ ssc_separate_key_pass | ternary(lookup('password', '/dev/null length=15 chars=ascii_letters'), ssc_keystore_pass) }}"
+  run_once: no
+
+- name: directory {{ ssc_dir }}
+  file:
+    path: "{{ ssc_dir }}"
+    state: directory
+    mode: 0775
+  become: yes
+  become_user: "{{ ssc_user }}"
+
+- include: "{{ ssc_format }}.yml"
+
+- name: certificate exists in trust store
+  java_cert:
+    cert_path: "{{ ssc_certificate }}"
+    cert_alias: "{{ ssc_certificate_alias }}"
+    executable: "{{ ssc_java_home }}/bin/keytool"
+    keystore_pass: "{{ ssc_keystore_pass }}"
+    keystore_path: "{{ ssc_keystore }}"
+  become: yes
+  become_user: "{{ ssc_user }}"
+  ignore_errors: True
+

@@ -1,0 +1,81 @@
+package ca.bc.gov.webade.datastore;
+
+import java.lang.reflect.Method;
+
+public final class WebADEConnection
+{
+  public static final int DEFAULT_MIN_CONNECTIONS = 0;
+  public static final int DEFAULT_MAX_CONNECTIONS = 10;
+  public static final int DEFAULT_MAX_IDLE_TIME = 10;
+  public static final int DEFAULT_MAX_CHECKOUT_TIME = 10;
+  public static final int DEFAULT_MAX_WAIT_TIME = 0;
+  public static final int DEFAULT_MONITOR_SLEEP_TIME = 1;
+  public static final boolean DEFAULT_POOL_CONNECTIONS_FLAG = true;
+  public static final boolean DEFAULT_PING_CONNECTIONS_FLAG = false;
+  private static final String DETAILS_CLASS = "ca.bc.gov.webade.WebADEConnectionDetails";
+  private static final String SET_DATASTORE_METHOD = "setWebadeDatastoreImplementation";
+  private static final String SET_ENVIRONMENT_METHOD = "setWebadeEnvironment";
+  private static final String SET_URL_METHOD = "setWebadeJdbcUrl";
+  private static final String SET_USERID_METHOD = "setWebadeUserid";
+  private static final String SET_PASSWORD_METHOD = "setWebadePassword";
+  private static final String SET_MIN_CONNECTIONS_METHOD = "setWebadeMinConnections";
+  private static final String SET_MAX_CONNECTIONS_METHOD = "setWebadeMaxConnections";
+  private static final String SET_MONITOR_SLEEP_TIME_METHOD = "setMonitorSleepTime";
+  private static final String SET_PING_CONNECTIONS_FLAG_METHOD = "setPingConnectionsFlag";
+  private static final String SET_POOL_CONNECTIONS_FLAG_METHOD = "setPoolConnectionsFlag";
+  private static final String SET_WEBADE_MAX_CONNECTION_CHECKOUT_TIME_METHOD = "setWebadeMaxConnectionCheckoutTime";
+  private static final String SET_WEBADE_MAX_CONNECTION_IDLE_TIME_METHOD = "setWebadeMaxConnectionIdleTime";
+  private static final String SET_WEBADE_MAX_CONNECTION_WAIT_TIME_METHOD = "setWebadeMaxConnectionWaitTime";
+  private static final String WEBADE_ENVIRONMENT = "{{ webade_env }}";
+  private static final String WEBADE_JDBCURL = "{{ webade_jdbc_url }}";
+  private static final String WEBADE_USERID = "{{ webade_db_user }}";
+  private static final String WEBADE_PASSWORD = "{{ webade_db_pass }}";
+  private static final int WEBADE_MIN_CONNECTIONS = {{ webade_min_connections }};
+  private static final int WEBADE_MAX_CONNECTIONS = {{ webade_max_connections }};
+  private static final int WEBADE_MAX_CONNECTION_IDLE_TIME = 10;
+  private static final int WEBADE_MAX_CONNECTION_CHECKOUT_TIME = 10;
+  private static final int WEBADE_MAX_CONNECTION_WAIT_TIME = 0;
+  private static final int WEBADE_MONITOR_SLEEP_TIME = 1;
+  private static final boolean WEBADE_POOL_CONNECTIONS_FLAG = true;
+  private static final boolean WEBADE_PING_CONNECTIONS_FLAG = false;
+  private static final String WEBADE_DATASTORE_IMPLEMENTATION = "{{ webade_datastore }}";
+  
+  public static final void loadWebADEConnectionDetails(ClassLoader paramClassLoader, Object paramObject)
+    throws Exception
+  {
+    Class localClass = paramClassLoader.loadClass("ca.bc.gov.webade.WebADEConnectionDetails");
+    if (localClass.isInstance(paramObject))
+    {
+      Method localMethod = localClass.getMethod("setWebadeDatastoreImplementation", new Class[] { String.class });
+      localMethod.invoke(paramObject, new Object[] { "{{ webade_datastore }}" });
+      localMethod = localClass.getMethod("setWebadeEnvironment", new Class[] { String.class });
+      localMethod.invoke(paramObject, new Object[] { "{{ webade_env }}" });
+      localMethod = localClass.getMethod("setWebadeJdbcUrl", new Class[] { String.class });
+      localMethod.invoke(paramObject, new Object[] { "{{ webade_jdbc_url }}" });
+      localMethod = localClass.getMethod("setWebadeUserid", new Class[] { String.class });
+      localMethod.invoke(paramObject, new Object[] { "{{ webade_db_user }}" });
+      localMethod = localClass.getMethod("setWebadePassword", new Class[] { String.class });
+      localMethod.invoke(paramObject, new Object[] { "{{ webade_db_pass }}" });
+      localMethod = localClass.getMethod("setWebadeMinConnections", new Class[] { Integer.TYPE });
+      localMethod.invoke(paramObject, new Object[] { new Integer(0) });
+      localMethod = localClass.getMethod("setWebadeMaxConnections", new Class[] { Integer.TYPE });
+      localMethod.invoke(paramObject, new Object[] { new Integer(10) });
+      localMethod = localClass.getMethod("setMonitorSleepTime", new Class[] { Integer.TYPE });
+      localMethod.invoke(paramObject, new Object[] { new Integer(1) });
+      localMethod = localClass.getMethod("setPingConnectionsFlag", new Class[] { Boolean.TYPE });
+      localMethod.invoke(paramObject, new Object[] { new Boolean(false) });
+      localMethod = localClass.getMethod("setPoolConnectionsFlag", new Class[] { Boolean.TYPE });
+      localMethod.invoke(paramObject, new Object[] { new Boolean(true) });
+      localMethod = localClass.getMethod("setWebadeMaxConnectionCheckoutTime", new Class[] { Integer.TYPE });
+      localMethod.invoke(paramObject, new Object[] { new Integer(10) });
+      localMethod = localClass.getMethod("setWebadeMaxConnectionIdleTime", new Class[] { Integer.TYPE });
+      localMethod.invoke(paramObject, new Object[] { new Integer(10) });
+      localMethod = localClass.getMethod("setWebadeMaxConnectionWaitTime", new Class[] { Integer.TYPE });
+      localMethod.invoke(paramObject, new Object[] { new Integer(0) });
+    }
+    else
+    {
+      throw new Exception("Provided details object is not an instance of 'ca.bc.gov.webade.WebADEConnectionDetails'");
+    }
+  }
+}

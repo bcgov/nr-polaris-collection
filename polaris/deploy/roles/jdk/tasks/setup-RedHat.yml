@@ -1,0 +1,29 @@
+---
+# tasks file for java
+- name: 'Download {{ jdk_archive }}'
+  get_url:
+    url: "{{ jdk_download_url }}"
+    dest: "{{ jdk_download_dir }}/{{ jdk_archive }}"
+    checksum: "{{ jdk_archive_checksum }}"
+    validate_certs: false
+    timeout: 1000
+  become: yes
+  become_user: "{{ install_user }}"
+  tags: ["java","jdk"]
+
+- name: 'Extract {{ jdk_archive }} to {{ jdk_home }}'
+  unarchive:
+    src: "{{ jdk_download_dir }}/{{ jdk_archive  }}"
+    dest: "{{ jdk_home }}"
+    remote_src: yes
+    #extra_opts: ['--transform=s,/*[^/]*,{{ jdk_install_folder_name }},i', '--show-stored-names']
+    extra_opts: [ '--strip-component=1', '--show-stored-names' ]
+    creates: "{{ jdk_home }}/bin/java"
+  become: yes
+  become_user: "{{ install_user }}"
+  tags: ["java","jdk"]
+
+- name: 'Adjust permissions for javalib.so'
+  shell: "chmod g+rx {{ jdk_home }}/{jre,jre/lib,jre/lib/amd64,jre/lib/amd64/server}"
+  become: yes
+  become_user: "{{ install_user }}"

@@ -1,0 +1,97 @@
+---
+- name: "Show download info"
+  debug:
+    msg: "tomcat_version_number: {{ tomcat_version_number }} and tomcat_version: {{ tomcat_version }}"
+
+- name: Checking for alternate app directory name
+  set_fact:
+    using_alt_app_dir: true
+  when: alt_app_dir_name is defined
+
+- debug:
+    msg: 'ensuring Tomcat is stopped'
+  changed_when: true
+  notify: stop tomcat - {{ tomcat_handler_style }}
+
+- meta: flush_handlers
+
+- name: required directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0775
+  with_items:
+    - "{{ tomcat_install_dir }}"
+    - "{{ tomcat_data_dir }}"
+    - "{{ tomcat_log_dir }}"
+    - "{{ tomcat_webapp_dir }}"
+  become: yes
+  become_user: "{{ tomcat_install_as }}"
+
+- name: download to {{ tomcat_download_tmp_dir }}/{{ tomcat_version.url | basename }}
+  get_url: 
+    url: "{{ tomcat_version.url }}"
+    url_username: "{{ tomcat_download_username }}"
+    url_password: "{{ tomcat_download_password }}"
+    dest: "{{ tomcat_download_tmp_dir }}/{{ tomcat_version.url | basename }}"
+    checksum: "md5:{{ tomcat_version.md5 }}"
+    timeout: "{{ timeout | default(100) }}"
+    mode: 0755
+  become: yes
+  become_user: "{{ tomcat_install_as }}"
+
+- name: load task list for Tomcat {{ tomcat_version.major_version }}
+  include: "install-tomcat-{{ tomcat_version.major_version }}.yml"
+
+- include: "{{ (item.clean | default('yes')) | ternary('webapp-clean-extract.yml', 'webapp-extract.yml') }}"
+  with_items: "{{ tomcat_webapps }}"
+  when: tomcat_webapps|length > 0
+
+- name: service directory {{ tomcat_service_dir }}
+  file:
+    path: "{{ tomcat_service_dir }}"
+    mode: 0775
+    state: directory
+  become: yes
+  become_user: "{{ tomcat_install_as }}"
+
+- name: run script {{ tomcat_service_dir }}/run
+  template:
+    src: "run.j2"
+    dest: "{{ tomcat_service_dir }}/run"
+    mode: 0775
+  become: yes
+  become_user: "{{ tomcat_install_as }}"
+
+- name: record deployment data for the CMDB
+  set_fact:
+    cmdb_tomcat: 
+      port: "{{ tomcat_https_port }}" 
+      webapps: "{{ tomcat_webapps }}"
+      https: "{{ tomcat_use_https }}"
+      install_dir: "{{ tomcat_install_dir }}"
+      version: "{{ tomcat_version }}"
+
+- name: Until CMDB is ready, register port for port-manager
+  file:
+    path: "{{ tomcat_install_dir }}/port:{{ tomcat_https_port }}"
+    state: touch
+  become: yes
+  become_user: "{{ tomcat_install_as }}"
+
+- name: Release port reservation
+  file:
+    path: "/tmp/ports-tmp/port:{{ tomcat_https_port }}"
+    state: absent
+  become: yes
+  become_user: wwwadm
+
+- name: Enable rotation of catalina.out
+  blockinfile:
+    path: "{{ tomcat_install_dir }}/bin/catalina.sh"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK"
+    insertafter: '= "run"'
+    block: "{{ lookup('file', 'files/rotate_catalina') }}"
+  become: yes
+  become_user: "{{ tomcat_install_as }}"
+

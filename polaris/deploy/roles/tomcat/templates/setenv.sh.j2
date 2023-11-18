@@ -1,0 +1,15 @@
+export JAVA_HOME="{{ tomcat_java_home }}"
+export CATALINA_PID="{{ tomcat_pid_file }}"
+export CATALINA_OUT="{{ tomcat_log_dir }}/catalina.out"
+export CATALINA_TMPDIR="{{ tomcat_temp_dir }}"
+{% if tomcat_catalina_opts is defined %}
+export CATALINA_OPTS="{{ tomcat_catalina_opts }}"
+{% endif %}
+{% if tomcat_umask is defined %}
+export UMASK="{{ tomcat_umask }}"
+{% endif %}
+{% if tomcat_env_dict is defined %}
+{% for key, value in tomcat_env_dict.items() %}
+export {{ key }}="{{ value }}"
+{% endfor %}
+{% endif %}

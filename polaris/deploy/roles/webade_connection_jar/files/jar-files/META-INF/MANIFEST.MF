@@ -1,0 +1,5 @@
+Manifest-Version: webade-environment=DEV:webade-jdbcurl=jdbc:oracle:thin:@start.bcgov:1521:NRKOFM01:webade-userid=ADE_WEB
+Ant-Version: Apache Ant 1.9.4
+Created-By: 1.7.0_10-b18 (Oracle Corporation)
+Implementation-Title: WebADE Connection Class
+

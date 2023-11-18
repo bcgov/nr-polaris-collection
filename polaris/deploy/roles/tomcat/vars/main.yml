@@ -1,0 +1,115 @@
+---
+#########################################################################################
+# tomcat versions - put newer major versions at top and older major versions further down
+# IIT infrastructure responsible for adding newer tomcat versions
+# latest/default (currently 8.5.x) is set after consideration of impact and testing
+# other versions are options where the default/latest is too old
+# or security updates are required
+#########################################################################################
+
+tomcat_versions:
+
+  ###############################################################
+  # tomcat 9 versions - put newer minor versions at top of group
+  ###############################################################
+  # if an app wants to use a different version from below, set in sdk-config or playbook, e.g.:
+  #   ansible_tomcat_version_number=9.0.xx
+  9.0.31:
+    major_version: 9
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/9/apache-tomcat-9.0.31.tar.gz'
+    md5: 0ea73dd9d4b94663474117ab4e171524
+    version_number: '9.0.31'
+  9.0.22:
+    major_version: 9
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/9/apache-tomcat-9.0.22.tar.gz'
+    md5: a4c4cab01abb65cf9b9bfeb383dc5120
+    version_number: '9.0.22'
+
+  ###############################################################
+  # tomcat 8 versions - put newer minor versions at top of group
+  ###############################################################
+  # top one is default/latest for the major version
+  # be careful changing default since all deployments would be affected
+  # if an app wants to use a different version from below, set in sdk-config or playbook, e.g.:
+  #   ansible_tomcat_version_number=8.5.xx
+  latest:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.20.zip'
+    md5: 827fb063bcac90d9a5ce0e9397041e92
+    version_number: '8.5.20'
+  8.5.89:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.89.zip'
+    md5: dcbe515aeca70b6fd93857be631b1c13
+    version_number: '8.5.89'
+  8.5.85:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.85.zip'
+    md5: cc9f26308fd52131f2efa76e65011c52
+    version_number: '8.5.85'
+  8.5.84:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.84.zip'
+    md5: c638025b2e868937f57aff27fb279bab
+    version_number: '8.5.84'
+  8.5.83:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.83.zip'
+    md5: 94c250d04615063701a43ac7acc24c59
+    version_number: '8.5.83'
+  8.5.82:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.82.zip'
+    md5: 41ad8eacaa2738f68a027e5151b1085c
+    version_number: '8.5.82'
+  8.5.81:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.81.zip'
+    md5: b9731aecccc41f7ab849e0cf567d3112
+    version_number: '8.5.81'
+  8.5.73:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.73.zip'
+    md5: ec9fa44663696374b27385686423982d
+    version_number: '8.5.73'
+  8.5.60:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.60.zip'
+    md5: 9d085e275dab906a501d643ececb44a0
+    version_number: '8.5.60'
+  8.5.51:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.51.zip'
+    md5: 7c45e016dc3f17169938d78a5efa64c0
+    version_number: '8.5.51'
+  8.5.20:
+    major_version: 8
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.20.zip'
+    md5: 827fb063bcac90d9a5ce0e9397041e92
+    version_number: '8.5.20'
+
+  ###############################################################
+  # tomcat 7 versions - put newer minor versions at top of group
+  ###############################################################
+  # if an app wants to use a different version from below, set in sdk-config or playbook, e.g.:
+  #   ansible_tomcat_version_number=7.0.xx
+  7.0.100:
+    major_version: 7
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/7/apache-tomcat-7.0.100.tar.gz'
+    md5:  79be4ba5a6e770730a4be3d5cb3c7862
+    version_number: '7.0.100'
+  7.0.88:
+    major_version: 7
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/7/apache-tomcat-7.0.88.tar.gz'
+    md5:  ed624bde21e1f120e0052a47f295fde6
+    version_number: '7.0.88'
+  7.0.82:
+    major_version: 7
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/7/apache-tomcat-7.0.82.tar.gz'
+    md5:  b9c07fb4f37063e9e8185972b3f88a98
+    version_number: '7.0.82'
+  7.0.70:
+    major_version: 7
+    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/7/apache-tomcat-7.0.70.zip'
+    md5:  2e3c0999b2e495907d4ea98a70486168
+    version_number: '7.0.70'
