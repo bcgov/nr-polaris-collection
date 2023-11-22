@@ -17,7 +17,7 @@ jdk_jce_download_url:   '{{ artifactory_url }}/ext-binaries-local/com.oracle/jdk
 jdk_home:               '{{ jdk_install_root }}/{{ jdk_install_dir }}'
 jdk_cacerts_file:       '{{ jdk_home }}/jre/lib/security/cacerts'
 jdk_keytool:            '{{ jdk_home }}/bin/keytool'
-jdk_cacerts_pass:       "{{ lookup('ansible.builtin.env', 'PODMAN_JDK_CACERTS_PASS') }}"
+jdk_cacerts_pass:       'password'
 
 jdk_certs:
   - { name: IDIR_Infrastructure_Authority1.cer, url: '{{ artifactory_url }}/ext-binaries-local/certs/IDIR_Infrastructure_Authority1.cer' }
