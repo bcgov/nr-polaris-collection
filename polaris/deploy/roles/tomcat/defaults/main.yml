@@ -37,6 +37,7 @@ tomcat_handler_style:       "{{ tomcat_s6_enabled | ternary('s6', 'default') }}"
 tomcat_download_username:   "{{ artifactory_username }}"
 tomcat_download_password:   "{{ artifactory_password }}"
 using_alt_app_dir:          false
+default_ssc_keystore_pass:  "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
 # setenv.sh
 tomcat_java_home:         "{{ tomcat_install_root }}/jdk" # educated assumption based on conventions
@@ -52,7 +53,7 @@ tomcat_unpack_wars:               yes
 tomcat_auto_deploy:               yes
 tomcat_deployOnStartup:           yes
 tomcat_shutdown_port:             -1
-tomcat_keystore_pass:             "{{ ssc_keystore_pass | default('abkjasfi66') }}"
+tomcat_keystore_pass:             "{{ ssc_keystore_pass | default(default_ssc_keystore_pass) }}"
 tomcat_jndi_resources:            []
 
 # logging.properties
