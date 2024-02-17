@@ -19,3 +19,9 @@ quartzdesk_log_enabled:            False
 # of database versions at the time. This default may need to be updated in the future.
 ojdbc_file: "ojdbc7-12.1.3-0-0.jar"
 ojdbc_url: "http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/com.oracle"
+
+proxy_env_dev_test:
+  https_proxy: http://test-forwardproxy.nrs.bcgov:23128
+
+proxy_env_prod:
+  https_proxy: http://forwardproxy.nrs.bcgov:23128
