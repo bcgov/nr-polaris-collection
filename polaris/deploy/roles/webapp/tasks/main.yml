@@ -25,6 +25,8 @@
     checksum: "md5:{{ webapp_war.md5 }}"
     timeout: 100
     mode: 0755
+  environment:
+    http_proxy: "{{ http_proxy }}"
   become: yes
   become_user: "{{ webapp_user }}"
 
