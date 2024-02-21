@@ -17,6 +17,7 @@
   become_user: "{{ webapp_user }}"
 
 - name: "download {{ webapp_war.url | basename }}"
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   get_url:
     url: "{{ webapp_war.url }}"
     url_username: "{{ webapp_war.username | default(artifactory_username) }}"
@@ -25,8 +26,6 @@
     checksum: "md5:{{ webapp_war.md5 }}"
     timeout: 100
     mode: 0755
-  environment:
-    http_proxy: "{{ http_proxy }}"
   become: yes
   become_user: "{{ webapp_user }}"
 
