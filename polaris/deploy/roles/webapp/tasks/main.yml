@@ -51,34 +51,6 @@
   become: yes
   become_user: "{{ webapp_user }}"
 
-# - name: find bundled logging configuration
-#   find:
-#     paths: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
-#     patterns: 'log(ging|4j)\.(properties|xml)' # match log4j.properties, log4j.xml, logging.properties
-#     use_regex: yes
-#     recurse: yes
-#   register: logging_config
-#   become: yes
-#   become_user: "{{ webapp_user }}"
-
-# - name: remove bundled logging configuration
-#   file:
-#     path: "{{ logfile.path }}"
-#     state: absent
-#   when: logging_config.files
-#   with_items: "{{ logging_config.files | default([]) }}"
-#   loop_control:
-#     loop_var: logfile
-#   become: yes
-#   become_user: "{{ webapp_user }}"
-
-- name: 'configure logging log4j v1'
-  template:
-    src: 'log4j.xml.j2'
-    dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/classes/log4j.xml"
-  become: yes
-  become_user: "{{ webapp_user }}"
-
 - name: 'configure logging log4j v2'
   template:
     src: 'log4j2.xml.j2'
