@@ -72,13 +72,6 @@
 #   become: yes
 #   become_user: "{{ webapp_user }}"
 
-- name: 'configure logging log4j v1'
-  template:
-    src: 'log4j.xml.j2'
-    dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/classes/log4j.xml"
-  become: yes
-  become_user: "{{ webapp_user }}"
-
 - name: 'configure logging log4j v2'
   template:
     src: 'log4j2.xml.j2'
