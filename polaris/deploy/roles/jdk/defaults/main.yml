@@ -2,14 +2,14 @@
 # roles/jdk/defaults/main.yml
 
 # Required
-jdk_install_root:       '{{ cd_app_install | default("/sw_ux") }}'
+jdk_install_root:       '{{ pd_common_service_dir_install | default("/sw_ux") }}'
 
 # Optional
 jdk_version_number:     'default'
 jdk_version:            '{{ jdk_versions[jdk_version_number] }}'
 jdk_type:               'openjdk'
 jdk_install_dir:        'jdk'
-jdk_install_as:         '{{ install_user | default("wwwadm") }}'
+jdk_install_as:         '{{ pd_common_install_user | default("wwwadm") }}'
 
 # Derived
 jdk_jce_archive:        'java-jce-{{ jdk_version.major_version }}-2020.zip'

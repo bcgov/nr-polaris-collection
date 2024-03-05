@@ -1,6 +1,8 @@
 # NR Polaris Collection
 
-The Ansible collection of pipeline is for deploying applications to NR servers.
+This Ansible collection provides roles for deploying applications to BC Government NR servers.
+
+See: [polaris/deploy](./polaris/deploy/README.md)
 
 # License
 

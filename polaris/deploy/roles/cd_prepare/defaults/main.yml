@@ -1,31 +1,7 @@
 ---
 # defaults file for cd-prepare
 
-######################
-# Required properties
-######################
-# Because this role advertises a tight integration with Jenkins (essentially a dependency),
-# it uses the provided variables directly instead of proxying them
-# cd_project
-# cd_component
-# cd_apps_home
-# cd_apps_data
-# cd_apps_logs
-
-# Allow component name to be optionally overriden, such as when there are
-# two instances of an app on one server and a single component name would
-# cause directory name conflicts.
-cd_component_name:  "{{ custom_component_name | default(cd_component) }}"
-cd_app_container:         "{{ cd_apps_home }}/{{ cd_project }}"
-cd_app_home:        "{{ cd_app_container }}/{{ cd_component_name }}"
-cd_app_install:           "{{ cd_app_home }}/{{ cd_version }}"
-cd_app_current:           "{{ cd_app_home }}/current"
-cd_app_data:        "{{ cd_apps_data }}/{{ cd_project }}/{{ cd_component_name }}"
-cd_app_logs:        "{{ cd_apps_logs }}/{{ cd_project }}/{{ cd_component_name }}"
-
-# Generic properties
-cdprep_become:            "{{ install_user | default('wwwadm') }}"
-cdprep_mode:              '0775'
-
-cd_app_service: "{{ (s6_enabled == true) | ternary(s6_services + '/' + cd_component_name, cd_app_install + '/.s6') }}"
-cdprep_skip_cleanup:      no
+cd_prepare_service_dir_install: "{{ pd_common_service_dir_install }}"
+cd_prepare_install_user:        "{{ pd_common_install_user }}"
+cd_prepare_install_mod:         "{{ pd_common_install_mod }}"
+cd_prepare_skip_cleanup:        no

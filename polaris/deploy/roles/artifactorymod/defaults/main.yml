@@ -1,3 +1,10 @@
+---
+
+######################
+# Required properties
+######################
+# pd_prop_build_number
+
 #Global properties
 artifactory_api: "https://artifacts.developer.gov.bc.ca/artifactory/api"
 
@@ -5,6 +12,6 @@ artifactory_api: "https://artifacts.developer.gov.bc.ca/artifactory/api"
 artifactory_username: ""
 artifactory_password: ""
 
-artifactorymod_project: "{{ cd_project }}"
-artifactorymod_job: "{{ cd_component }}"
-artifactorymod_buildnumber: "{{ cd_build_number }}"
+artifactorymod_project: "{{ pd_common_project_name }}"
+artifactorymod_job: "{{ pd_common_service_name }}"
+artifactorymod_buildnumber: "{{ pd_prop_build_number }}"

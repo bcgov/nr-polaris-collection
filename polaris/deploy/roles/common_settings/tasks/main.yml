@@ -1,0 +1,6 @@
+---
+# tasks file for common_settings
+
+- name: status
+  debug:
+    msg: "Common role variables set"

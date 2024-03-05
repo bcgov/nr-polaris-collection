@@ -13,10 +13,6 @@ This role observes a number of conventions:
 * Webapps are installed to `cd_app_install`/webapps, referenced by `tomcat_webapp_dir`
 * A default port of 8001 is applied, but it is **strongly** recommended that this be provided at deploy time by setting a variable of `tomcat_https_port`
 
-The state of this role is: **Preview**
-* Only HTTPS is supported
-* Only Tomcat 8.5.20 is supported
-
 *****
 
 ## Installation visualization
