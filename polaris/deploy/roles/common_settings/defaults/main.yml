@@ -1,0 +1,37 @@
+---
+# defaults file for common_settings
+
+######################
+# Required properties
+######################
+# pd_prop_project_name
+# pd_prop_service_name
+# pd_prop_service_version
+######################
+# Optional properties
+######################
+# pd_prop_project_id
+# pd_prop_service_id
+
+pd_common_dir_base_app_root: "/apps_ux"
+pd_common_dir_base_app_data: "/apps_data"
+pd_common_dir_base_app_logs: "{{ pd_common_dir_app_data }}/logs"
+pd_common_install_user: "wwwadm"
+pd_common_install_mod: '0775'
+pd_common_run_user: "wwwsvr"
+
+# Project/service id default to the name. Id is used when there are
+# two instances of an app on one server and a single project/service id would
+# cause directory name conflicts.
+pd_common_project_name:  "{{ pd_prop_project_name }}"
+pd_common_service_name:  "{{ pd_prop_service }}"
+pd_common_project_id : "{{ pd_prop_project_id | default(pd_common_project_name) }}"
+pd_common_service_id : "{{ pd_prop_service_id | default(pd_common_service_name) }}"
+
+
+pd_common_project_dir_home:    "{{ pd_common_dir_base_app_root }}/{{ pd_common_project_id }}"
+pd_common_service_dir_home:    "{{ pd_common_project_home }}/{{ pd_common_service_id }}"
+pd_common_service_dir_install: "{{ pd_common_service_dir_home }}/{{ pd_prop_service_version }}"
+pd_common_service_dir_current: "{{ pd_common_service_dir_home }}/current"
+pd_common_service_dir_data:    "{{ pd_common_dir_base_app_data }}/{{ pd_common_project_id }}/{{ pd_common_service_id }}"
+pd_common_service_dir_logs:    "{{ pd_common_dir_base_app_logs }}/{{ pd_common_project_id }}/{{ pd_common_service_id }}"
