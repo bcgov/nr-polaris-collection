@@ -1,9 +1,8 @@
 # cd-prepare
 
-This role is meant to ensure the creation of application directories as dictated by the Continuous Delivery pipeline. **This role has a tight integration with Jenkins**, and acts based on variables that are provided by a Jenkins deployment.
+This role creates application directories. This role should be called before most roles.
 
-In addition to the default [Jenkins deployment variables](../../docs/JENKINSPLAYBOOK.md), this role will set `cd_app_service`. If the target host is [S6 enabled](../../docs/CONVENTIONS.md), then an S6 service directory will be created for the application. If not, it will instead create a hidden service directory inside the installation folder.
-The state of this role is: **Stable**
+If the target host is [S6 enabled](../../docs/CONVENTIONS.md), then an S6 service directory will be created for the application. If not, it will instead create a hidden service directory inside the installation folder.
 
 ## Required variables
 
@@ -19,13 +18,14 @@ The state of this role is: **Stable**
 | `cd_build_number` | 12 |
 | `s6_services` | /apps_ux/s6_services |
 
-**Note**: `s6_services` is only required if s6_enabled is true on the target host. 
+**Note**: `s6_services` is only required if s6_enabled is true on the target host.
 
 Example Playbook
 ----------------
 ```yaml
 - hosts: my-target-servers
   roles:
-    - cd-prepare 
+    - common-settings
+    - cd-prepare
     - { role: my-cool-role, mcr_home: "{{ cd_app_home }}" } # this directory is guaranteed to exist
 ```

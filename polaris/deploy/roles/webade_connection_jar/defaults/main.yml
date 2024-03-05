@@ -1,7 +1,7 @@
 # roles/webade-connection-jar/defaults/main.yml
 
 # Required
-webade_java_home:      "{{ cd_app_install }}/jdk"
+webade_java_home:      "{{ pd_common_service_dir_install }}/jdk"
 webade_install_dir:
 webade_env:
 webade_jdbc_url:

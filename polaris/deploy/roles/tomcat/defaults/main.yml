@@ -5,11 +5,11 @@
 # tomcat_webapps
 
 # Convention over configuration
-tomcat_install_root:          "{{ cd_app_install }}"
-tomcat_install_root_current: "{{ cd_app_current }}"
-tomcat_data_dir:              "{{ cd_app_data }}/tomcat"
-tomcat_log_dir:               "{{ cd_app_logs }}"
-tomcat_service_dir:           "{{ cd_app_service }}"
+tomcat_install_root:          "{{ pd_common_service_dir_install }}"
+tomcat_install_root_current:  "{{ pd_common_service_dir_current }}"
+tomcat_data_dir:              "{{ pd_common_service_dir_data }}/tomcat"
+tomcat_log_dir:               "{{ pd_common_service_dir_logs }}"
+tomcat_service_dir:           "{{ pd_common_service_dir_s6 }}"
 
 # general
 tomcat_install_dir:         "{{ tomcat_install_root }}/tomcat"
@@ -28,11 +28,11 @@ tomcat_https_port:          8001
 tomcat_ajp_port:            8001
 tomcat_set_as_current:      yes
 tomcat_download_tmp_dir:    "/tmp"
-tomcat_install_as:          "{{ install_user | default('wwwadm') }}"
-tomcat_run_as:              "{{ run_user | default('wwwsvr') }}"
-tomcat_s6_enabled:          "{{ s6_enabled | default('yes') }}"
-tomcat_s6_home:             "{{ s6_home | default('/sw_ux/s6') }}"
-tomcat_s6_services:         "{{ s6_services | default('/apps_ux/s6_services') }}"
+tomcat_install_as:          "{{ pd_common_install_user }}"
+tomcat_run_as:              "{{ pd_common_run_user }}"
+tomcat_s6_enabled:          "{{ pd_common_s6_enabled }}"
+tomcat_s6_home:             "{{ pd_common_s6_dir_home }}"
+tomcat_s6_services:         "{{ pd_common_s6_dir_services }}"
 tomcat_handler_style:       "{{ tomcat_s6_enabled | ternary('s6', 'default') }}"
 tomcat_download_username:   "{{ artifactory_username }}"
 tomcat_download_password:   "{{ artifactory_password }}"

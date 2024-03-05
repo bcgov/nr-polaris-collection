@@ -1,7 +1,6 @@
 # Tomcat
 
-Configures and deploys a WAR file to an existing Tomcat container
-The state of this role is: **Preview**
+Configures and deploys a WAR file to an existing Tomcat container.
 
 *****
 

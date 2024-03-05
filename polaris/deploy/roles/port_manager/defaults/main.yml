@@ -1,8 +1,8 @@
 # roles/port-manager/defaults/main.yml
 
 # Optional
-portmanager_app_dir: /apps_ux
-portmanager_first_dir: "{{ cd_project }}/{{ cd_component }}"
+portmanager_app_dir: "{{ pd_common_dir_app_root }}"
+portmanager_first_dir: "{{ pd_common_project_id }}/{{ pd_common_service_id }}"
 
 # Other
 portmanager_script_name: port_manager.pl

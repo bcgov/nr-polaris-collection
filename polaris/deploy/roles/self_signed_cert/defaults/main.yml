@@ -1,8 +1,8 @@
 ---
 # defaults file for self-signed-cert
-ssc_dir:                        "{{ cd_app_install }}/.keys"
-ssc_java_home:                  "{{ cd_app_install }}/jdk"
-ssc_user:                       "{{ install_user | default('wwwadm') }}"
+ssc_dir:                        "{{ pd_common_service_dir_install }}/.keys"
+ssc_java_home:                  "{{ pd_common_service_dir_install }}/jdk"
+ssc_user:                       "{{ pd_common_install_user }}"
 ssc_format:                     'pkcs12'
 
 ssc_keystore:                   "{{ ssc_dir }}/key.jks" #"{{ ssc_java_home }}/jre/lib/security/cacerts"
