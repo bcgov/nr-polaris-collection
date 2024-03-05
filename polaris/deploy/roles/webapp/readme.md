@@ -15,6 +15,8 @@ The state of this role is: **Preview**
 | `webapp_log_dir` | no | `cd_app_logs` | |
 | `webapp_staging_dir` | no | `cd_app_home` | Directory to use to extract & configure the webapp prior to deployment |
 | `webapp_user` | no | wwwadm | |
+| `webapp_configure_log4j_enabled` | no | True | If true, overwrite any existing `WEB-INF/classes/log4j2.xml` with template |
+| `webapp_configure_context_enabled` | no | True | If true, overwrite any existing `META-INF/context.xml` with template |
 
 *****
 
@@ -53,13 +55,13 @@ webapp_war:
 | `url` | yes | | This value should be a variable to allow deploy time injection |
 | `username` | yes | | This value should be a variable to allow deploy time injection |
 | `password` | yes | | This value **must** be a variable to allow deploy time injection |
-| `validation_query` | no | - | | 
-| `type` | no | javax.sql.Datasource | | 
+| `validation_query` | no | - | |
+| `type` | no | javax.sql.Datasource | |
 | `driver` | no | oracle.jdbc.OracleDriver | Any driver specified here must have its appropriate JAR added to `tomcat_install_dir`/lib |
 | `initial_size` | no | 3 | |
 | `max_active` | no | 10 | |
 | `max_idle` | no | 20 | |
-| `max_wait` | no | -1 | | 
+| `max_wait` | no | -1 | |
 
 
 *****
@@ -87,16 +89,16 @@ The following snippet will be included in the <log4j:configuration> element of l
 webapp_root_log_level
 
 ## JNDI Resources
-The role can accept an optional list of JNDI resource maps that will create resource entries in the container's server.xml file. 
+The role can accept an optional list of JNDI resource maps that will create resource entries in the container's server.xml file.
 
 | key | required | value (e.g.) | description |
 | --- | -------- | ------------ | ----------- |
 | `name` | yes | jdbc/webade_bootstrap | |
-| `url` | yes | | | 
+| `url` | yes | | |
 | `username` | yes | | |
 | `password` | yes | | |
-| `validation_query` | no | - | | 
-| `type` | no | javax.sql.Datasource | | 
+| `validation_query` | no | - | |
+| `type` | no | javax.sql.Datasource | |
 | `driver` | no | oracle.jdbc.OracleDriver | Any driver specified here must have its appropriate JAR added to `tomcat_install_dir`/lib |
 | `initial_size` | no | 3 | |
 | `max_active` | no | 10 | |
