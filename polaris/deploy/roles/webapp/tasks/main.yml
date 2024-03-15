@@ -16,16 +16,12 @@
   become: yes
   become_user: "{{ webapp_user }}"
 
-- name: "download {{ webapp_war.url | basename }}"
+- name: "copy webapp war from controller"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
-  get_url:
-    url: "{{ webapp_war.url }}"
-    url_username: "{{ webapp_war.username | default(artifactory_username) }}"
-    url_password: "{{ webapp_war.password | default(artifactory_password) }}"
-    dest: "{{ webapp_staging_dir }}/{{ webapp_war.url | basename }}"
-    checksum: "md5:{{ webapp_war.md5 }}"
-    timeout: 100
-    mode: 0755
+  ansible.builtin.copy:
+    src: "/ansible/downloads/{{ pd_props_artifact_name }}"
+    dest: "{{ webapp_staging_dir }}/{{ pd_props_artifact_name }}"
+    mode: '0755'
   become: yes
   become_user: "{{ webapp_user }}"
 
@@ -36,9 +32,9 @@
   become: yes
   become_user: "{{ webapp_user }}"
 
-- name: "extract {{ webapp_war.url | basename }}"
+- name: "extract webapp war"
   unarchive:
-    src: "{{ webapp_staging_dir }}/{{ webapp_war.url | basename }}"
+    src: "{{ webapp_staging_dir }}/{{ pd_props_artifact_name }}"
     dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
     remote_src: yes
   become: yes
@@ -104,5 +100,5 @@
   become_user: "{{ webapp_user }}"
   with_items:
     - "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
-    - "{{ webapp_staging_dir }}/{{ webapp_war.url | basename }}"
+    - "{{ webapp_staging_dir }}/{{ pd_props_artifact_name }}"
 
