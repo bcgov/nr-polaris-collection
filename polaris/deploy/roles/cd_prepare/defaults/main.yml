@@ -18,7 +18,7 @@
 cd_component_name:  "{{ custom_component_name | default(cd_component) }}"
 cd_app_container:         "{{ cd_apps_home }}/{{ cd_project }}"
 cd_app_home:        "{{ cd_app_container }}/{{ cd_component_name }}"
-cd_app_install:           "{{ cd_app_home }}/{{ cd_version }}"
+cd_app_install:           "{{ cd_app_home }}/{{ pd_prop_project_version }}"
 cd_app_current:           "{{ cd_app_home }}/current"
 cd_app_data:        "{{ cd_apps_data }}/{{ cd_project }}/{{ cd_component_name }}"
 cd_app_logs:        "{{ cd_apps_logs }}/{{ cd_project }}/{{ cd_component_name }}"
