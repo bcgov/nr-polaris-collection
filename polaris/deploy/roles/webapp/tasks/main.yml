@@ -21,8 +21,8 @@
   register: checksum_output
 
 - name: Extract the SHA256 checksum from the command output
-    set_fact:
-      downloaded_checksum: "{{ checksum_output.stdout.split()[0] }}"
+  set_fact:
+    downloaded_checksum: "{{ checksum_output.stdout.split()[0] }}"
 
 - name: Check if the downloaded checksum matches the expected value
   assert:
