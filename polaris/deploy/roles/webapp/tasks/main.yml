@@ -22,7 +22,7 @@
     src: "/ansible/downloads/{{ pd_prop_artifact_name }}"
     dest: "{{ webapp_staging_dir }}/{{ pd_prop_artifact_name }}"
     mode: '0755'
-    checksum: "sha256:{{ pd_prop_artifact_sha256 }}"
+    checksum: "{{ lookup('file', '/ansible/downloads/{{ pd_prop_artifact_name }}') | hash('sha256') }}"
   become: yes
   become_user: "{{ webapp_user }}"
 
