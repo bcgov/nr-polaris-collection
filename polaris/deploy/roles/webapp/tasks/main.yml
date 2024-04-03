@@ -22,10 +22,14 @@
     checksum_algorithm: sha256
   register: checksum_output
 
+- name: "Print SHA256 checksum"
+  ansible.builtin.debug:
+    var: checksum_output.stat.checksum
+
 - name: "verify sha256sum before copy"
   fail:
     msg: "Failure, artifactory file is not correct."
-  when: checksum_output.stat.checksum !=  pd_prop_artifact_sha256
+  when: checksum_output.stat.exists == false or checksum_output.stat.checksum !=  pd_prop_artifact_sha256
 
 - name: "copy webapp war from controller"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
