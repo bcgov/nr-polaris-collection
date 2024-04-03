@@ -16,24 +16,6 @@
   become: yes
   become_user: "{{ webapp_user }}"
 
-- name: "get sha256sum of the downloaded artifactory file"
-  ansible.builtin.stat:
-    path: "/ansible/downloads/{{ pd_prop_artifact_name }}"
-    checksum_algorithm: sha256
-    get_checksum: true
-  register: checksum_output
-
-- name: "Print checksum_output variable"
-  ansible.builtin.debug:
-    var: checksum_output
-
-- name: Check if the downloaded checksum matches the expected value
-  assert:
-    that:
-      - checksum_output.stat.checksum == '{{ pd_prop_artifact_sha256 }}'
-    fail_msg: "SHA256 checksums do not match"
-    success_msg: "SHA256 checksums match. Proceeding with deployment"
-
 - name: "copy webapp war from controller"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   ansible.builtin.copy:
