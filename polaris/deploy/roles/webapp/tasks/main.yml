@@ -17,17 +17,20 @@
   become_user: "{{ webapp_user }}"
 
 - name: "get sha256sum of the downloaded artifactory file"
-  command: "sha256sum /ansible/downloads/{{ pd_prop_artifact_name }}"
+  ansible.builtin.stat:
+    path: "/ansible/downloads/{{ pd_prop_artifact_name }}"
+    checksum_algorithm: sha256
+    get_checksum: true
   register: checksum_output
 
-- name: Extract the SHA256 checksum from the command output
-  set_fact:
-    downloaded_checksum: "{{ checksum_output.stdout.split()[0] }}"
+- name: "Print checksum_output variable"
+  ansible.builtin.debug:
+    var: checksum_output
 
 - name: Check if the downloaded checksum matches the expected value
   assert:
     that:
-      - downloaded_checksum == '{{ pd_prop_artifact_sha256 }}'
+      - checksum_output.stat.checksum == '{{ pd_prop_artifact_sha256 }}'
     fail_msg: "SHA256 checksums do not match"
     success_msg: "SHA256 checksums match. Proceeding with deployment"
 
