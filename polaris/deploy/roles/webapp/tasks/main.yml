@@ -16,6 +16,17 @@
   become: yes
   become_user: "{{ webapp_user }}"
 
+- name: "Check if the file exists before calculating checksum"
+  ansible.builtin.stat:
+    path: "/ansible/downloads/{{ pd_prop_artifact_name }}"
+  register: file_stat
+  become: yes
+  become_user: "{{ webapp_user }}"
+
+- name: "Print file_stat variable"
+  ansible.builtin.debug:
+    var: file_stat
+
 - name: "get sha256sum of the downloaded artifactory file"
   ansible.builtin.shell:
     cmd: "sha256sum /ansible/downloads/{{ pd_prop_artifact_name }}"
@@ -24,6 +35,11 @@
   become_user: "{{ webapp_user }}"
   changed_when: false
   check_mode: no
+  when: file_stat.stat.exists
+
+- name: "Print checksum_output variable"
+  ansible.builtin.debug:
+    var: checksum_output
 
 - name: Extract the SHA256 checksum from the command output
   set_fact:
@@ -36,7 +52,6 @@
     src: "/ansible/downloads/{{ pd_prop_artifact_name }}"
     dest: "{{ webapp_staging_dir }}/{{ pd_prop_artifact_name }}"
     mode: '0755'
-    checksum: sha256
   become: yes
   become_user: "{{ webapp_user }}"
   register: copy_result
