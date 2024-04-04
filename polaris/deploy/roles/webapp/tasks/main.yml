@@ -16,17 +16,50 @@
   become: yes
   become_user: "{{ webapp_user }}"
 
+- name: "get sha256sum of the downloaded artifactory file"
+  ansible.builtin.shell:
+    cmd: "sha256sum /ansible/downloads/{{ pd_prop_artifact_name }}"
+  register: checksum_output
+  become: yes
+  become_user: "{{ webapp_user }}"
+  changed_when: false
+  check_mode: no
+
+- name: Extract the SHA256 checksum from the command output
+  set_fact:
+    downloaded_checksum: "{{ checksum_output.stdout.split()[0] }}"
+  when: checksum_output.rc == 0
+
 - name: "copy webapp war from controller"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   ansible.builtin.copy:
     src: "/ansible/downloads/{{ pd_prop_artifact_name }}"
     dest: "{{ webapp_staging_dir }}/{{ pd_prop_artifact_name }}"
     mode: '0755'
+    checksum: sha256
   become: yes
   become_user: "{{ webapp_user }}"
-  vars:
-    src_checksum: "{{ lookup('file', '/ansible/downloads/{{ pd_prop_artifact_name }}' ) | hash('sha256') }}"
-  when: src_checksum == pd_prop_artifact_sha256
+  register: copy_result
+  when: downloaded_checksum == pd_prop_artifact_sha256
+
+- name: "get sha256sum of the downloaded artifactory file"
+  ansible.builtin.shell:
+    cmd: "sha256sum {{ webapp_staging_dir }}/{{ pd_prop_artifact_name }}"
+  register: dest_checksum_output
+  become: yes
+  become_user: "{{ webapp_user }}"
+  changed_when: false
+  check_mode: no
+
+- name: "Extract SHA-256 checksum from destination file command output"
+  set_fact:
+    dest_checksum: "{{ dest_checksum_output.stdout.split()[0] }}"
+  when: dest_checksum_output.rc == 0
+
+- name: "Compare checksums and verify file copy"
+  debug:
+    msg: "File copied successfully"
+  when: copy_result.changed and dest_checksum == pd_prop_artifact_sha256
 
 - name: ""
   file:
