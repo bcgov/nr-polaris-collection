@@ -24,7 +24,6 @@
     mode: '0755'
   become: yes
   become_user: "{{ webapp_user }}"
-  register: copy_stat
   vars:
     src_checksum: "{{ lookup('file', '/ansible/downloads/{{ pd_prop_artifact_name }}' ) | hash('sha256') }}"
   when: src_checksum == pd_prop_artifact_sha256
