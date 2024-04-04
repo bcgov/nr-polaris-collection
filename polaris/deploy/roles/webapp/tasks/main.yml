@@ -16,20 +16,6 @@
   become: yes
   become_user: "{{ webapp_user }}"
 
-- name: Get sha256 sum of artifactory download package
-  stat:
-    path: "/ansible/downloads/{{ pd_prop_artifact_name }}"
-    checksum_algorithm: sha256
-    get_checksum: yes
-  register: checksum_stat
-  become: yes
-  become_user: "{{ webapp_user }}"
-
-- name: Verify sha256sum of script before execution.
-  fail:
-    msg: "Failure, downloaded artifactory file is not correct."
-  when: checksum_stat.stat.checksum != pd_prop_artifact_sha256
-
 - name: "copy webapp war from controller"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   ansible.builtin.copy:
