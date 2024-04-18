@@ -1,12 +1,6 @@
-# roles/port-manager/defaults/main.yml
-
-# Optional
-portmanager_app_dir: /apps_ux
-portmanager_first_dir: "{{ cd_project }}/{{ cd_component }}"
-
-# Other
+---
+portmanager_app_dir: "{{ apps_home }}"
+portmanager_first_dir: "{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
 portmanager_script_name: port_manager.pl
 portmanager_assignments: {}
-
-# Not supported
-portmanager_ports_needed: 1
+portmanager_debug: False

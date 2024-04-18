@@ -11,8 +11,8 @@ The state of this role is: **Preview**
 | -------- | -------- | ------- | ----------- |
 | `webapp_war` | yes | {} | See [webapp_war map](#webapp-war-map) |
 | `webapp_component` | no | `cd_component` | The component name that this webapp manifests |
-| `webapp_tomcat_webapps_dir` | no | `cd_app_install`/webapps | |
-| `webapp_log_dir` | no | `cd_app_logs` | |
+| `webapp_tomcat_webapps_dir` | no | `pd_prop_service_install_directory`/webapps | |
+| `webapp_log_dir` | no | `pd_prop_service_logs` | |
 | `webapp_staging_dir` | no | `cd_app_home` | Directory to use to extract & configure the webapp prior to deployment |
 | `webapp_user` | no | wwwadm | |
 | `webapp_configure_log4j_enabled` | no | True | If true, overwrite any existing `WEB-INF/classes/log4j2.xml` with template |
@@ -125,7 +125,7 @@ The role can accept an optional list of JNDI resource maps that will create reso
       - { url: "{{ artifact.uri }}", md5: "{{ artifact.md5 }}", context: "int#e2edemo##{{ artifact.version }}" }
   roles:
     - cd-prepare
-    - { role: jdk, jdk_install_root: "{{ cd_app_install }}", jdk_version: "8" }
-    - { role: self-signed-cert, ssc_dir: "{{ cd_app_install }}/.keys", ssc_java_home: "{{ cd_app_install }}/jdk", ssc_format: 'pkcs12' }
+    - { role: jdk, jdk_install_root: "{{ pd_prop_service_install_directory }}", jdk_version: "8" }
+    - { role: self-signed-cert, ssc_dir: "{{ pd_prop_service_install_directory }}/.keys", ssc_java_home: "{{ pd_prop_service_install_directory }}/jdk", ssc_format: 'pkcs12' }
     - { role: tomcat, tomcat_version_number: '8.5.20', tomcat_webapps: "{{ webapps }}" }
 ```

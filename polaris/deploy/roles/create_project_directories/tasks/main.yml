@@ -1,0 +1,51 @@
+---
+- ansible.builtin.debug:
+    msg: "Service installation directory: {{ pd_prop_service_install_directory }}"
+
+- name: Create project directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0775"
+  become: yes
+  become_user: "{{ install_user }}"
+  with_items:
+    - "{{ apps_home }}/{{ pd_prop_project_name }}"
+    - "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
+    - "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
+    - "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
+    - "{{ apps_data }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
+    - "{{ s6_services }}/{{ pd_prop_service_name }}"
+
+- name: "set version {{ pd_prop_service_install_directory }} as current"
+  ansible.builtin.file:
+    path: "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/current"
+    src: "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
+    state: link
+  become: yes
+  become_user: "{{ install_user }}"
+
+# Clean up service installation directories (keep the last three)
+# https://stackoverflow.com/questions/61981651/how-to-delete-the-oldest-directory-with-ansible/61995155#61995155
+- name: Get directory list
+  ansible.builtin.find:
+    paths: "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
+    file_type: directory
+  register: found_dirs
+
+- name: Get the oldest dir
+  ansible.builtin.set_fact:
+    oldest_dir: "{{ found_dirs.files | sort(attribute='mtime') | first }}"
+
+- name: Display oldest dir
+  ansible.builtin.debug:
+    msg: "Oldest directory: {{ oldest_dir.path }}"
+
+- name: Delete oldest dir
+  ansible.builtin.file:
+    state: absent
+    path: "{{ oldest_dir.path }}"
+  become: yes
+  become_user: "{{ install_user }}"
+  when:
+    - found_dirs.files | count > 3

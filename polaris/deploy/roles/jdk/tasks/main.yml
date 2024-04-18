@@ -21,7 +21,7 @@
   file:
     path: "{{ jdk_home }}"
     state: directory
-    mode: 0755
+    mode: '0755'
   become:  yes
   become_user: "{{ jdk_install_as }}"
 
@@ -81,7 +81,7 @@
     dest: "/tmp/{{ jdk_jce_archive }}"
     validate_certs: false
     timeout: 100
-    mode: 0777
+    mode: '0777'
   become: yes
   become_user: "{{ jdk_install_as }}"
   when: jdk_version_updated.major_version == '8'

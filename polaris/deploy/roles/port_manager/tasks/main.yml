@@ -1,13 +1,13 @@
 ---
-# roles/port-manager/tasks/main.yml
-
 # Create port manager script on target host
 # -----------------------------------------
 - name: Port manager script
   template:
     src: "{{ portmanager_script_name }}.j2"
     dest: "/tmp/{{ portmanager_script_name }}"
-    mode: 0700
+    mode: "0700"
+  become: yes
+  become_user: "{{ install_user }}"
 
 # Run the port manager script
 # ---------------------------
@@ -15,7 +15,7 @@
   shell: "/tmp/{{ portmanager_script_name }} {{ portmanager_first_dir }}"
   register: port_check
   become: yes
-  become_user: wwwadm
+  become_user: "{{ install_user }}"
 
 # Quit if the script did not return normally
 # ------------------------------------------
@@ -26,7 +26,7 @@
 # Add the port or ports to the list
 # ---------------------------------
 - name: Add port(s) to list
-  set_fact: 
+  set_fact:
     portmanager_assignments: "{{ portmanager_assignments | combine( { ansible_host: item } ) }}"
     cacheable: true
   with_items: "{{ port_check.stdout.split(':') }}"
@@ -37,11 +37,6 @@
   file:
     path: "/tmp/{{ portmanager_script_name }}"
     state: absent
+  become: yes
+  become_user: "{{ install_user }}"
   when: not portmanager_debug
-
-# Show the port assignments
-# -------------------------
-#- name: Display port assignment
-#  debug:
-#    msg: "portmanager_assignments: {{ portmanager_assignments }}"
-

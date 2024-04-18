@@ -5,11 +5,11 @@
 # tomcat_webapps
 
 # Convention over configuration
-tomcat_install_root:          "{{ cd_app_install }}"
-tomcat_install_root_current: "{{ cd_app_current }}"
-tomcat_data_dir:              "{{ cd_app_data }}/tomcat"
-tomcat_log_dir:               "{{ cd_app_logs }}"
-tomcat_service_dir:           "{{ cd_app_service }}"
+tomcat_install_root:          "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
+tomcat_install_root_current:  "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/current"
+tomcat_data_dir:              "{{ apps_data }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/tomcat"
+tomcat_log_dir:               "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
+tomcat_service_dir:           "{{ s6_services }}/{{ pd_prop_service_name }}"
 
 # general
 tomcat_install_dir:         "{{ tomcat_install_root }}/tomcat"
