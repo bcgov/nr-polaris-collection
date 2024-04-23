@@ -19,7 +19,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: 0775
+    mode: "0775"
   with_items:
     - "{{ tomcat_install_dir }}"
     - "{{ tomcat_data_dir }}"
@@ -29,12 +29,12 @@
   become_user: "{{ tomcat_install_as }}"
 
 - name: download to {{ tomcat_download_tmp_dir }}/{{ tomcat_version.url | basename }}
-  get_url: 
+  get_url:
     url: "{{ tomcat_version.url }}"
     dest: "{{ tomcat_download_tmp_dir }}/{{ tomcat_version.url | basename }}"
     checksum: "md5:{{ tomcat_version.md5 }}"
     timeout: "{{ timeout | default(100) }}"
-    mode: 0755
+    mode: "0755"
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
@@ -48,7 +48,7 @@
 - name: service directory {{ tomcat_service_dir }}
   file:
     path: "{{ tomcat_service_dir }}"
-    mode: 0775
+    mode: "0775"
     state: directory
   become: yes
   become_user: "{{ tomcat_install_as }}"
@@ -57,14 +57,14 @@
   template:
     src: "run.j2"
     dest: "{{ tomcat_service_dir }}/run"
-    mode: 0775
+    mode: "0775"
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
 - name: record deployment data for the CMDB
   set_fact:
-    cmdb_tomcat: 
-      port: "{{ tomcat_https_port }}" 
+    cmdb_tomcat:
+      port: "{{ tomcat_https_port }}"
       webapps: "{{ tomcat_webapps }}"
       https: "{{ tomcat_use_https }}"
       install_dir: "{{ tomcat_install_dir }}"
