@@ -50,8 +50,8 @@
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
-- name: load task list for Tomcat {{ tomcat_major_version }}
-  include: "install-tomcat-{{ tomcat_major_version }}.yml"
+- name: load task list for Tomcat {{ tomcat_version_number.split('.')[0] }}
+  include: "install-tomcat-{{ tomcat_version_number.split('.')[0] }}.yml"
 
 - include: "{{ (item.clean | default('yes')) | ternary('webapp-clean-extract.yml', 'webapp-extract.yml') }}"
   with_items: "{{ tomcat_webapps }}"
