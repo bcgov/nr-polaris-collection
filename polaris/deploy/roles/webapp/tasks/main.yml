@@ -21,7 +21,7 @@
   ansible.builtin.copy:
     src: "/ansible/downloads/{{ pd_prop_artifact_name }}"
     dest: "{{ webapp_staging_dir }}/{{ pd_prop_artifact_name }}"
-    mode: '0755'
+    mode: "0755"
   become: yes
   become_user: "{{ webapp_user }}"
 
@@ -82,8 +82,8 @@
 - name: "directory {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
   file:
     path: "{{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
-    state: 'directory'
-    mode: 0755
+    state: "directory"
+    mode: "0755"
   become: yes
   become_user: "{{ webapp_user }}"
 
@@ -101,4 +101,3 @@
   with_items:
     - "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
     - "{{ webapp_staging_dir }}/{{ pd_prop_artifact_name }}"
-

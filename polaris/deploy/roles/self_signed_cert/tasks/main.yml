@@ -19,7 +19,7 @@
   file:
     path: "{{ ssc_dir }}"
     state: directory
-    mode: 0775
+    mode: "0775"
   become: yes
   become_user: "{{ ssc_user }}"
 
@@ -35,4 +35,3 @@
   become: yes
   become_user: "{{ ssc_user }}"
   ignore_errors: True
-

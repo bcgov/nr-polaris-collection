@@ -1,7 +1,7 @@
 ---
 # defaults file for self-signed-cert
-ssc_dir:                        "{{ cd_app_install }}/.keys"
-ssc_java_home:                  "{{ cd_app_install }}/jdk"
+ssc_dir:                        "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}/.keys"
+ssc_java_home:                  "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}/jdk"
 ssc_user:                       "{{ install_user | default('wwwadm') }}"
 ssc_format:                     'pkcs12'
 

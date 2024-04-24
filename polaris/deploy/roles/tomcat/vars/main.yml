@@ -87,29 +87,3 @@ tomcat_versions:
     url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/8/apache-tomcat-8.5.20.zip'
     md5: 827fb063bcac90d9a5ce0e9397041e92
     version_number: '8.5.20'
-
-  ###############################################################
-  # tomcat 7 versions - put newer minor versions at top of group
-  ###############################################################
-  # if an app wants to use a different version from below, set in sdk-config or playbook, e.g.:
-  #   ansible_tomcat_version_number=7.0.xx
-  7.0.100:
-    major_version: 7
-    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/7/apache-tomcat-7.0.100.tar.gz'
-    md5:  79be4ba5a6e770730a4be3d5cb3c7862
-    version_number: '7.0.100'
-  7.0.88:
-    major_version: 7
-    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/7/apache-tomcat-7.0.88.tar.gz'
-    md5:  ed624bde21e1f120e0052a47f295fde6
-    version_number: '7.0.88'
-  7.0.82:
-    major_version: 7
-    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/7/apache-tomcat-7.0.82.tar.gz'
-    md5:  b9c07fb4f37063e9e8185972b3f88a98
-    version_number: '7.0.82'
-  7.0.70:
-    major_version: 7
-    url: 'http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/org/apache/tomcat/7/apache-tomcat-7.0.70.zip'
-    md5:  2e3c0999b2e495907d4ea98a70486168
-    version_number: '7.0.70'

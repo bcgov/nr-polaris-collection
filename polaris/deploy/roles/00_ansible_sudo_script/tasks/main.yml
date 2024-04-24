@@ -1,8 +1,0 @@
-- name: Setup/check that Ansible sudo script is present for user
-  template:
-    src: templates/ansible-sudo-script.sh
-    dest: ~/
-    mode: 0755
-  delegate_to: "{{ item }}"
-  with_items: "{{ reverse_proxy_list_sudo }}"
-

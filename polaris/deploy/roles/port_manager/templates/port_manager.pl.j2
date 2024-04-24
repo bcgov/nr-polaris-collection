@@ -86,7 +86,7 @@ if ($found < $needed) {
 }
 
 # In order to prevent possible collisions, temporarily mark the selected
-# port(s) as in use.  
+# port(s) as in use.
 # ----------------------------------------------------------------------
 foreach (@assigned) {
   open HANDLE, ">>$tmp_dir/port:$_";
@@ -104,4 +104,3 @@ sub wanted {
   (/^port:\d+$/) && push(@portfiles, $File::Find::name);
   (/^range:\d+\-\d+$/) && ($range = $File::Find::name);
 }
-

@@ -1,6 +1,4 @@
 ---
-# roles/webade-connection-jar/tasks/main.yml
-
 # Make sure the JDK is installed
 # ------------------------------
 - name: JDK check
@@ -8,7 +6,7 @@
     path: "{{ webade_java_home }}"
   register: java_home
 - fail:
-    msg: "JDK not found at {{ webade_java_home }}.  Cannot proceed."
+    msg: "JDK not found at {{ webade_java_home }}. Cannot proceed."
   when: not java_home.stat.exists
 
 # Build directory
@@ -17,7 +15,7 @@
   file:
     path: "{{ webade_build_dir }}"
     state: directory
-    mode: '0777'
+    mode: "0777"
 
 - name: Build dir name
   debug:
@@ -29,7 +27,7 @@
   template:
     src: WebADEConnection.java.j2
     dest: "{{ webade_build_dir }}/WebADEConnection.java"
-    mode: '0600'
+    mode: "0600"
 
 # Compile
 # -------
@@ -72,4 +70,3 @@
   file:
     path: "{{ webade_build_dir }}"
     state: absent
-

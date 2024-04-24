@@ -1,16 +1,16 @@
 webapp_configure_log4j_enabled:   True
 webapp_configure_context_enabled: True
 
-webapp_log_dir:                   "{{ cd_app_logs }}"
+webapp_log_dir:                   "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
 webapp_log_level:                 'INFO'
 webapp_root_log_level:            'INFO'
 webapp_loggers:                   []
 webapp_log_quartzdesk_enabled:    False
 
-webapp_component:                 "{{ cd_component }}"
-webapp_tomcat_webapps_dir:        "{{ cd_app_install }}/webapps"
+webapp_component:                 "{{ pd_prop_service_name }}"
+webapp_tomcat_webapps_dir:        "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}/webapps"
 
-webapp_staging_dir:               "{{ cd_app_home }}"
+webapp_staging_dir:               "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
 
 webapp_user:                      "{{ install_user | default('wwwadm') }}"
 

@@ -8,7 +8,6 @@
   become_user: "{{ tomcat_run_as }}"
   # when: tomcat_s6_enabled | bool
 
-
 - name: stop tomcat via s6
   s6_service:
     name: "{{ tomcat_service_dir | basename }}"
@@ -27,7 +26,6 @@
   become_user: "{{ tomcat_run_as }}"
   # when: tomcat_s6_enabled | bool
 
-
 - name: start tomcat using startup.sh
   command:
     cmd: "{{ tomcat_install_dir }}/bin/startup.sh"
@@ -36,7 +34,6 @@
   become: yes
   become_user: "{{ tomcat_run_as }}"
   # when: not tomcat_s6_enabled | bool
-
 
 - name: stop tomcat using shutdown.sh
   command:
@@ -57,4 +54,3 @@
   become_user: "{{ tomcat_run_as }}"
   ignore_errors: yes
   # when: not tomcat_s6_enabled | bool
-

@@ -1,8 +1,6 @@
 ---
-# roles/jdk/defaults/main.yml
-
 # Required
-jdk_install_root:       '{{ cd_app_install | default("/sw_ux") }}'
+jdk_install_root:       "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
 
 # Optional
 jdk_version_number:     'default'

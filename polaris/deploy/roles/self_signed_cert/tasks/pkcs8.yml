@@ -10,7 +10,7 @@
   args:
     creates: "{{ ssc_pkcs8_key }}"
   become: yes
-  become_user: "{{ ssc_user }}" 
+  become_user: "{{ ssc_user }}"
 
   set_fact:
     - ssc_key: "{{ ssc_pkcs8_key }}"
