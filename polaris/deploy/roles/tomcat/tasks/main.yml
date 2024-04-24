@@ -29,7 +29,7 @@
   become_user: "{{ tomcat_install_as }}"
 
 - uri:
-    url: "{{ tomcat_download_url }}" + ".sha512"
+    url: "{{ tomcat_download_url + '.sha512' }}"
     return_content: true
   register: tomcat_sha512
 
