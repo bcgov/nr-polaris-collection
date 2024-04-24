@@ -1,12 +1,12 @@
 - name: download webapp to {{ tomcat_download_tmp_dir }}/{{ item.url | basename }}
-  get_url: 
+  get_url:
     url: "{{ item.url }}"
     url_username: "{{ tomcat_download_username }}"
     url_password: "{{ tomcat_download_password }}"
     dest: "{{ tomcat_download_tmp_dir }}/{{ item.url | basename }}"
     checksum: "md5:{{ item.md5 }}"
     timeout: "{{ timeout | default(100) }}"
-    mode: 0755
+    mode: "0755"
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
@@ -14,7 +14,7 @@
   file:
     path: "{{ tomcat_webapp_dir }}/{{ item.context }}"
     state: directory
-    mode: 0775
+    mode: "0775"
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
@@ -25,4 +25,3 @@
     remote_src: yes
   become: yes
   become_user: "{{ tomcat_install_as }}"
-  

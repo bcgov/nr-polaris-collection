@@ -92,4 +92,3 @@
     block: "{{ lookup('file', 'files/rotate_catalina') }}"
   become: yes
   become_user: "{{ tomcat_install_as }}"
-

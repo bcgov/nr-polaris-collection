@@ -2,7 +2,7 @@
 - name: service directory {{ tomcat_s6_services }}/{{ tomcat_service_name }}
   file:
     path: "{{ tomcat_s6_services }}/{{ tomcat_service_name }}"
-    mode: 0775
+    mode: "0775"
     state: directory
   become: yes
   become_user: "{{ tomcat_install_as }}"
@@ -11,8 +11,6 @@
   template:
     src: "run.j2"
     dest: "{{ tomcat_s6_services }}/{{ tomcat_service_name }}/run"
-    mode: 0775
+    mode: "0775"
   become: yes
   become_user: "{{ tomcat_install_as }}"
-
-# template finish file
