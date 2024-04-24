@@ -1,7 +1,7 @@
 ---
 - name: "Show download info"
   debug:
-    msg: "tomcat_version_number: {{ tomcat_version_number }} and tomcat_version: {{ tomcat_version }}"
+    msg: "tomcat_version_number: {{ tomcat_version_number }} and tomcat_download_url: {{ tomcat_download_url }}"
 
 - name: Checking for alternate app directory name
   set_fact:
@@ -28,18 +28,26 @@
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
-- name: download to {{ tomcat_download_tmp_dir }}/{{ tomcat_version.url | basename }}
+- uri:
+    url: "{{ tomcat_download_url }}" + ".sha512"
+    return_content: true
+  register: tomcat_sha512
+
+- set_fact:
+    tomcat_checksum: "{{ tomcat_sha512.content.split(' ')[0] }}"      # there are 2 spaces
+
+- name: download to {{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}
   get_url:
-    url: "{{ tomcat_version.url }}"
-    dest: "{{ tomcat_download_tmp_dir }}/{{ tomcat_version.url | basename }}"
-    checksum: "md5:{{ tomcat_version.md5 }}"
+    url: "{{ tomcat_download_url }}"
+    dest: "{{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}"
+    checksum: "sha512:{{ tomcat_checksum }}"
     timeout: "{{ timeout | default(100) }}"
     mode: "0755"
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
-- name: load task list for Tomcat {{ tomcat_version.major_version }}
-  include: "install-tomcat-{{ tomcat_version.major_version }}.yml"
+- name: load task list for Tomcat {{ tomcat_major_version }}
+  include: "install-tomcat-{{ tomcat_major_version }}.yml"
 
 - include: "{{ (item.clean | default('yes')) | ternary('webapp-clean-extract.yml', 'webapp-extract.yml') }}"
   with_items: "{{ tomcat_webapps }}"
@@ -68,7 +76,7 @@
       webapps: "{{ tomcat_webapps }}"
       https: "{{ tomcat_use_https }}"
       install_dir: "{{ tomcat_install_dir }}"
-      version: "{{ tomcat_version }}"
+      version: "{{ tomcat_version_number }}"
 
 - name: Until CMDB is ready, register port for port-manager
   file:
