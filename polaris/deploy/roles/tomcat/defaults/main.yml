@@ -11,10 +11,14 @@ tomcat_data_dir:              "{{ apps_data }}/{{ pd_prop_project_name }}/{{ pd_
 tomcat_log_dir:               "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
 tomcat_service_dir:           "{{ s6_services }}/{{ pd_prop_service_name }}"
 
-# general
+# The explicit version to use when referring to the short name.
 tomcat_version8:            "8.5.100"
 tomcat_version9:            "9.0.87"
 
+# The location where to download Apache Tomcat from.
+tomcat_mirror:              "https://archive.apache.org"
+
+# general
 tomcat_install_dir:         "{{ tomcat_install_root }}/tomcat"
 tomcat_install_dir_current: "{{ tomcat_install_root_current }}/tomcat"
 tomcat_webapp_dir:          "{{ tomcat_install_root }}/webapps"
