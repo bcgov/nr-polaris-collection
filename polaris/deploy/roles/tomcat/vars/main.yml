@@ -6,4 +6,3 @@ tomcat_versions:
   9:
     url: "{{ tomcat_mirror }}/dist/tomcat/tomcat-9/v{{ tomcat_version9 }}/bin/apache-tomcat-{{ tomcat_version9 }}.tar.gz"
     version_number: "{{ tomcat_version9 }}"
-
