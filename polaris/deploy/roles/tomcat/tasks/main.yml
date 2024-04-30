@@ -1,6 +1,8 @@
 ---
 - name: Get Latest Tomcat Minor Version
   shell: "curl -s https://downloads.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
+  environment:
+    https_proxy: "http://test-forwardproxy.nrs.bcgov:23128"
   register: latest_tomcat_minor_version
 
 - name: Set Tomcat Version number
