@@ -1,12 +1,12 @@
 - unarchive:
-    src: "{{ tomcat_download_tmp_dir }}/{{ tomcat_version.url | basename }}"
+    src: "{{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}"
     dest: "{{ tomcat_download_tmp_dir }}"
     exclude:
       - 'webapps'
       - 'logs'
       - 'temp'
       - 'work'
-    creates: "{{ tomcat_download_tmp_dir }}/apache-tomcat-{{ tomcat_version.version_number }}/lib/catalina.jar"
+    creates: "{{ tomcat_download_tmp_dir }}/apache-tomcat-{{ tomcat_version }}/lib/catalina.jar"
     remote_src: yes
   ignore_errors: "{{ ansible_check_mode }}"
   become: yes
@@ -14,7 +14,7 @@
 
 # TODO: replace this workaround, it's ugly and causes configuration steps to be 'changed' on every run
 - name: copy files from extracted archive
-  shell: cp -r {{ tomcat_download_tmp_dir }}/apache-tomcat-{{ tomcat_version.version_number }}/* {{ tomcat_install_dir }}
+  shell: cp -r {{ tomcat_download_tmp_dir }}/apache-tomcat-{{ tomcat_version }}/* {{ tomcat_install_dir }}
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
@@ -42,7 +42,7 @@
 
 - name: Configure server.xml
   template:
-    src: "tomcat8-server.xml.j2"
+    src: "tomcat-server.xml.j2"
     dest: "{{ tomcat_install_dir }}/conf/server.xml"
     mode: "0755"
   when: tomcat_configure_server_xml
@@ -70,6 +70,7 @@
   become: yes
   become_user: "{{ tomcat_install_as }}"
   tags: [ 'configure' ]
+  when: tomcat_major_version == '8'
 
 - name: scripts are executable
   file:
