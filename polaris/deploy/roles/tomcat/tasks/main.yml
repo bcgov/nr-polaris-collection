@@ -40,7 +40,7 @@
 
 - name: Set Tomcat Download URL
   set_fact:
-    tomcat_download_url: "{{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.tar.gz"
+    tomcat_download_url: "{{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.zip"
 
 - uri:
     url: "{{ tomcat_download_url + '.sha512' }}"
