@@ -36,7 +36,6 @@
         <Connector port="{{ tomcat_https_port }}"
             protocol="org.apache.coyote.http11.Http11NioProtocol"
             maxThreads="{{ tomcat_max_threads }}"
-        {% if tomcat_major_version == '8' %}
             connectionTimeout="130000"
          {% if tomcat_compression is defined %}
             compression="{{ tomcat_compression | default('off') }}"
@@ -47,7 +46,6 @@
 		 {% if tomcat_max_post_size is defined %}
             maxPostSize="{{ tomcat_max_post_size | default('2097152') }}"
          {% endif %}
-        {% endif %}
             SSLEnabled="true"
             scheme="https"
             secure="true"
