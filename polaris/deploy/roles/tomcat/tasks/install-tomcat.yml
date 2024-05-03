@@ -21,7 +21,7 @@
 - name: configuration directories
   file:
     path: "{{ item }}"
-    mode: "0775"
+    mode: '0775'
     state: directory
   become: yes
   become_user: "{{ tomcat_install_as }}"
@@ -33,7 +33,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: "0775"
+    mode: '0775'
   become: yes
   become_user: "{{ tomcat_install_as }}"
   with_items:
@@ -44,7 +44,7 @@
   template:
     src: "tomcat-server.xml.j2"
     dest: "{{ tomcat_install_dir }}/conf/server.xml"
-    mode: "0755"
+    mode: '0755'
   when: tomcat_configure_server_xml
   become: yes
   become_user: "{{ tomcat_install_as }}"
@@ -55,7 +55,7 @@
   template:
     src: "logging.properties.j2"
     dest: "{{ tomcat_install_dir }}/conf/logging.properties"
-    mode: "0775"
+    mode: '0775'
   when: tomcat_configure_logging_properties
   become: yes
   become_user: "{{ tomcat_install_as }}"
@@ -66,7 +66,7 @@
   template:
     src: "setenv.sh.j2"
     dest: "{{ tomcat_install_dir }}/bin/setenv.sh"
-    mode: "0755"
+    mode: '0755'
   become: yes
   become_user: "{{ tomcat_install_as }}"
   tags: [ 'configure' ]
@@ -74,7 +74,7 @@
 - name: scripts are executable
   file:
     path: "{{ tomcat_install_dir }}/{{ item }}"
-    mode: "0775"
+    mode: '0775'
   with_items:
     - bin/startup.sh
     - bin/shutdown.sh
