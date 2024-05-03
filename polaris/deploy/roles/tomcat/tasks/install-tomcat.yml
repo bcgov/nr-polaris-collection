@@ -70,7 +70,6 @@
   become: yes
   become_user: "{{ tomcat_install_as }}"
   tags: [ 'configure' ]
-  when: tomcat_major_version == '8'
 
 - name: scripts are executable
   file:
