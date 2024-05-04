@@ -1,7 +1,17 @@
 ---
+- name: Get Latest Tomcat Minor Version
+  shell: "curl -s https://downloads.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
+  environment:
+    https_proxy: "http://test-forwardproxy.nrs.bcgov:23128"
+  register: latest_tomcat_minor_version
+
+- name: Set Tomcat Version number
+  set_fact:
+    tomcat_version: "{{ tomcat_version_number | default(latest_tomcat_minor_version.stdout, true) }}"
+
 - name: "Show download info"
   debug:
-    msg: "tomcat_version_number: {{ tomcat_version_number }} and tomcat_version: {{ tomcat_version }}"
+    msg: "tomcat_major_version: {{ tomcat_major_version }} and tomcat_version: {{ tomcat_version }}"
 
 - name: Checking for alternate app directory name
   set_fact:
@@ -28,22 +38,34 @@
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
-- name: download to {{ tomcat_download_tmp_dir }}/{{ tomcat_version.url | basename }}
+- name: Set Tomcat Download URL
+  set_fact:
+    tomcat_download_url: "{{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.zip"
+
+- uri:
+    url: "{{ tomcat_download_url + '.sha512' }}"
+    return_content: true
+  environment:
+    https_proxy: "http://test-forwardproxy.nrs.bcgov:23128"
+  register: tomcat_sha512
+
+- set_fact:
+    tomcat_checksum: "{{ tomcat_sha512.content.split(' ')[0] }}"      # there are 2 spaces
+
+- name: download to {{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}
   get_url:
-    url: "{{ tomcat_version.url }}"
-    dest: "{{ tomcat_download_tmp_dir }}/{{ tomcat_version.url | basename }}"
-    checksum: "md5:{{ tomcat_version.md5 }}"
+    url: "{{ tomcat_download_url }}"
+    dest: "{{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}"
+    checksum: "sha512:{{ tomcat_checksum }}"
     timeout: "{{ timeout | default(100) }}"
     mode: "0755"
+  environment:
+    https_proxy: "http://test-forwardproxy.nrs.bcgov:23128"
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
-- name: load task list for Tomcat {{ tomcat_version.major_version }}
-  include: "install-tomcat-{{ tomcat_version.major_version }}.yml"
-
-- include: "{{ (item.clean | default('yes')) | ternary('webapp-clean-extract.yml', 'webapp-extract.yml') }}"
-  with_items: "{{ tomcat_webapps }}"
-  when: tomcat_webapps|length > 0
+- name: load task list for Tomcat {{ tomcat_version }}
+  include: "install-tomcat.yml"
 
 - name: service directory {{ tomcat_service_dir }}
   file:

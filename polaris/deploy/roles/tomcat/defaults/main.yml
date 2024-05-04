@@ -11,13 +11,15 @@ tomcat_data_dir:              "{{ apps_data }}/{{ pd_prop_project_name }}/{{ pd_
 tomcat_log_dir:               "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
 tomcat_service_dir:           "{{ s6_services }}/{{ pd_prop_service_name }}"
 
+# The location where to download Apache Tomcat from.
+tomcat_mirror:              "https://archive.apache.org"
+
 # general
 tomcat_install_dir:         "{{ tomcat_install_root }}/tomcat"
 tomcat_install_dir_current: "{{ tomcat_install_root_current }}/tomcat"
 tomcat_webapp_dir:          "{{ tomcat_install_root }}/webapps"
 tomcat_webapps:             []
-tomcat_version_number:      '8.5.20'
-tomcat_version:             "{{ tomcat_versions[tomcat_version_number] }}"
+tomcat_major_version:       '8'
 tomcat_work_dir:            "{{ tomcat_data_dir }}/work"
 tomcat_temp_dir:            "{{ tomcat_data_dir }}/temp"
 tomcat_pid_file:            "{{ tomcat_work_dir }}/catalina.pid"
