@@ -1,8 +1,7 @@
 ---
 - name: Get Latest Tomcat Minor Version
   shell: "curl -s https://downloads.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
-  environment:
-    https_proxy: "http://test-forwardproxy.nrs.bcgov:23128"
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   register: latest_tomcat_minor_version
 
 - name: Set Tomcat Version number
@@ -45,8 +44,7 @@
 - uri:
     url: "{{ tomcat_download_url + '.sha512' }}"
     return_content: true
-  environment:
-    https_proxy: "http://test-forwardproxy.nrs.bcgov:23128"
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   register: tomcat_sha512
 
 - set_fact:
@@ -59,8 +57,7 @@
     checksum: "sha512:{{ tomcat_checksum }}"
     timeout: "{{ timeout | default(100) }}"
     mode: "0755"
-  environment:
-    https_proxy: "http://test-forwardproxy.nrs.bcgov:23128"
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
