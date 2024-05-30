@@ -74,10 +74,12 @@
   become: yes
   become_user: "{{ webapp_user }}"
   ignore_errors: yes
+  when: not skip_ojdbc_install
 
 - name: show installed ojdbc source and version for reference purposes
   debug:
     msg: "{{ ojdbc_url }}/{{ ojdbc_file }}"
+  when: not skip_ojdbc_install
 
 - name: "directory {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
   file:

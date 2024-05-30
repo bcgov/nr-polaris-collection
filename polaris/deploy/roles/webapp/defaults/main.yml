@@ -20,6 +20,7 @@ webapp_user:                      "{{ install_user | default('wwwadm') }}"
 # of database versions at the time. This default may need to be updated in the future.
 ojdbc_file: "ojdbc7-12.1.3-0-0.jar"
 ojdbc_url: "http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/com.oracle"
+skip_ojdbc_install: false
 
 proxy_env_dev_test:
   https_proxy: http://test-forwardproxy.nrs.bcgov:23128
