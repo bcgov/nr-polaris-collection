@@ -80,14 +80,26 @@
   become: yes
   become_user: "{{ tomcat_install_as }}"
 
-- name: record deployment data for the CMDB
-  set_fact:
-    cmdb_tomcat:
-      port: "{{ tomcat_https_port }}"
-      webapps: "{{ tomcat_webapps }}"
-      https: "{{ tomcat_use_https }}"
-      install_dir: "{{ tomcat_install_dir }}"
-      version: "{{ tomcat_version }}"
+- name: Patch intention
+  ansible.builtin.uri:
+    url: https://broker.io.nrs.gov.bc.ca/v1/intention/action/patch
+    method: POST
+    body_format: json
+    status_code: [200, 201]
+    headers:
+      X-Broker-Token: "{{ action_token }}"
+      Content-Type: application/json
+    body:
+      cloud:
+        target:
+          propStrategy: "merge"
+          prop:
+            tomcat_version: "{{ tomcat_version }}"
+          instance:
+            name: "{{ inventory_hostname }}"
+  when:
+    - action_token is defined
+    - action_token != ""
 
 - name: Until CMDB is ready, register port for port-manager
   file:
