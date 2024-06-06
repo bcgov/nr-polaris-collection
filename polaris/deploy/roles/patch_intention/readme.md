@@ -32,4 +32,5 @@ Here's an example playbook that uses the `patch_intention` role:
   roles:
     - role: patch_intention
       vars:
-        tomcat_version: "9.0.89"
+        _tomcat_version: "9.0.89"
+        _tomcat_port: "8055"
