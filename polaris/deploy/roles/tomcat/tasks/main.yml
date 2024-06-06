@@ -81,25 +81,11 @@
   become_user: "{{ tomcat_install_as }}"
 
 - name: Patch intention
-  ansible.builtin.uri:
-    url: https://broker.io.nrs.gov.bc.ca/v1/intention/action/patch
-    method: POST
-    body_format: json
-    status_code: [200, 201]
-    headers:
-      X-Broker-Token: "{{ action_token }}"
-      Content-Type: application/json
-    body:
-      cloud:
-        target:
-          propStrategy: "merge"
-          prop:
-            tomcat_version: "{{ tomcat_version }}"
-          instance:
-            name: "{{ inventory_hostname }}"
-  when:
-    - action_token is defined
-    - action_token != ""
+  include_role:
+    name: patch_intention
+  vars:
+    _tomcat_version: "{{ tomcat_version }}"
+    _tomcat_port: "{{ tomcat_port }}"
 
 - name: Until CMDB is ready, register port for port-manager
   file:

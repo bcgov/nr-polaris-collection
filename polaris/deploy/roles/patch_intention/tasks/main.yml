@@ -1,0 +1,29 @@
+---
+- name: Generate JSON data from template
+  ansible.builtin.template:
+    src: data.json.j2
+    dest: data.json
+
+- name: Read generated JSON data
+  ansible.builtin.slurp:
+    src: data.json
+  register: json_data
+
+- name: Decode JSON data
+  ansible.builtin.set_fact:
+    decoded_json: "{{ json_data.content | b64decode | from_json }}"
+
+- name: Display decoded JSON
+  debug:
+    msg: "{{ decoded_json }}"
+
+- name: Patch intention
+  ansible.builtin.uri:
+    url: "{{ broker_url }}/v1/intention/action/patch"
+    method: POST
+    body_format: json
+    status_code: [200, 201]
+    headers:
+      X-Broker-Token: "{{ action_token }}"
+      Content-Type: application/json
+    body: "{{ decoded_json | to_json }}"

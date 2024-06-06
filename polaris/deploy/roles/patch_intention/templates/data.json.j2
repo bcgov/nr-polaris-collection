@@ -1,0 +1,18 @@
+{
+  "cloud": {
+    "target": {
+      "propStrategy": "replace",
+      "prop": {
+{% if _tomcat_version | length > 0 %}
+        "tomcat_version": "{{ _tomcat_version }}"{% if _tomcat_port | length > 0 %},{% endif %}
+{% endif %}
+{% if _tomcat_port | length > 0 %}
+        "port": "{{ _tomcat_port }}"
+{% endif %}
+      },
+      "instance": {
+        "name": "{{ inventory_hostname }}"
+      }
+    }
+  }
+}

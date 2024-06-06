@@ -28,6 +28,7 @@
 - name: Add port(s) to list
   set_fact:
     portmanager_assignments: "{{ portmanager_assignments | combine( { ansible_host: item } ) }}"
+    tomcat_port: "{{ port_check.stdout.split(':')[0] }}"
     cacheable: true
   with_items: "{{ port_check.stdout.split(':') }}"
 
