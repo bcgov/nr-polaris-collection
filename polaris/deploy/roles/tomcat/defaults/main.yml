@@ -71,5 +71,3 @@ proxy_env_dev_test:
 
 proxy_env_prod:
   https_proxy: http://forwardproxy.nrs.bcgov:23128
-
-action_token: "{{ lookup('ansible.builtin.env', 'ACTION_TOKEN_INSTALL') }}"

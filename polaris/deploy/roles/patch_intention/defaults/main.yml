@@ -1,0 +1,5 @@
+---
+broker_url: "https://broker.io.nrs.gov.bc.ca"
+action_token: "{{ lookup('ansible.builtin.env', 'ACTION_TOKEN_INSTALL') }}"
+_tomcat_version: ""
+_tomcat_port: ""
