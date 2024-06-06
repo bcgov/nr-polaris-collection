@@ -14,9 +14,9 @@ The following variables can be customized to modify the behavior of the role:
 
 - `action_token`: The action token for the PATCH request payload. (Default: The role uses the "ACTION_TOKEN_INSTALL" environment variable)
 
-- `tomcat_version`: The tomcat version for the PATCH request payload. (Default: empty string)
+- `_tomcat_version`: The tomcat version for the PATCH request payload. (Default: empty string)
 
-- `tomcat_port`: The tomcat port for the PATCH request payload. (Default: empty string)
+- `_tomcat_port`: The tomcat port for the PATCH request payload. (Default: empty string)
 
 ## Dependencies
 
