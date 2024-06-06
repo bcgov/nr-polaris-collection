@@ -4,7 +4,7 @@ The Patch Intention role is responsible for generating and sending a PATCH reque
 
 ## Requirements
 
-This role requires Ansible collection "nr-polaris-collection" to be installed on the system where it will be executed.
+This role requires the `nr-polaris-collection` Ansible collection to be installed on the system where it will be executed.
 
 ## Role Variables
 
