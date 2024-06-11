@@ -1,6 +1,6 @@
-# Patch Intention Role
+# Ansible Role: patch_intention
 
-The Patch Intention role is responsible for generating and sending a PATCH request to the NR Broker. It takes input variables to customize the payload sent in the request.
+This Ansible role is responsible for generating and sending a PATCH request to the NR Broker. It takes input variables to customize the payload sent in the request.
 
 ## Requirements
 
