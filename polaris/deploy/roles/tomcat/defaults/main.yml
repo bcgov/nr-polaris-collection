@@ -66,6 +66,7 @@ tomcat_localhost_log_level:           "{{ tomcat_log_level }}"
 tomcat_manager_log_level:             "{{ tomcat_log_level }}"
 tomcat_host_manager_log_level:        "{{ tomcat_log_level }}"
 
+tomcat_configure_catalina_properties: yes
 proxy_env_dev_test:
   https_proxy: http://test-forwardproxy.nrs.bcgov:23128
 

@@ -51,6 +51,17 @@
   tags: [ 'configure' ]
   notify: restart tomcat - {{ tomcat_handler_style }}
 
+- name: Configure catalina.properties
+  template:
+    src: "catalina.properties.j2"
+    dest: "{{ tomcat_install_dir }}/conf/catalina.properties"
+    mode: '0755'
+  when: tomcat_configure_catalina_properties
+  become: yes
+  become_user: "{{ tomcat_install_as }}"
+  tags: [ 'configure' ]
+  notify: restart tomcat - {{ tomcat_handler_style }}
+
 - name: logging.properties configuration
   template:
     src: "logging.properties.j2"
