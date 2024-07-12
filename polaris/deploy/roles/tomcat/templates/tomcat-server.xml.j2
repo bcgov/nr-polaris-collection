@@ -2,7 +2,7 @@
 
 <Server port="{{ tomcat_shutdown_port }}" shutdown="SHUTDOWN">
     <!-- TODO: are these worth parameterizing? -->
-{% if tomcat_major_version == '9' %}
+{% if tomcat_major_version != '8' %}
     <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
     <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
 {% endif %}
