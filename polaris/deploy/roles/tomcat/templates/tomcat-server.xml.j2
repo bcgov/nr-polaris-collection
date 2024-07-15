@@ -51,10 +51,6 @@
             secure="true"
             clientAuth="false"
             sslProtocol="TLS"
-            {% if tomcat_keystore_file is defined %}
-            keystoreFile="{{ tomcat_keystore_file }}"
-            keystorePass="{{ tomcat_keystore_pass }}"
-            {% endif %}
             {% if tomcat_max_http_header is defined %}
             maxHttpHeaderSize="{{ tomcat_max_http_header }}"
             {% endif %}
@@ -76,8 +72,14 @@
                 TLS_RSA_WITH_AES_256_CBC_SHA,
                 TLS_RSA_WITH_AES_128_CBC_SHA256,
                 TLS_RSA_WITH_AES_128_CBC_SHA"
-        />
-        {% endif %}
+        >
+        <SSLHostConfig>
+            <Certificate certificateKeystoreFile="{{ tomcat_keystore_file }}"
+                            certificateKeystorePassword="{{ tomcat_keystore_pass }}"
+                            type="RSA" />
+        </SSLHostConfig>
+        </Connector>
+    {% endif %}
 
 {% if tomcat_use_ajp %}
         <!-- Define an AJP 1.3 Connector -->
