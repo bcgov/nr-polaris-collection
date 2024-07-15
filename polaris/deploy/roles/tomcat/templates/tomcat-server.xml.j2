@@ -35,7 +35,6 @@
     {% if tomcat_use_https %}
         <Connector port="{{ tomcat_https_port }}"
             protocol="org.apache.coyote.http11.Http11NioProtocol"
-            sslImplementationName="org.apache.tomcat.util.net.jsse.JSSEImplementation"
             maxThreads="{{ tomcat_max_threads }}"
             connectionTimeout="130000"
          {% if tomcat_compression is defined %}
