@@ -1,10 +1,11 @@
 ---
 # Required
 jdk_install_root:       "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
+jdk_major_version:      "22"
 
 # Optional
-jdk_version_number:     'default'
-jdk_version:            '{{ jdk_versions[jdk_version_number] }}'
+#jdk_version_number:     'default'
+#jdk_version:            '{{ jdk_versions[jdk_version_number] }}'
 jdk_type:               'openjdk'
 jdk_install_dir:        'jdk'
 jdk_install_as:         '{{ install_user | default("wwwadm") }}'
