@@ -23,7 +23,15 @@
     url: "{{ jdk_archive_url + '.sha256' }}"
     return_content: true
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
-  register: jdk_checksum
+  register: jdk_sha256
+
+- name: Get JDK Checksum
+  set_fact:
+    jdk_checksum: "{{ jdk_sha256.content }}"
+
+- name: Show Checksum
+  debug:
+    var: jdk_checksum
 
 - name: Download JDK archive
   get_url:
