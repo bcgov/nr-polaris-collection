@@ -93,3 +93,11 @@
   become: yes
   become_user: "{{ jdk_install_as }}"
   when: jdk_version_updated.major_version == '8'
+
+- name: Patch intention
+  include_role:
+    name: patch_intention
+  vars:
+    _jdk_type: "{{ jdk_version_updated.type }}"
+    _jdk_major_version: "{{ jdk_version_updated.major_version }}"
+    _jdk_url: "{{ jdk_version_updated.url }}"
