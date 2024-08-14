@@ -1,1 +1,6 @@
 ---
+pd_prop_project_version: "{{ lookup('ansible.builtin.env', 'PODMAN_PROJECT_VERSION') }}"
+pd_prop_artifact_name: "{{ lookup('ansible.builtin.env', 'PODMAN_ARTIFACT_NAME') }}"
+pd_prop_artifact_sha256: "{{ lookup('ansible.builtin.env', 'PODMAN_ARTIFACT_SHA256') }}"
+pd_prop_build_number: "{{ lookup('ansible.builtin.env', 'PODMAN_BUILD_NUMBER') }}"
+pd_prop_service_install_directory: "{{ pd_prop_project_version }}-{{ pd_prop_build_number }}"
