@@ -1,9 +1,0 @@
----
-jdk_versions:
-  default:
-    type: 'openjdk'
-    major_version: 22
-    url: 'https://download.java.net/java/GA/jdk22.0.1/c7ec1332f7bb44aeba2eb341ae18aca4/8/GPL/openjdk-22.0.1_linux-x64_bin.tar.gz'
-    filename: 'openjdk-22.0.1_linux-x64_bin.tar.gz'
-    checksum: 'sha256:133c8b65113304904cdef7c9103274d141cfb64b191ff48ceb6528aca25c67b1'
-    cacerts_path: 'lib/security/cacerts'
