@@ -42,19 +42,19 @@
     tomcat_download_url: "{{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.zip"
 
 - uri:
-    url: "{{ tomcat_download_url + '.sha512' }}"
+    url: "{{ tomcat_download_url + '.' + tomcat_checksum_protocol }}"
     return_content: true
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
-  register: tomcat_sha512
+  register: tomcat_checksum
 
 - set_fact:
-    tomcat_checksum: "{{ tomcat_sha512.content.split(' ')[0] }}"      # there are 2 spaces
+    tomcat_checksum: "{{ tomcat_checksum.content.split(' ')[0] }}"      # there are 2 spaces
 
 - name: download to {{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}
   get_url:
     url: "{{ tomcat_download_url }}"
     dest: "{{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}"
-    checksum: "sha512:{{ tomcat_checksum }}"
+    checksum: "{{ tomcat_checksum_protocol }}:{{ tomcat_checksum }}"
     timeout: "{{ timeout | default(100) }}"
     mode: "0755"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
