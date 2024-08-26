@@ -1,10 +1,10 @@
 ---
-- debug:
-    msg: '{{ ansible_os_family }} {{ ansible_architecture }} {{ jdk_version }} {{ jdk_type }}'
-
 - name: 'Include parameters for {{ ansible_os_family }} {{ ansible_architecture }} JDK type:{{ jdk_type }}'
   include_vars:
     file: '{{ ansible_os_family }}_{{ ansible_architecture }}_{{ jdk_type }}.yml'
+
+- debug:
+    msg: '{{ ansible_os_family }} {{ ansible_architecture }} {{ jdk_version }} {{ jdk_type }}'
 
 - debug:
     msg: 'jdk_version_number: {{ jdk_version_number }}'
