@@ -38,6 +38,7 @@ tomcat_s6_services:         "{{ s6_services | default('/apps_ux/s6_services') }}
 tomcat_handler_style:       "{{ tomcat_s6_enabled | ternary('s6', 'default') }}"
 tomcat_download_username:   "{{ artifactory_username }}"
 tomcat_download_password:   "{{ artifactory_password }}"
+tomcat_checksum_protocol:   "sha512"
 using_alt_app_dir:          false
 default_ssc_keystore_pass:  "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
