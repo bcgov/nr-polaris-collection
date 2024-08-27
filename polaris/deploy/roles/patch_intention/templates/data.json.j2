@@ -12,6 +12,9 @@
 {% if _jdk_url | length > 0 %}
         "jdk_url": "{{ _jdk_url }}",
 {% endif %}
+{% if _jdk_release_name | length > 0 %}
+        "jdk_release_name": "{{ _jdk_release_name }}",
+{% endif %}
 {% if _tomcat_version | length > 0 %}
         "tomcat_version": "{{ _tomcat_version }}",
 {% endif %}

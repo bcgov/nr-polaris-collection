@@ -1,58 +1,75 @@
 ---
-- name: 'Include parameters for {{ ansible_os_family }} {{ ansible_architecture }} JDK type:{{ jdk_type }}'
-  include_vars:
-    file: '{{ ansible_os_family }}_{{ ansible_architecture }}_{{ jdk_type }}.yml'
-
-- debug:
-    msg: '{{ ansible_os_family }} {{ ansible_architecture }} {{ jdk_version }} {{ jdk_type }}'
-
-- debug:
-    msg: 'jdk_version_number: {{ jdk_version_number }}'
-
-- name: 'Set jdk_version_updated based on jdk_version_number'
-  set_fact:
-    jdk_version_updated: '{{ jdk_version | default(jdk_versions[jdk_version_number]) }}'
-
-- name: 'jdk_cacerts_file'
-  set_fact:
-    jdk_cacerts_file: '{{ jdk_home }}/{{ jdk_version_updated.cacerts_path }}'
-
-- name: 'Directory {{ jdk_home }}'
+- name: 'Create JDK home directory: {{ jdk_home }}'
   file:
-    path: "{{ jdk_home }}"
+    path: '{{ jdk_home }}'
     state: directory
     mode: '0755'
-  become:  yes
-  become_user: "{{ jdk_install_as }}"
+  become: yes
+  become_user: '{{ jdk_install_as }}'
 
-- name: Show JDK package info
+- name: 'Get asset info'
+  uri:
+    url: >-
+      {% if jdk_pinned_release_name | length > 0 %}
+      https://api.adoptium.net/v3/assets/release_name/eclipse/{{ jdk_pinned_release_name | urlencode }}?architecture=x64&heap_size=normal&image_type=jdk&jvm_impl=hotspot&os=linux&project=jdk
+      {% else %}
+      https://api.adoptium.net/v3/assets/latest/{{ jdk_major_version }}/hotspot?architecture=x64&image_type=jdk&os=linux&vendor=eclipse
+      {% endif %}
+    return_content: yes
+  environment: '{{ (proxy_env_dev_test if proxy_env == "dev" or proxy_env == "test") or (proxy_env_prod if proxy_env == "prod") | default({}) }}'
+  register: json_response
+  when: jdk_type == 'openjdk'
+
+- name: 'Print asset info'
   debug:
-    var: jdk_version_updated
+    var: json_response.json
+  when: jdk_type == 'openjdk'
 
-- name: Show JDK url
-  debug:
-    var: jdk_version_updated.url
+- name: 'Set asset info for latest release'
+  set_fact:
+    jdk_checksum_value: '{{ json_response.json | json_query("[0].binary.package.checksum") }}'
+    jdk_release_name: '{{ json_response.json | json_query("[0].release_name") }}'
+    jdk_major_version: '{{ json_response.json | json_query("[0].version.major") }}'
+    jdk_package_name: '{{ json_response.json | json_query("[0].binary.package.name") }}'
+    jdk_package_link: '{{ json_response.json | json_query("[0].binary.package.link") }}'
+  when: jdk_type == 'openjdk' and jdk_pinned_release_name | length == 0
 
-- name: Download JDK archive
+- name: 'Set asset info for pinned release'
+  set_fact:
+    jdk_checksum_value: '{{ json_response.json | json_query("binaries[0].package.checksum") }}'
+    jdk_release_name: '{{ json_response.json | json_query("release_name") }}'
+    jdk_major_version: '{{ json_response.json | json_query("version_data.major") }}'
+    jdk_package_name: '{{ json_response.json | json_query("binaries[0].package.name") }}'
+    jdk_package_link: '{{ json_response.json | json_query("binaries[0].package.link") }}'
+  when: jdk_type == 'openjdk' and jdk_pinned_release_name | length > 0
+
+- name: 'Download the release'
   get_url:
-    url: "{{ jdk_version_updated.url }}"
-    dest: "/tmp/{{ jdk_version_updated.url | basename }}"
-    checksum: "{{ jdk_version_updated.checksum }}"
+    url: 'https://api.adoptium.net/v3/binary/version/{{ jdk_release_name | urlencode }}/linux/x64/jdk/hotspot/normal/eclipse?project=jdk'
+    dest: '{{ jdk_install_root }}/{{ jdk_package_name }}'
+    checksum: "sha256:{{ jdk_checksum_value }}"
     validate_certs: false
     timeout: 1000
-  environment:
-    https_proxy: "{{ 'http://test-forwardproxy.nrs.bcgov:23128' if use_proxy else '' }}"
+  environment: '{{ (proxy_env_dev_test if proxy_env == "dev" or proxy_env == "test") or (proxy_env_prod if proxy_env == "prod") | default({}) }}'
   become: yes
-  become_user: "{{ jdk_install_as }}"
+  become_user: '{{ jdk_install_as }}'
+  when: jdk_type == 'openjdk'
 
-- name: 'Extract JDK archive'
+- name: 'Extract the downloaded archive'
   unarchive:
-    src: "/tmp/{{ jdk_version_updated.url | basename }}"
+    src: "{{ jdk_install_root }}/{{ jdk_package_name }}"
     dest: "{{ jdk_install_root }}"
     extra_opts: ['--transform=s,/*[^/]*,{{ jdk_install_dir | basename }},i', '--show-stored-names']
     remote_src: yes
   become: yes
-  become_user: "{{ jdk_install_as }}"
+  become_user: '{{ jdk_install_as }}'
+
+- name: 'Remove the downloaded archive'
+  file:
+    path: "{{ jdk_install_root }}/{{ jdk_package_name }}"
+    state: absent
+  become: yes
+  become_user: '{{ jdk_install_as }}'
 
 - name: 'Download IMB trust certs'
   get_url:
@@ -62,7 +79,11 @@
     timeout: 100
   with_items: "{{ jdk_certs }}"
   become: yes
-  become_user: "{{ jdk_install_as }}"
+  become_user: '{{ jdk_install_as }}'
+
+- name: 'Set jdk cacerts file'
+  set_fact:
+    jdk_cacerts_file: '{{ jdk_home }}/{{ "jre/lib/security/cacerts" if jdk_major_version == "8" else "lib/security/cacerts" }}'
 
 - name: 'Import certs'
   java_cert:
@@ -73,7 +94,7 @@
     keystore_path: "{{ jdk_cacerts_file }}"
   with_items: "{{ jdk_certs }}"
   become: yes
-  become_user: "{{ jdk_install_as }}"
+  become_user: '{{ jdk_install_as }}'
 
 - name: 'Download JCE to /tmp/{{ jdk_jce_archive }}'
   get_url:
@@ -83,21 +104,22 @@
     timeout: 100
     mode: '0777'
   become: yes
-  become_user: "{{ jdk_install_as }}"
-  when: jdk_version_updated.major_version == '8'
+  become_user: '{{ jdk_install_as }}'
+  when: jdk_major_version == '8'
 
 - name: 'Extract JCE JARs to {{ jdk_home }}/jre/lib/security/'
   shell: unzip -j -o /tmp/{{ jdk_jce_archive }} '*.jar'
   args:
     chdir: "{{ jdk_home }}/jre/lib/security/"
   become: yes
-  become_user: "{{ jdk_install_as }}"
-  when: jdk_version_updated.major_version == '8'
+  become_user: '{{ jdk_install_as }}'
+  when: jdk_major_version == '8'
 
-- name: Patch intention
+- name: 'Patch intention'
   include_role:
     name: patch_intention
   vars:
-    _jdk_type: "{{ jdk_version_updated.type }}"
-    _jdk_major_version: "{{ jdk_version_updated.major_version }}"
-    _jdk_url: "{{ jdk_version_updated.url }}"
+    _jdk_type: "{{ jdk_type }}"
+    _jdk_major_version: "{{ jdk_major_version }}"
+    _jdk_url: "{{ jdk_package_link }}"
+    _jdk_release_name: "{{ jdk_release_name }}"

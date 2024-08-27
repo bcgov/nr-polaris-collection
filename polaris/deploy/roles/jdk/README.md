@@ -1,35 +1,67 @@
-# JDK
+# Ansible Role: JDK Installation and Configuration
 
-Installs a Java JDK with strong encryption enabled and default certificates added to cacerts.  The JDK directory is created in `jdk_install_root` and is named 'jdk' or using the value of `jdk_install_dir`.  For example,
-```
-/sw_ux/jdk
-```
+This Ansible role automates the installation and configuration of Adoptium OpenJDK on a Linux system. It supports downloading and installing both latest
+and specific versions, configuring certificates and managing the JCE policy files.
 
-This role installs the appropriate distribution based on OS, platform, and Java version.
-The state of this role is: **Preview**
+## Tasks
 
-## Role Variables
+This role includes the following tasks:
 
-### Required
+1. **Create JDK Home Directory:** Creates the directory specified by `jdk_home` with the appropriate permissions.
+2. **Fetch Asset Information:** Retrieves metadata for the specified JDK version using the Adoptium API.
+3. **Download and Extract JDK:** Downloads the JDK package and extracts it to the specified location.
+4. **Manage Certificates:** Downloads and imports certificates into the JDK's cacerts file.
+5. **Configure JCE:** Downloads and installs the JCE policy files (for JDK 8).
+6. **Patch Intention:** Patches the intention with the JDK version.
 
-| variable name     | type    | default | description |
-| ------------------|---------|---------|-------------|
-| `jdk_install_root` | string | /sw_ux | The directory in which the JDK directory will be placed |
+## Example Playbooks
 
+Use this role to deploy an Adoptium OpenJDK package in one of three ways: (1) the latest version of the default major version, (2) the latest
+version of a given major version or (3) a specific pinned version. The role uses the Adoptium API to get release information and download packages.
 
-### Optional
-| variable name     | type    | default | description |
-| ------------------|---------|---------|-------------|
-| `jdk_version` | string | 8 | JDK version - 7 or 8 |
-| `jdk_install_dir` | string | jdk | The name of the JDK directory itself |
-| `jdk_install_as` | string | wwwadm | The user account owning the JDK directory |
-| `jdk_type` | string | oracle | Options include: oracle, openjdk |
+### Deploy latest version of the default major version
 
+To deploy the latest version of the default major version, simply call the role:
 
-### Example Playbook
-
-```
-- hosts: my-jdk-servers
+```yaml
+---
+- hosts: all
   roles:
-    - { role: jdk, jdk_install_root: '/apps_ux/myapp' } # export JAVA_HOME=/apps_ux/myapp/jdk
+    - name: jdk
+      vars:
+        proxy_env: '{{ env_vars }}'
 ```
+
+### Deploy latest version of a given major version
+
+To deploy the latest version of a given major version, call the role with the following variables:
+
+```yaml
+---
+- hosts: all
+  roles:
+    - name: jdk
+      vars:
+        jdk_major_version: '8'
+        proxy_env: '{{ env_vars }}'
+```
+
+### Deploy a specific pinned version
+
+To deploy a specific pinned version, call the role with the following variables:
+
+```yaml
+---
+- hosts: all
+  roles:
+    - name: jdk
+      vars:
+        jdk_pinned_release_name: 'jdk8u412-b08'
+        proxy_env: "{{ env_vars }}"
+```
+
+Use the Adoptium API to determine the release name: https://api.adoptium.net/q/swagger-ui/#/Assets/searchReleases.
+
+## License
+
+This role is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
