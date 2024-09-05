@@ -15,6 +15,18 @@
 {% if _jdk_release_name | length > 0 %}
         "jdk_release_name": "{{ _jdk_release_name }}",
 {% endif %}
+{% if _log_dir | length > 0 %}
+        "log_dir": "{{ _log_dir }}",
+{% endif %}
+{% if _log_level | length > 0 %}
+        "log_level": "{{ _log_level }}",
+{% endif %}
+{% if _log_provider | length > 0 %}
+        "log_provider": "{{ _log_provider }}",
+{% endif %}
+{% if _log_type | length > 0 %}
+        "log_type": "{{ _log_type }}",
+{% endif %}
 {% if _tomcat_version | length > 0 %}
         "tomcat_version": "{{ _tomcat_version }}",
 {% endif %}

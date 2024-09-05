@@ -12,7 +12,11 @@ The state of this role is: **Preview**
 | `webapp_war` | yes | {} | See [webapp_war map](#webapp-war-map) |
 | `webapp_component` | no | `cd_component` | The component name that this webapp manifests |
 | `webapp_tomcat_webapps_dir` | no | `pd_prop_service_install_directory`/webapps | |
-| `webapp_log_dir` | no | `pd_prop_service_logs` | |
+| `webapp_log_archive_filename_pattern` | no | `pd_prop_service_name`.%d.log.gz | |
+| `webapp_log_dir` | no | `apps_logs`/`pd_prop_project_name`/`pd_prop_service_name` | |
+| `webapp_log_filename` | no | `pd_prop_service_name`.log| |
+| `webapp_log_provider` | no | log4j2 | |
+| `webapp_root_log_level` | no | INFO | |
 | `webapp_staging_dir` | no | `cd_app_home` | Directory to use to extract & configure the webapp prior to deployment |
 | `webapp_user` | no | wwwadm | |
 | `webapp_configure_log4j_enabled` | no | True | If true, overwrite any existing `WEB-INF/classes/log4j2.xml` with template |
@@ -85,8 +89,6 @@ The following snippet will be included in the <log4j:configuration> element of l
   <level value="DEBUG" />
 </logger>
 ```
-
-webapp_root_log_level
 
 ## JNDI Resources
 The role can accept an optional list of JNDI resource maps that will create resource entries in the container's server.xml file.
