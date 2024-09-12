@@ -1,11 +1,13 @@
 webapp_configure_log4j_enabled:   True
 webapp_configure_context_enabled: True
 
+webapp_log_archive_filename_pattern: "{{ pd_prop_service_name }}.%d.log.gz"
 webapp_log_dir:                   "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
-webapp_log_level:                 'INFO'
-webapp_root_log_level:            'INFO'
-webapp_loggers:                   []
+webapp_log_filename:              "{{ pd_prop_service_name }}.log"
+webapp_log_provider:              "log4j2"
 webapp_log_quartzdesk_enabled:    False
+webapp_loggers:                   []
+webapp_root_log_level:            'INFO'
 
 webapp_component:                 "{{ pd_prop_service_name }}"
 webapp_tomcat_webapps_dir:        "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}/webapps"

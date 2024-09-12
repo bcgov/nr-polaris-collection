@@ -2,9 +2,9 @@
 <Configuration>
   <Appenders>
     <RollingFile name="file"
-      fileName="{{ webapp_log_dir }}/{{ webapp_component }}.log"
+      fileName="{{ webapp_log_dir }}/{{ webapp_log_filename }}"
       encoding="UTF-8"
-      filePattern="{{ webapp_log_dir }}/{{ webapp_component }}.%d.log.gz"
+      filePattern="{{ webapp_log_dir }}/{{ webapp_log_archive_filename_pattern }}"
       ignoreExceptions="false">
       <PatternLayout>
         <!-- The log message pattern -->
