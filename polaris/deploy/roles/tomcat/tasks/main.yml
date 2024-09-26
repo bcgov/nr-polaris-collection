@@ -1,6 +1,6 @@
 ---
 - name: Get Latest Tomcat Minor Version
-  shell: "curl -s https://downloads.apache.org/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
+  shell: "curl -s {{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   register: latest_tomcat_minor_version
 
