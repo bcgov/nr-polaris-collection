@@ -1,0 +1,67 @@
+---
+- name: Get Node.js Package Name
+  shell: "curl -sL {{ nodejs_mirror }}/{{ nodejs_version_number }}/ | grep -oP 'node-v\\d+\\.\\d+\\.\\d+-linux-x64.tar.xz' | head -n1"
+  register: nodejs_package_name
+  failed_when: nodejs_package_name.stdout | length == 0
+
+- name: Set Node.js Package Name
+  set_fact:
+    nodejs_package: "{{ nodejs_package_name.stdout }}"
+
+- name: "Show download info"
+  debug:
+    msg: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/{{ nodejs_package }}"
+
+#Implement after S6 service unit implementation for Node.js
+#- debug:
+#    msg: 'ensuring Node.js is stopped'
+#  changed_when: true
+#  notify: stop nodejs
+
+#- meta: flush_handlers
+
+- name: required directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0775"
+  with_items:
+    - "{{ nodejs_install_dir }}"
+    - "{{ nodejs_data_dir }}"
+    - "{{ nodejs_log_dir }}"
+    - "{{ nodejs_webapp_dir }}"
+  become: yes
+  become_user: "{{ nodejs_install_as }}"
+
+- name: Set Node.js Download URL
+  set_fact:
+    nodejs_download_url: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/{{ nodejs_package }}"
+
+- name: Get Node.js package checksum
+  uri:
+    url: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/SHASUMS256.txt"
+    return_content: true
+  register: nodejs_checksum_all
+
+- name: "Show checksum information"
+  debug:
+    msg: "Node.js package checksum: {{ ((nodejs_checksum_all.content | split('\n') | select('search',  nodejs_package))[0] | split(' '))[0]  }}"
+
+- set_fact:
+    nodejs_checksum: "{{ ((nodejs_checksum_all.content | split('\n') | select('search',  nodejs_package))[0] | split(' '))[0]  }}"
+
+- name: download to {{ nodejs_download_tmp_dir }}/{{ nodejs_download_url | basename }}
+  get_url:
+    url: "{{ nodejs_download_url }}"
+    dest: "{{ nodejs_download_tmp_dir }}/{{ nodejs_download_url | basename }}"
+    checksum: "{{ nodejs_checksum_protocol }}:{{ nodejs_checksum }}"
+    timeout: "{{ timeout | default(100) }}"
+    mode: "0755"
+  become: yes
+  become_user: "{{ nodejs_install_as }}"
+
+- name: load task list for Node.js {{ nodejs_version_number }}
+  include_tasks: "install-nodejs.yml"
+
+
+
