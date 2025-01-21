@@ -1,0 +1,24 @@
+---
+- name: start nodejs via s6
+  s6_service:
+    name: "{{ nodejs_service_dir | basename }}"
+    state: 'running'
+  listen: 'start nodejs - s6'
+  become: yes
+  become_user: "{{ nodejs_run_as }}"
+
+- name: stop nodejs via s6
+  s6_service:
+    name: "{{ nodejs_service_dir | basename }}"
+    state: 'stopped'
+  listen: 'stop nodejs - s6'
+  become: yes
+  become_user: "{{ nodejs_run_as }}"
+
+- name: restart nodejs using s6
+  s6_service:
+    name: "{{ nodejs_service_dir | basename }}"
+    state: 'restarted'
+  listen: 'restart nodejs - s6'
+  become: yes
+  become_user: "{{ nodejs_run_as }}"

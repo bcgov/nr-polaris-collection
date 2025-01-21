@@ -17,6 +17,7 @@ nodejs_install_root:          "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_
 nodejs_install_root_current:  "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/current"
 nodejs_data_dir:              "{{ apps_data }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/nodejs"
 nodejs_log_dir:               "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
+nodejs_service_dir:           "{{ s6_services }}/{{ pd_prop_service_name }}"
 
 # The location where to download Apache Node.js from.
 nodejs_mirror:              "https://nodejs.org/download/release"
@@ -30,4 +31,5 @@ nodejs_webapps:             []
 nodejs_install_as:          "{{ install_user | default('wwwadm') }}"
 nodejs_run_as:              "{{ run_user | default('wwwsvr') }}"
 nodejs_checksum_protocol:   "sha256"
+nodejs_s6_home:             "{{ s6_home | default('/sw_ux/s6') }}"
 

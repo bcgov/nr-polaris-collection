@@ -12,13 +12,12 @@
   debug:
     msg: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/{{ nodejs_package }}"
 
-#Implement after S6 service unit implementation for Node.js
-#- debug:
-#    msg: 'ensuring Node.js is stopped'
-#  changed_when: true
-#  notify: stop nodejs
+- debug:
+    msg: 'ensuring Node.js is stopped'
+  changed_when: true
+  notify: stop nodejs via s6
 
-#- meta: flush_handlers
+- meta: flush_handlers
 
 - name: required directories
   file:
@@ -63,5 +62,19 @@
 - name: load task list for Node.js {{ nodejs_version_number }}
   include_tasks: "install-nodejs.yml"
 
+- name: service directory {{ nodejs_service_dir }}
+  file:
+    path: "{{ nodejs_service_dir }}"
+    mode: "0775"
+    state: directory
+  become: yes
+  become_user: "{{ nodejs_install_as }}"
 
+- name: run script {{ nodejs_service_dir }}/run
+  template:
+    src: "run.j2"
+    dest: "{{ nodejs_service_dir }}/run"
+    mode: "0775"
+  become: yes
+  become_user: "{{ nodejs_install_as }}"
 

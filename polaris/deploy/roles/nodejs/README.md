@@ -40,10 +40,20 @@ This role observes a number of conventions:
 ## Example Playbook
 ```yml
 ---
-- hosts: npe-e2edemo-war-servers
+- hosts: all
+  become: yes
   vars:
-    project:              NPE
-    component:            npe-e2edemo-war
+    pd_prop_service_install_directory: "test"
+    install_user: "wwwadm"
+    apps_home: "/apps_home"
+    apps_logs: "/apps_logs"
+    apps_data: "/apps_data"
+    s6_services: "/apps_ux/s6_services"
+    pd_prop_project_name: "test_project"
+    pd_prop_service_name: "test_service"
+    nodejs_version_number: "latest-v22.x"
+    app_js_name: "hello-world.js"
   roles:
-    - { role: nodejs_install, nodejs_version_number: '22.13.0', tomcat_webapps: "{{ webapps }}" }
+    - create_project_directories
+    - nodejs
 ```
