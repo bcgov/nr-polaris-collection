@@ -1,0 +1,70 @@
+---
+- name: 'Create NodeJS home directory: {{ nodejs_home }}'
+  file:
+    path: '{{ nodejs_home }}'
+    state: directory
+    mode: '0755'
+  become: yes
+  become_user: '{{ nodejs_install_as }}'
+
+- name: Get Node.js Package Name
+  shell: "curl -sL {{ nodejs_mirror }}/{{ nodejs_version_number }}/ | grep -oP 'node-v\\d+\\.\\d+\\.\\d+-linux-x64.tar.xz' | head -n1"
+  register: nodejs_package_name
+  failed_when: nodejs_package_name.stdout | length == 0
+
+- name: Set Node.js Package Name
+  set_fact:
+    nodejs_package: "{{ nodejs_package_name.stdout }}"
+
+- name: "Show download info"
+  debug:
+    msg: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/{{ nodejs_package }}"
+
+- name: Set Node.js Download URL
+  set_fact:
+    nodejs_download_url: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/{{ nodejs_package }}"
+
+- name: Get Node.js package checksum
+  uri:
+    url: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/SHASUMS256.txt"
+    return_content: true
+  register: nodejs_checksum_all
+
+- name: "Show checksum information"
+  debug:
+    msg: "Node.js package checksum: {{ ((nodejs_checksum_all.content | split('\n') | select('search',  nodejs_package))[0] | split(' '))[0]  }}"
+
+- set_fact:
+    nodejs_checksum: "{{ ((nodejs_checksum_all.content | split('\n') | select('search',  nodejs_package))[0] | split(' '))[0]  }}"
+    nodejs_package_name: "{{ nodejs_download_url | basename }}"
+
+- name: "download to {{ nodejs_install_root }}/{{ nodejs_package_name }}"
+  get_url:
+    url: "{{ nodejs_download_url }}"
+    dest: "{{ nodejs_install_root }}/{{ nodejs_package_name }}"
+    checksum: "{{ nodejs_checksum_protocol }}:{{ nodejs_checksum }}"
+    timeout: "{{ timeout | default(100) }}"
+    mode: "0755"
+  become: yes
+  become_user: "{{ nodejs_install_as }}"
+
+- name: Extract the downloaded archive'
+  unarchive:
+    src: "{{ nodejs_install_root }}/{{ nodejs_package_name }}"
+    dest: "{{ nodejs_home }}"
+    extra_opts: ['--strip-components=1', '--show-stored-names']
+    remote_src: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+  become: yes
+  become_user: "{{ nodejs_install_as }}"
+
+- name: 'Remove the downloaded archive'
+  file:
+    path: "{{ nodejs_install_root }}/{{ nodejs_package_name }}"
+    state: absent
+  become: yes
+  become_user: "{{ nodejs_install_as }}"
+
+- name: Extract Node.js package version
+  set_fact:
+    nodejs_package_version: "{{ nodejs_package_name | replace('.tar.xz', '') }}"
