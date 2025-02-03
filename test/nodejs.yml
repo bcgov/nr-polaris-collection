@@ -1,0 +1,11 @@
+---
+# file: nodejs.yml
+- hosts: localssh
+
+  roles:
+    - name: nodejs
+      vars:
+        jdk_base_dir: '/apps_ux/'
+  tasks:
+    - debug:
+        msg: "{{ my_jdk_home.path }}"

@@ -1,35 +1,21 @@
-# ######################
-# Optional properties
-# #####################
-# nodejs_webapps
+---
+# Required
+nodejs_install_root:          "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
 
+# Optional
+nodejs_install_dir:         "nodejs"
+nodejs_install_as:          "{{ install_user | default('wwwadm') }}"
+nodejs_download_tmp_dir:    "/tmp"
+nodejs_checksum_protocol:   "sha256"
+nodejs_mirror:              "https://nodejs.org/download/release"
 # temporary for testing
 nodejs_version_number: "latest-v22.x"
-apps_home: "/apps_home"
-apps_data: "/apps_data"
-apps_logs: "/apps_logs"
-pd_prop_project_name: "test_project"
-pd_prop_service_name: "test_service"
-pd_prop_service_install_directory: "test"
 
-# Convention over configuration
-nodejs_install_root:          "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
-nodejs_install_root_current:  "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/current"
-nodejs_data_dir:              "{{ apps_data }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/nodejs"
-nodejs_log_dir:               "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
-nodejs_service_dir:           "{{ s6_services }}/{{ pd_prop_service_name }}"
+# Derived
+nodejs_home:               '{{ nodejs_install_root }}/{{ nodejs_install_dir }}'
 
-# The location where to download Apache Node.js from.
-nodejs_mirror:              "https://nodejs.org/download/release"
+proxy_env_dev_test:
+  https_proxy: http://test-forwardproxy.nrs.bcgov:23128
 
-# general
-nodejs_download_tmp_dir:    "/tmp"
-nodejs_install_dir:         "{{ nodejs_install_root }}/nodejs"
-nodejs_install_dir_current: "{{ nodejs_install_root_current }}/nodejs"
-nodejs_webapp_dir:          "{{ nodejs_install_root }}/webapps"
-nodejs_webapps:             []
-nodejs_install_as:          "{{ install_user | default('wwwadm') }}"
-nodejs_run_as:              "{{ run_user | default('wwwsvr') }}"
-nodejs_checksum_protocol:   "sha256"
-nodejs_s6_home:             "{{ s6_home | default('/sw_ux/s6') }}"
-
+proxy_env_prod:
+  https_proxy: http://forwardproxy.nrs.bcgov:23128

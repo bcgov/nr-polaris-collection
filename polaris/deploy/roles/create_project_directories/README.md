@@ -54,3 +54,4 @@ Below is an example playbook that uses this role:
     pd_prop_service_name: "my_service"
   roles:
     - role: create_project_directories
+```

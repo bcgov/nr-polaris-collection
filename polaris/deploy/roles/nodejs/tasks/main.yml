@@ -1,4 +1,12 @@
 ---
+- name: 'Create NodeJS home directory: {{ nodejs_home }}'
+  file:
+    path: '{{ nodejs_home }}'
+    state: directory
+    mode: '0755'
+  become: yes
+  become_user: '{{ nodejs_install_as }}'
+
 - name: Get Node.js Package Name
   shell: "curl -sL {{ nodejs_mirror }}/{{ nodejs_version_number }}/ | grep -oP 'node-v\\d+\\.\\d+\\.\\d+-linux-x64.tar.xz' | head -n1"
   register: nodejs_package_name
@@ -11,26 +19,6 @@
 - name: "Show download info"
   debug:
     msg: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/{{ nodejs_package }}"
-
-- debug:
-    msg: 'ensuring Node.js is stopped'
-  changed_when: true
-  notify: stop nodejs via s6
-
-- meta: flush_handlers
-
-- name: required directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: "0775"
-  with_items:
-    - "{{ nodejs_install_dir }}"
-    - "{{ nodejs_data_dir }}"
-    - "{{ nodejs_log_dir }}"
-    - "{{ nodejs_webapp_dir }}"
-  become: yes
-  become_user: "{{ nodejs_install_as }}"
 
 - name: Set Node.js Download URL
   set_fact:
@@ -48,33 +36,34 @@
 
 - set_fact:
     nodejs_checksum: "{{ ((nodejs_checksum_all.content | split('\n') | select('search',  nodejs_package))[0] | split(' '))[0]  }}"
+    nodejs_package_name="{{ nodejs_download_url | basename }}"
 
-- name: download to {{ nodejs_download_tmp_dir }}/{{ nodejs_download_url | basename }}
+- name: download to {{ nodejs_install_root }}/{{ nodejs_package_name }}
   get_url:
     url: "{{ nodejs_download_url }}"
-    dest: "{{ nodejs_download_tmp_dir }}/{{ nodejs_download_url | basename }}"
+    dest: "{{ nodejs_install_root }}/{{ nodejs_package_name }}"
     checksum: "{{ nodejs_checksum_protocol }}:{{ nodejs_checksum }}"
     timeout: "{{ timeout | default(100) }}"
     mode: "0755"
   become: yes
   become_user: "{{ nodejs_install_as }}"
 
-- name: load task list for Node.js {{ nodejs_version_number }}
-  include_tasks: "install-nodejs.yml"
+- name: Extract the downloaded archive'
+  unarchive:
+    src: "{{ nodejs_install_root }}/{{ nodejs_package_name }}"
+    dest: "{{ nodejs_install_root }}"
+    remote_src: yes
+  ignore_errors: "{{ ansible_check_mode }}"
+  become: yes
+  become_user: "{{ nodejs_install_as }}"
 
-- name: service directory {{ nodejs_service_dir }}
+- name: 'Remove the downloaded archive'
   file:
-    path: "{{ nodejs_service_dir }}"
-    mode: "0775"
-    state: directory
+    path: "{{ nodejs_install_root }}/{{ nodejs_package_name }}"
+    state: absent
   become: yes
-  become_user: "{{ nodejs_install_as }}"
+  become_user: '{{ jdk_install_as }}'
 
-- name: run script {{ nodejs_service_dir }}/run
-  template:
-    src: "run.j2"
-    dest: "{{ nodejs_service_dir }}/run"
-    mode: "0775"
-  become: yes
-  become_user: "{{ nodejs_install_as }}"
-
+- name: Extract Node.js package version
+  set_fact:
+    nodejs_package_version: "{{ nodejs_package_name.stdout | replace('.tar.xz', '') }}"
