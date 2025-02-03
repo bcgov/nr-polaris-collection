@@ -6,9 +6,11 @@
     mode: '0755'
   become: yes
   become_user: '{{ nodejs_install_as }}'
+  notify: 'stop Nodejs app - s6'
 
 - name: Get Node.js Package Name
   shell: "curl -sL {{ nodejs_mirror }}/{{ nodejs_version_number }}/ | grep -oP 'node-v\\d+\\.\\d+\\.\\d+-linux-x64.tar.xz' | head -n1"
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   register: nodejs_package_name
   failed_when: nodejs_package_name.stdout | length == 0
 
@@ -28,6 +30,7 @@
   uri:
     url: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/SHASUMS256.txt"
     return_content: true
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   register: nodejs_checksum_all
 
 - name: "Show checksum information"
@@ -45,6 +48,7 @@
     checksum: "{{ nodejs_checksum_protocol }}:{{ nodejs_checksum }}"
     timeout: "{{ timeout | default(100) }}"
     mode: "0755"
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   become: yes
   become_user: "{{ nodejs_install_as }}"
 
@@ -68,3 +72,19 @@
 - name: Extract Node.js package version
   set_fact:
     nodejs_package_version: "{{ nodejs_package_name | replace('.tar.xz', '') }}"
+
+- name: service directory {{ nodejs_service_dir }}
+  file:
+    path: "{{ nodejs_service_dir }}"
+    mode: "0775"
+    state: directory
+  become: yes
+  become_user: "{{ nodejs_install_as }}"
+
+- name: Run script to start Node.js app
+  template:
+    src: "nodejs-run.j2"
+    dest: "{{ nodejs_service_dir }}/run"
+    mode: "0775"
+  become: yes
+  become_user: "{{ nodejs_install_as }}"

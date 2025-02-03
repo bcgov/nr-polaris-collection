@@ -11,7 +11,12 @@ nodejs_mirror:              "https://nodejs.org/download/release"
 nodejs_version_number: "latest-v22.x"
 
 # Derived
-nodejs_home:               '{{ nodejs_install_root }}/bin/{{ nodejs_install_dir }}'
+nodejs_home:               "{{ nodejs_install_root }}/{{ nodejs_install_dir }}"
+
+# Nodejs webapp
+nodejs_webapp_home:        '{{ nodejs_install_root }}'
+nodejs_webapp_user:        "{{ nodejs_install_as }}"
+nodejs_service_dir:        "{{ s6_services }}/{{ pd_prop_service_name }}"
 
 proxy_env_dev_test:
   https_proxy: http://test-forwardproxy.nrs.bcgov:23128
