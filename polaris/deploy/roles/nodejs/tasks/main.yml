@@ -36,9 +36,9 @@
 
 - set_fact:
     nodejs_checksum: "{{ ((nodejs_checksum_all.content | split('\n') | select('search',  nodejs_package))[0] | split(' '))[0]  }}"
-    nodejs_package_name="{{ nodejs_download_url | basename }}"
+    nodejs_package_name: "{{ nodejs_download_url | basename }}"
 
-- name: download to {{ nodejs_install_root }}/{{ nodejs_package_name }}
+- name: "download to {{ nodejs_install_root }}/{{ nodejs_package_name }}"
   get_url:
     url: "{{ nodejs_download_url }}"
     dest: "{{ nodejs_install_root }}/{{ nodejs_package_name }}"
@@ -51,7 +51,8 @@
 - name: Extract the downloaded archive'
   unarchive:
     src: "{{ nodejs_install_root }}/{{ nodejs_package_name }}"
-    dest: "{{ nodejs_install_root }}"
+    dest: "{{ nodejs_home }}"
+    extra_opts: ['--strip-components=1', '--show-stored-names']
     remote_src: yes
   ignore_errors: "{{ ansible_check_mode }}"
   become: yes
@@ -62,8 +63,8 @@
     path: "{{ nodejs_install_root }}/{{ nodejs_package_name }}"
     state: absent
   become: yes
-  become_user: '{{ jdk_install_as }}'
+  become_user: "{{ nodejs_install_as }}"
 
 - name: Extract Node.js package version
   set_fact:
-    nodejs_package_version: "{{ nodejs_package_name.stdout | replace('.tar.xz', '') }}"
+    nodejs_package_version: "{{ nodejs_package_name | replace('.tar.xz', '') }}"

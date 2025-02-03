@@ -5,14 +5,13 @@ nodejs_install_root:          "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_
 # Optional
 nodejs_install_dir:         "nodejs"
 nodejs_install_as:          "{{ install_user | default('wwwadm') }}"
-nodejs_download_tmp_dir:    "/tmp"
 nodejs_checksum_protocol:   "sha256"
 nodejs_mirror:              "https://nodejs.org/download/release"
 # temporary for testing
 nodejs_version_number: "latest-v22.x"
 
 # Derived
-nodejs_home:               '{{ nodejs_install_root }}/{{ nodejs_install_dir }}'
+nodejs_home:               '{{ nodejs_install_root }}/bin/{{ nodejs_install_dir }}'
 
 proxy_env_dev_test:
   https_proxy: http://test-forwardproxy.nrs.bcgov:23128

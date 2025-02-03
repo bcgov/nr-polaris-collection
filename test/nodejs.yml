@@ -1,11 +1,10 @@
 ---
 # file: nodejs.yml
-- hosts: localssh
+- hosts: localhost
+  vars_files:
+    - "vars/all.yml"
+    - "vars/nodejs.yml"
 
   roles:
+    - role: create_project_directories
     - name: nodejs
-      vars:
-        jdk_base_dir: '/apps_ux/'
-  tasks:
-    - debug:
-        msg: "{{ my_jdk_home.path }}"
