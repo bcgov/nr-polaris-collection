@@ -1,24 +1,16 @@
 ---
-- name: start Nodejs app via s6
-  s6_service:
-    name: "{{ nodejs_service_dir | basename }}"
-    state: 'running'
-  listen: 'start Nodejs app - s6'
+- name: start nodejs app via s6 run script
+  command:
+    cmd: "{{ nodejs_service_dir }}/run"
+    chdir: "/"
+  listen: 'start nodejs app'
   become: yes
-  become_user: "{{ nodejs_webapp_user }}"
+  become_user: "{{ nodejs_install_as }}"
 
-- name: stop Nodejs app via s6
-  s6_service:
-    name: "{{ nodejs_service_dir | basename }}"
-    state: 'stopped'
-  listen: 'stop Nodejs app - s6'
+- name: stop nodejs app via s6 run script
+  command:
+    cmd: "{{ nodejs_service_dir }}/finish"
+    chdir: "/"
+  listen: 'stop nodejs app'
   become: yes
-  become_user: "{{ nodejs_webapp_user }}"
-
-- name: restart Nodejs app using s6
-  s6_service:
-    name: "{{ nodejs_service_dir | basename }}"
-    state: 'restarted'
-  listen: 'restart Nodejs app - s6'
-  become: yes
-  become_user: "{{ nodejs_webapp_user }}"
+  become_user: "{{ nodejs_install_as }}"

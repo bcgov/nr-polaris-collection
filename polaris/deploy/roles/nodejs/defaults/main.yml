@@ -1,6 +1,7 @@
 ---
 # Required
 nodejs_install_root:          "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
+nodejs_log_dir:               "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
 
 # Optional
 nodejs_install_dir:         "nodejs"
@@ -11,11 +12,10 @@ nodejs_mirror:              "https://nodejs.org/download/release"
 nodejs_version_number: "latest-v22.x"
 
 # Derived
-nodejs_home:               "{{ nodejs_install_root }}/{{ nodejs_install_dir }}"
+nodejs_home:               "{{ nodejs_install_root }}/bin/{{ nodejs_install_dir }}"
+nodejs_webapp_home:        "{{ nodejs_install_root }}/webapp"
 
-# Nodejs webapp
-nodejs_webapp_home:        '{{ nodejs_install_root }}'
-nodejs_webapp_user:        "{{ nodejs_install_as }}"
+# Nodejs app s6 service
 nodejs_service_dir:        "{{ s6_services }}/{{ pd_prop_service_name }}"
 
 proxy_env_dev_test:
