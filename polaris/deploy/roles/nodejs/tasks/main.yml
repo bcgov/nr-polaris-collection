@@ -100,7 +100,7 @@
 - name: "copy nodejs app folders to server"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   ansible.builtin.copy:
-    src: "/ansible/downloads/app/"
+    src: "/ansible/downloads/"
     dest: "{{ nodejs_install_root }}/webapp/"
     mode: "0755"
   become: yes
