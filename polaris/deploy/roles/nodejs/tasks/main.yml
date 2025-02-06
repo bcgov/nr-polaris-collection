@@ -6,7 +6,6 @@
     mode: '0755'
   become: yes
   become_user: '{{ nodejs_install_as }}'
-  notify: 'stop nodejs app'
 
 - name: Get Node.js Package Name
   shell: "curl -sL {{ nodejs_mirror }}/{{ nodejs_version_number }}/ | grep -oP 'node-v\\d+\\.\\d+\\.\\d+-linux-x64.tar.xz' | head -n1"
