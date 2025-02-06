@@ -1,6 +1,16 @@
 ---
 - ansible.builtin.debug:
-    msg: "Service installation directory: {{ pd_prop_service_install_directory }}"
+    msg: "Service installation directory: {{ pd_apps_service_install_home }}"
+
+- name: Remove existing install directory if present
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  become: yes
+  become_user: "{{ pd_install_user }}"
+  when: pd_remove_existing | bool
+  with_items:
+    - "{{ pd_apps_service_install_home }}"
 
 - name: Create project directories
   ansible.builtin.file:
@@ -8,28 +18,27 @@
     state: directory
     mode: "0775"
   become: yes
-  become_user: "{{ install_user }}"
+  become_user: "{{ pd_install_user }}"
   with_items:
-    - "{{ apps_home }}/{{ pd_prop_project_name }}"
-    - "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
-    - "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
-    - "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
-    - "{{ apps_data }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
-    - "{{ s6_services }}/{{ pd_prop_service_name }}"
+    - "{{ pd_apps_project_home }}"
+    - "{{ pd_apps_service_home }}"
+    - "{{ pd_apps_service_install_home }}"
+    - "{{ pd_apps_service_logs_home }}"
+    - "{{ pd_apps_service_data_home }}"
 
-- name: "set version {{ pd_prop_service_install_directory }} as current"
+- name: "set version {{ pd_apps_service_install_home }} as current"
   ansible.builtin.file:
-    path: "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/current"
-    src: "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
+    path: "{{ pd_apps_service_current_home }}"
+    src: "{{ pd_apps_service_install_home }}"
     state: link
   become: yes
-  become_user: "{{ install_user }}"
+  become_user: "{{ pd_install_user }}"
 
 # Clean up service installation directories (keep the last three)
 # https://stackoverflow.com/questions/61981651/how-to-delete-the-oldest-directory-with-ansible/61995155#61995155
 - name: Get directory list
   ansible.builtin.find:
-    paths: "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
+    paths: "{{ pd_apps_service_home }}"
     file_type: directory
   register: found_dirs
 
@@ -46,6 +55,6 @@
     state: absent
     path: "{{ oldest_dir.path }}"
   become: yes
-  become_user: "{{ install_user }}"
+  become_user: "{{ pd_install_user }}"
   when:
     - found_dirs.files | count > 3

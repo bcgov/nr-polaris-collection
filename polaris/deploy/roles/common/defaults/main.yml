@@ -1,0 +1,47 @@
+---
+
+polaris_install_user: "wwwadm"
+polaris_service_user: "wwwsvr"
+
+# Global directories
+
+polaris_apps_home:      "/apps_ux"
+polaris_apps_data_home: "/apps_data"
+polaris_apps_logs_home: "/apps_data/logs"
+polaris_bin_folder:     "bin"
+polaris_app_folder:     "app"
+polaris_tmp_folder:     "tmp"
+polaris_current_folder: "current"
+
+# Project/service directories
+
+polaris_apps_project_name: ""
+polaris_apps_project_home: "{{polaris_apps_home}}/{{polaris_apps_project_name}}"
+polaris_apps_service_name: ""
+polaris_apps_service_home: "{{polaris_apps_project_home}}/{{polaris_apps_service_name}}"
+polaris_apps_service_install_name: ""
+polaris_apps_service_install_home: "{{polaris_apps_service_home}}/{{polaris_apps_service_install_name}}"
+polaris_apps_service_current_home: "{{polaris_apps_service_home}}/{{polaris_current_folder}}"
+polaris_apps_service_install_app_home: "{{polaris_apps_service_install_home}}/{{ polaris_app_folder }}"
+polaris_apps_service_install_bin_home: "{{polaris_apps_service_install_home}}/{{ polaris_bin_folder }}"
+polaris_apps_service_install_tmp_home: "{{polaris_apps_service_install_home}}/{{ polaris_tmp_folder }}"
+
+polaris_apps_service_data_home: "{{ polaris_apps_data_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
+polaris_apps_service_logs_home: "{{ polaris_apps_logs_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
+polaris_apps_service_port: "8080"
+
+polaris_control_handler: "s6"
+
+# s6 - Used if polaris_control_handler == 's6'
+polaris_s6_services_home: "/apps_ux/s6_services"
+polaris_s6_home:  "/sw_ux/s6"
+polaris_apps_service_s6_home: "{{ polaris_s6_services_home }}/{{polaris_apps_service_name}}"
+polaris_apps_service_s6_name: "{{ polaris_apps_service_name }}"
+
+proxy_env: "dev"
+proxy_env_dev_test:
+  https_proxy: "http://test-forwardproxy.nrs.bcgov:23128"
+
+proxy_env_prod:
+  https_proxy: "http://forwardproxy.nrs.bcgov:23128"
+

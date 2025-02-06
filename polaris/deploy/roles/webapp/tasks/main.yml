@@ -14,38 +14,38 @@
     path: "{{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
     state: absent
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: "copy webapp war from controller"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   ansible.builtin.copy:
-    src: "/ansible/downloads/{{ pd_prop_artifact_name }}"
-    dest: "{{ webapp_staging_dir }}/{{ pd_prop_artifact_name }}"
+    src: "/ansible/downloads/{{ pd_artifact_name }}"
+    dest: "{{ webapp_staging_dir }}/{{ pd_artifact_name }}"
     mode: "0755"
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: ""
   file:
     path: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
     state: directory
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: "extract webapp war"
   unarchive:
-    src: "{{ webapp_staging_dir }}/{{ pd_prop_artifact_name }}"
+    src: "{{ webapp_staging_dir }}/{{ pd_artifact_name }}"
     dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
     remote_src: yes
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: 'remove superfluous logging files'
   file:
     path: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/classes/log4j.properties"
     state: 'absent'
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
   when: webapp_configure_log4j_enabled
 
 - name: 'configure logging log4j v2'
@@ -53,7 +53,7 @@
     src: 'log4j2.xml.j2'
     dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/classes/log4j2.xml"
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
   when: webapp_configure_log4j_enabled
 
 - name: 'configure context'
@@ -61,7 +61,7 @@
     src: 'context.xml.j2'
     dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/META-INF/context.xml"
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
   when: webapp_configure_context_enabled
 
 # Default ojdbc version set in role defaults, but can be overridden in playbook or
@@ -72,7 +72,7 @@
     dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/lib/{{ ojdbc_file }}"
     timeout: 100
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
   ignore_errors: yes
   when: not skip_ojdbc_install
 
@@ -87,7 +87,7 @@
     state: "directory"
     mode: "0755"
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: Patch intention
   include_role:
@@ -102,14 +102,14 @@
 - name: "deploy {{ webapp_app_dir_name }}"
   command: "cp -a {{ webapp_staging_dir }}/.{{ webapp_war.context }}/. {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: 'clean up staging assets'
   file:
     path: "{{ item }}"
     state: 'absent'
   become: yes
-  become_user: "{{ webapp_user }}"
+  become_user: "{{ polaris_install_user }}"
   with_items:
     - "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
-    - "{{ webapp_staging_dir }}/{{ pd_prop_artifact_name }}"
+    - "{{ webapp_staging_dir }}/{{ pd_artifact_name }}"

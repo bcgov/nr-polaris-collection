@@ -10,13 +10,13 @@
     remote_src: yes
   ignore_errors: "{{ ansible_check_mode }}"
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ tomcat_install_user }}"
 
 # TODO: replace this workaround, it's ugly and causes configuration steps to be 'changed' on every run
 - name: copy files from extracted archive
   shell: cp -r {{ tomcat_download_tmp_dir }}/apache-tomcat-{{ tomcat_version }}/* {{ tomcat_install_dir }}
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ tomcat_install_user }}"
 
 - name: configuration directories
   file:
@@ -24,7 +24,7 @@
     mode: '0775'
     state: directory
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ tomcat_install_user }}"
   with_items:
     - "{{ tomcat_install_dir }}/conf/Catalina"
     - "{{ tomcat_install_dir }}/conf/Catalina/localhost"
@@ -35,7 +35,7 @@
     state: directory
     mode: '0775'
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ tomcat_install_user }}"
   with_items:
     - "{{ tomcat_work_dir }}"
     - "{{ tomcat_temp_dir }}"
@@ -47,7 +47,7 @@
     mode: '0755'
   when: tomcat_configure_server_xml
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ tomcat_install_user }}"
   tags: [ 'configure' ]
   notify: restart tomcat - {{ tomcat_handler_style }}
 
@@ -58,7 +58,7 @@
     mode: '0775'
   when: tomcat_configure_logging_properties
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ tomcat_install_user }}"
   tags: [ 'configure' ]
   notify: restart tomcat - {{ tomcat_handler_style }}
 
@@ -68,7 +68,7 @@
     dest: "{{ tomcat_install_dir }}/bin/setenv.sh"
     mode: '0755'
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ tomcat_install_user }}"
   tags: [ 'configure' ]
 
 - name: scripts are executable
@@ -80,4 +80,4 @@
     - bin/shutdown.sh
     - bin/catalina.sh
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ tomcat_install_user }}"

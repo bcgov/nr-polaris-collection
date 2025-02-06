@@ -1,0 +1,10 @@
+export SERVICE_DATA_HOME="{{ nodejs_app_service_data_home }}"
+export SERVICE_LOG_HOME="{{ nodejs_app_service_log_home }}"
+export SERVICE_TMP_HOME="{{ nodejs_app_service_install_tmp_home }}"
+export NODE_ENV=production
+export PORT={{ nodejs_app_service_port }}
+{% if nodejs_app_env_dict is defined %}
+{% for key, value in nodejs_app_env_dict.items() %}
+export {{ key }}="{{ value }}"
+{% endfor %}
+{% endif %}
