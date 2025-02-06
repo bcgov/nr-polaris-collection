@@ -5,9 +5,8 @@
   become_user: "{{ ssc_user }}"
 
 - name: Generate Self-Signed SSL Certificate
-  openssl_certificate:
-    path: "{{ ssc_certificate }}"  # Public certificate
-    privatekey_path: "{{ ssc_key }}"  # Private key
-    provider: selfsigned
+  shell: "openssl req -newkey rsa:4096 {{ ssc_certificate_options }} -keyout {{ ssc_key }} -out {{ ssc_certificate }}"
+  args:
+    creates: "{{ ssc_key }}"
   become: yes
   become_user: "{{ ssc_user }}"
