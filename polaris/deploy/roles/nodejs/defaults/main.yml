@@ -1,20 +1,16 @@
 ---
 # Required
-nodejs_install_root:          "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
+nodejs_bin_home:          "{{ polaris_apps_service_install_bin_home }}"
+nodejs_tmp_home:          "{{ polaris_apps_service_install_tmp_home }}"
 
 # Optional
-nodejs_install_dir:         "nodejs"
-nodejs_install_as:          "{{ install_user | default('wwwadm') }}"
-nodejs_checksum_protocol:   "sha256"
-nodejs_mirror:              "https://nodejs.org/download/release"
+nodejs_install_dir:       "nodejs"
+nodejs_install_user:      "{{ polaris_install_user }}"
+nodejs_checksum_protocol: "sha256"
+nodejs_mirror:            "https://nodejs.org/download/release"
+
 # temporary for testing
-nodejs_version_number: "latest-v22.x"
+nodejs_version_number:    "latest-v22.x"
 
 # Derived
-nodejs_home:               '{{ nodejs_install_root }}/bin/{{ nodejs_install_dir }}'
-
-proxy_env_dev_test:
-  https_proxy: http://test-forwardproxy.nrs.bcgov:23128
-
-proxy_env_prod:
-  https_proxy: http://forwardproxy.nrs.bcgov:23128
+nodejs_home:              "{{ nodejs_bin_home }}/{{ nodejs_install_dir }}"

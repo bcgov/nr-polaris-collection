@@ -1,20 +1,20 @@
 webapp_configure_log4j_enabled:   True
 webapp_configure_context_enabled: True
 
-webapp_log_archive_filename_pattern: "{{ pd_prop_service_name }}.%d.log.gz"
-webapp_log_dir:                   "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
-webapp_log_filename:              "{{ pd_prop_service_name }}.log"
+webapp_log_archive_filename_pattern: "{{ polaris_apps_service_name }}.%d.log.gz"
+webapp_log_dir:                   "{{ polaris_apps_service_logs_home }}"
+webapp_log_filename:              "{{ polaris_apps_service_name }}.log"
 webapp_log_provider:              "log4j2"
 webapp_log_quartzdesk_enabled:    False
 webapp_loggers:                   []
 webapp_root_log_level:            'INFO'
 
-webapp_component:                 "{{ pd_prop_service_name }}"
-webapp_tomcat_webapps_dir:        "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}/webapps"
+webapp_component:                 "{{ polaris_apps_service_name }}"
+webapp_tomcat_webapps_dir:        "{{ polaris_apps_service_install_home }}/webapps"
 
-webapp_staging_dir:               "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
+webapp_staging_dir:               "{{ polaris_apps_service_home}}"
 
-webapp_user:                      "{{ install_user | default('wwwadm') }}"
+webapp_user:                      "{{ polaris_install_user }}"
 
 
 # When dev-all-in-one was setup, someone decided on ojdbc7-12.1.3-0-0.jar
@@ -23,9 +23,3 @@ webapp_user:                      "{{ install_user | default('wwwadm') }}"
 ojdbc_file: "ojdbc7-12.1.3-0-0.jar"
 ojdbc_url: "http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/com.oracle"
 skip_ojdbc_install: false
-
-proxy_env_dev_test:
-  https_proxy: http://test-forwardproxy.nrs.bcgov:23128
-
-proxy_env_prod:
-  https_proxy: http://forwardproxy.nrs.bcgov:23128

@@ -1,6 +1,7 @@
 ---
-portmanager_app_dir: "{{ apps_home }}"
-portmanager_first_dir: "{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
+portmanager_install_user: "{{ polaris_install_user }}"
+portmanager_app_dir: "{{ polaris_apps_home }}"
+portmanager_first_dir: "{{ polaris_apps_project_name }}/{{ polaris_apps_service_name }}"
 portmanager_script_name: port_manager.pl
 portmanager_assignments: {}
 portmanager_debug: False
