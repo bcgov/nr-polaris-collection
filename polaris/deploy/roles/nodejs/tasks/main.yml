@@ -72,45 +72,5 @@
   set_fact:
     nodejs_package_version: "{{ nodejs_package_name | replace('.tar.xz', '') }}"
 
-- name: service directory {{ nodejs_service_dir }}
-  file:
-    path: "{{ nodejs_service_dir }}"
-    mode: "0775"
-    state: directory
-  become: yes
-  become_user: "{{ nodejs_install_as }}"
-
-- name: Deploy s6 run script for Node.js app
-  template:
-    src: "run.j2"
-    dest: "{{ nodejs_service_dir }}/run"
-    mode: "0755"
-  become: yes
-  become_user: "{{ nodejs_install_as }}"
-
-- name: Deploy s6 finish script for Node.js app
-  template:
-    src: "finish.j2"
-    dest: "{{ nodejs_service_dir }}/finish"
-    mode: "0755"
-  become: yes
-  become_user: "{{ nodejs_install_as }}"
-
-- name: "copy nodejs app folders dist to server"
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
-  ansible.builtin.copy:
-    src: "/ansible/downloads/dist/"
-    dest: "{{ nodejs_install_root }}/webapp/dist/"
-    mode: "0755"
-  become: yes
-  become_user: "{{ nodejs_install_as }}"
-
-- name: "copy nodejs app other folders to server"
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
-  ansible.builtin.copy:
-    src: "/ansible/downloads/"
-    dest: "{{ nodejs_install_root }}/webapp/"
-    mode: "0755"
-  become: yes
-  become_user: "{{ nodejs_install_as }}"
-  notify: 'start nodejs app'
+- name: Nodejs Application starts
+  include_tasks: nodejs-start.yml

@@ -1,2 +1,4 @@
 #!/bin/sh
+echo {{ nodejs_home }}
+echo {{ nodejs_webapp_home }}
 exec {{ nodejs_home }}/bin/node {{ nodejs_webapp_home }}/dist/index.js
