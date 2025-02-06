@@ -102,6 +102,7 @@
     src: "/ansible/downloads/"
     dest: "{{ nodejs_install_root }}/webapp/"
     mode: "0755"
+    recurse: yes
   become: yes
   become_user: "{{ nodejs_install_as }}"
   notify: 'start nodejs app'
