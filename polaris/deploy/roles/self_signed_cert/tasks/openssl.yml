@@ -1,0 +1,13 @@
+- name: remove old Self-Signed SSL Certificate
+  shell: "rm {{ ssc_dir }}/*.pem"
+  ignore_errors: True
+  become: yes
+  become_user: "{{ ssc_user }}"
+
+- name: Generate Self-Signed SSL Certificate
+  openssl_certificate:
+    path: "{{ ssc_certificate }}"  # Public certificate
+    privatekey_path: "{{ ssc_key }}"  # Private key
+    provider: selfsigned
+  become: yes
+  become_user: "{{ ssc_user }}"

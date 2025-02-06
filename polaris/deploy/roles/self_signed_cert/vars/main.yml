@@ -4,3 +4,4 @@ ssc_supported_formats:
   - 'pkcs5'
   - 'pkcs8'
   - 'pkcs12'
+  - 'openssl'
