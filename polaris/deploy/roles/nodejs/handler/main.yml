@@ -1,4 +1,9 @@
 ---
+- name: Check if finish file exists
+  stat:
+    path: "{{ nodejs_service_dir }}/finish"
+  register: finish_file
+
 - name: start nodejs app via s6 run script
   command:
     cmd: "{{ nodejs_service_dir }}/run"
@@ -14,3 +19,4 @@
   listen: 'stop nodejs app'
   become: yes
   become_user: "{{ nodejs_install_as }}"
+  when: finish_file.stat.exists
