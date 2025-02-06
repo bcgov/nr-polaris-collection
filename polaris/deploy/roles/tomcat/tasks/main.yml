@@ -35,7 +35,7 @@
     - "{{ tomcat_log_dir }}"
     - "{{ tomcat_webapp_dir }}"
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: Set Tomcat Download URL
   set_fact:
@@ -59,7 +59,7 @@
     mode: "0755"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: load task list for Tomcat {{ tomcat_version }}
   include: "install-tomcat.yml"
@@ -70,7 +70,7 @@
     mode: "0775"
     state: directory
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: run script {{ tomcat_service_dir }}/run
   template:
@@ -78,28 +78,28 @@
     dest: "{{ tomcat_service_dir }}/run"
     mode: "0775"
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: Patch intention
   include_role:
     name: patch_intention
   vars:
     _tomcat_version: "{{ tomcat_version }}"
-    _tomcat_port: "{{ tomcat_port }}"
+    _tomcat_port: "{{ polaris_apps_service_port }}"
 
 - name: Until CMDB is ready, register port for port-manager
   file:
     path: "{{ tomcat_install_dir }}/port:{{ tomcat_https_port }}"
     state: touch
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: Release port reservation
   file:
     path: "/tmp/ports-tmp/port:{{ tomcat_https_port }}"
     state: absent
   become: yes
-  become_user: wwwadm
+  become_user: "{{ polaris_install_user }}"
 
 - name: Enable rotation of catalina.out
   blockinfile:
@@ -108,4 +108,4 @@
     insertafter: '= "run"'
     block: "{{ lookup('file', 'files/rotate_catalina') }}"
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"

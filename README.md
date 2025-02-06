@@ -31,6 +31,7 @@ Connect to the virtual machine and then run the playbook. You can then check the
 ```
 vagrant ssh
 cd polaris/deploy
+export ANSIBLE_LIBRARY=/home/vagrant/polaris/deploy/plugins
 ansible-playbook nodejs.yml
 /apps_ux/sample/service/artifact/bin/nodejs/bin/node -v
 ```

@@ -5,7 +5,7 @@
     state: 'running'
   listen: 'start tomcat - s6'
   become: yes
-  become_user: "{{ tomcat_run_as }}"
+  become_user: "{{ tomcat_run_user }}"
   # when: tomcat_s6_enabled | bool
 
 - name: stop tomcat via s6
@@ -14,7 +14,7 @@
     state: 'stopped'
   listen: 'stop tomcat - s6'
   become: yes
-  become_user: "{{ tomcat_run_as }}"
+  become_user: "{{ tomcat_run_user }}"
   # when: tomcat_s6_enabled | bool
 
 - name: restart tomcat using s6
@@ -23,7 +23,7 @@
     state: 'restarted'
   listen: 'restart tomcat - s6'
   become: yes
-  become_user: "{{ tomcat_run_as }}"
+  become_user: "{{ tomcat_run_user }}"
   # when: tomcat_s6_enabled | bool
 
 - name: start tomcat using startup.sh
@@ -32,7 +32,7 @@
     chdir: "/"
   listen: 'start tomcat - default'
   become: yes
-  become_user: "{{ tomcat_run_as }}"
+  become_user: "{{ tomcat_run_user }}"
   # when: not tomcat_s6_enabled | bool
 
 - name: stop tomcat using shutdown.sh
@@ -41,7 +41,7 @@
     chdir: "/"
   listen: 'stop tomcat - default'
   become: yes
-  become_user: "{{ tomcat_run_as }}"
+  become_user: "{{ tomcat_run_user }}"
   ignore_errors: yes # if tomcat is not already running, there's no quick & dirty way to find that out other than trying to stop it -- and failing
   # when: not tomcat_s6_enabled | bool
 
@@ -51,6 +51,6 @@
     chdir: "/"
   listen: 'restart tomcat - default'
   become: yes
-  become_user: "{{ tomcat_run_as }}"
+  become_user: "{{ tomcat_run_user }}"
   ignore_errors: yes
   # when: not tomcat_s6_enabled | bool
