@@ -5,11 +5,12 @@
 # tomcat_webapps
 
 # Convention over configuration
-tomcat_install_root:          "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
-tomcat_install_root_current:  "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/current"
-tomcat_data_dir:              "{{ apps_data }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/tomcat"
-tomcat_log_dir:               "{{ apps_logs }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}"
-tomcat_service_dir:           "{{ s6_services }}/{{ pd_prop_service_name }}"
+tomcat_install_root:          "{{ polaris_apps_service_install_home }}"
+tomcat_install_root_current:  "{{ polaris_apps_service_current_home }}"
+tomcat_data_dir:              "{{ polaris_apps_service_data_home }}/tomcat"
+tomcat_log_dir:               "{{ polaris_apps_service_logs_home }}"
+tomcat_service_dir:           "{{ polaris_apps_service_s6_home }}"
+tomcat_port:                  "{{ polaris_apps_service_port }}"
 
 # The location where to download Apache Tomcat from.
 tomcat_mirror:              "https://archive.apache.org"
@@ -30,11 +31,11 @@ tomcat_https_port:          8001
 tomcat_ajp_port:            8001
 tomcat_set_as_current:      yes
 tomcat_download_tmp_dir:    "/tmp"
-tomcat_install_as:          "{{ install_user | default('wwwadm') }}"
-tomcat_run_as:              "{{ run_user | default('wwwsvr') }}"
+tomcat_install_user:        "{{ polaris_install_user }}"
+tomcat_run_user:            "{{ polaris_service_user }}"
 tomcat_s6_enabled:          "{{ s6_enabled | default('yes') }}"
-tomcat_s6_home:             "{{ s6_home | default('/sw_ux/s6') }}"
-tomcat_s6_services:         "{{ s6_services | default('/apps_ux/s6_services') }}"
+tomcat_s6_home:             "{{ polaris_s6_home }}"
+tomcat_s6_services:         "{{ polaris_s6_services_home }}"
 tomcat_handler_style:       "{{ tomcat_s6_enabled | ternary('s6', 'default') }}"
 tomcat_download_username:   "{{ artifactory_username }}"
 tomcat_download_password:   "{{ artifactory_password }}"
@@ -43,7 +44,7 @@ using_alt_app_dir:          false
 default_ssc_keystore_pass:  "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
 # setenv.sh
-tomcat_java_home:         "{{ tomcat_install_root }}/jdk" # educated assumption based on conventions
+tomcat_java_home:         "{{ tomcat_install_root }}/bin/jdk" # educated assumption based on conventions
 tomcat_env_dict:          {}
 
 # server.xml
@@ -66,9 +67,3 @@ tomcat_catalina_log_level:            "{{ tomcat_log_level }}"
 tomcat_localhost_log_level:           "{{ tomcat_log_level }}"
 tomcat_manager_log_level:             "{{ tomcat_log_level }}"
 tomcat_host_manager_log_level:        "{{ tomcat_log_level }}"
-
-proxy_env_dev_test:
-  https_proxy: http://test-forwardproxy.nrs.bcgov:23128
-
-proxy_env_prod:
-  https_proxy: http://forwardproxy.nrs.bcgov:23128

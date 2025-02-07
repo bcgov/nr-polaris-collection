@@ -7,4 +7,9 @@
 
   roles:
     - role: create_project_directories
+    - name: port_manager
     - name: nodejs
+    - name: nodejs_app
+      vars:
+        nodejs_app_service_copy_src: "/home/vagrant/polaris/deploy/samples/nodejs/"
+        nodejs_app_service_entrypoint: "app/main.js"
