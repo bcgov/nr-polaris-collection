@@ -20,6 +20,7 @@ Vagrant.configure("2") do |config|
     sudo dnf update -y
     sudo dnf install -y ansible-core
     sudo dnf install -y ansible
+    sudo dnf install -y python3-jmespath
   SHELL
 
   config.vm.provision "shell", inline: <<-SHELL
