@@ -17,12 +17,24 @@
     using_alt_app_dir: true
   when: alt_app_dir_name is defined
 
-- debug:
-    msg: 'ensuring Tomcat is stopped'
-  changed_when: true
-  notify: stop tomcat - {{ tomcat_handler_style }}
+- name: "Service: stop"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "stop"
+    service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
+    service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
+    service_control_user: "{{ tomcat_run_user }}"
+    service_control_handler: "{{ tomcat_handler_style }}"
 
-- meta: flush_handlers
+- name: "Setup handler {{ nodejs_app_control_handler }}"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "setup"
+    service_control_home: "{{ tomcat_install_root_current }}"
+    service_control_user: "{{ tomcat_run_user }}"
+    service_control_handler: "{{ tomcat_handler_style }}"
 
 - name: required directories
   file:
@@ -87,20 +99,6 @@
     _tomcat_version: "{{ tomcat_version }}"
     _tomcat_port: "{{ polaris_apps_service_port }}"
 
-- name: Until CMDB is ready, register port for port-manager
-  file:
-    path: "{{ tomcat_install_dir }}/port:{{ tomcat_https_port }}"
-    state: touch
-  become: yes
-  become_user: "{{ polaris_install_user }}"
-
-- name: Release port reservation
-  file:
-    path: "/tmp/ports-tmp/port:{{ tomcat_https_port }}"
-    state: absent
-  become: yes
-  become_user: "{{ polaris_install_user }}"
-
 - name: Enable rotation of catalina.out
   blockinfile:
     path: "{{ tomcat_install_dir }}/bin/catalina.sh"
@@ -109,3 +107,13 @@
     block: "{{ lookup('file', 'files/rotate_catalina') }}"
   become: yes
   become_user: "{{ polaris_install_user }}"
+
+- name: "Service: start"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "start"
+    service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
+    service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
+    service_control_user: "{{ tomcat_run_user }}"
+    service_control_handler: "{{ tomcat_handler_style }}"

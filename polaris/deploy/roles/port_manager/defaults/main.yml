@@ -5,3 +5,4 @@ portmanager_first_dir: "{{ polaris_apps_project_name }}/{{ polaris_apps_service_
 portmanager_script_name: port_manager.pl
 portmanager_assignments: {}
 portmanager_debug: False
+portmanager_service_home: "{{ polaris_apps_service_home }}"

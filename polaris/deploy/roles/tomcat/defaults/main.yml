@@ -6,7 +6,7 @@
 
 # Convention over configuration
 tomcat_install_root:          "{{ polaris_apps_service_install_home }}"
-tomcat_install_root_current:  "{{ polaris_apps_service_home }}/current"
+tomcat_install_root_current:  "{{ polaris_apps_service_current_home }}"
 tomcat_data_dir:              "{{ polaris_apps_service_data_home }}/tomcat"
 tomcat_log_dir:               "{{ polaris_apps_service_logs_home }}"
 tomcat_service_dir:           "{{ polaris_apps_service_s6_home }}"
@@ -44,7 +44,7 @@ using_alt_app_dir:          false
 default_ssc_keystore_pass:  "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
 # setenv.sh
-tomcat_java_home:         "{{ tomcat_install_root }}/jdk" # educated assumption based on conventions
+tomcat_java_home:         "{{ tomcat_install_root }}/bin/jdk" # educated assumption based on conventions
 tomcat_env_dict:          {}
 
 # server.xml

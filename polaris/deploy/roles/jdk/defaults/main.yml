@@ -1,6 +1,6 @@
 ---
 # Required
-jdk_install_root:       "{{ polaris_apps_service_install_home }}"
+jdk_install_root:       "{{ polaris_apps_service_install_bin_home }}"
 
 # Optional
 jdk_major_version: '21'

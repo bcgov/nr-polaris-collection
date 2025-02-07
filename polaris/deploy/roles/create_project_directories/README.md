@@ -20,7 +20,6 @@ The following variables can be configured in the role:
 | `apps_home`                        | Base directory for applications                         | `/opt/apps`   |
 | `apps_logs`                        | Base directory for logs                                 | `/var/log`    |
 | `apps_data`                        | Base directory for application data                     | `/var/data`   |
-| `s6_services`                      | Directory for S6 services                               | `/etc/s6`     |
 | `pd_project_name`             | Name of the project                                     | `null`        |
 | `pd_service_name`             | Name of the service                                     | `null`        |
 | `pd_remove_existing`          | If truthy wipe existing directories                     | `null`        |

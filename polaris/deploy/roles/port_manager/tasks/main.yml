@@ -34,10 +34,24 @@
 
 # Remove the script when done
 # ---------------------------
-# - name: cleanup
-#   file:
-#     path: "/tmp/{{ portmanager_script_name }}"
-#     state: absent
-#   become: yes
-#   become_user: "{{ portmanager_install_user }}"
-#   when: not portmanager_debug
+- name: cleanup
+  file:
+    path: "/tmp/{{ portmanager_script_name }}"
+    state: absent
+  become: yes
+  become_user: "{{ portmanager_install_user }}"
+  when: not portmanager_debug
+
+- name: Until CMDB is ready, register port for port-manager
+  file:
+    path: "{{ portmanager_service_home }}/port:{{ tomcat_https_port }}"
+    state: touch
+  become: yes
+  become_user: "{{ portmanager_install_user }}"
+
+- name: Release port reservation
+  file:
+    path: "/tmp/ports-tmp/port:{{ tomcat_https_port }}"
+    state: absent
+  become: yes
+  become_user: "{{ portmanager_install_user }}"
