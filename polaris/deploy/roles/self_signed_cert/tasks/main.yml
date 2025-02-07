@@ -10,10 +10,13 @@
   set_fact:
     ssc_keystore_pass: "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
   run_once: no
+  when: ssc_format != 'openssl'
+
 - name: 'generate random key password'
   set_fact:
     ssc_key_pass: "{{ ssc_separate_key_pass | ternary(lookup('password', '/dev/null length=15 chars=ascii_letters'), ssc_keystore_pass) }}"
   run_once: no
+  when: ssc_format != 'openssl'
 
 - name: directory {{ ssc_dir }}
   file:
@@ -35,3 +38,4 @@
   become: yes
   become_user: "{{ ssc_user }}"
   ignore_errors: True
+  when: ssc_format != 'openssl'
