@@ -15,11 +15,12 @@ polaris_current_folder: "current"
 
 # Project/service directories
 
-polaris_apps_project_name: ""
+polaris_apps_project_name: "{{pd_prop_project_name}}"
 polaris_apps_project_home: "{{polaris_apps_home}}/{{polaris_apps_project_name}}"
-polaris_apps_service_name: ""
+polaris_apps_service_name: "{{pd_prop_project_name}}"
 polaris_apps_service_home: "{{polaris_apps_project_home}}/{{polaris_apps_service_name}}"
-polaris_apps_service_install_name: ""
+
+polaris_apps_service_install_name: "{{ pd_prop_project_version }}-{{ pd_prop_build_number }}"
 polaris_apps_service_install_home: "{{polaris_apps_service_home}}/{{polaris_apps_service_install_name}}"
 polaris_apps_service_current_home: "{{polaris_apps_service_home}}/{{polaris_current_folder}}"
 polaris_apps_service_install_app_home: "{{polaris_apps_service_install_home}}/{{ polaris_app_folder }}"
@@ -29,6 +30,11 @@ polaris_apps_service_install_tmp_home: "{{polaris_apps_service_install_home}}/{{
 polaris_apps_service_data_home: "{{ polaris_apps_data_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
 polaris_apps_service_logs_home: "{{ polaris_apps_logs_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
 polaris_apps_service_port: "8080"
+
+pd_project_version: "{{ lookup('ansible.builtin.env', 'PODMAN_PROJECT_VERSION') }}"
+pd_prop_artifact_name: "{{ lookup('ansible.builtin.env', 'PODMAN_ARTIFACT_NAME') }}"
+pd_artifact_sha256: "{{ lookup('ansible.builtin.env', 'PODMAN_ARTIFACT_SHA256') }}"
+pd_build_number: "{{ lookup('ansible.builtin.env', 'PODMAN_BUILD_NUMBER') }}"
 
 polaris_control_handler: "s6"
 
