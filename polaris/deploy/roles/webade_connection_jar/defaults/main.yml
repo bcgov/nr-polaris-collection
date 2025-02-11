@@ -1,8 +1,8 @@
 # roles/webade-connection-jar/defaults/main.yml
 
 # Required
-webade_java_home:      "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}/jdk"
-webade_install_dir:    "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}/webapps/{{ alt_app_dir_name | default(context) }}/WEB-INF/lib"
+webade_java_home:      "{{ polaris_apps_service_install_home }}/jdk"
+webade_install_dir:    "{{ polaris_apps_service_install_home }}/webapps/{{ alt_app_dir_name | default(context) }}/WEB-INF/lib"
 webade_env:
 webade_jdbc_url:
 webade_db_user:

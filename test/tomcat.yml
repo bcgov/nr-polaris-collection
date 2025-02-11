@@ -1,0 +1,16 @@
+---
+# file: nodejs.yml
+- hosts: localhost
+  vars_files:
+    - "vars/all.yml"
+    - "vars/tomcat.yml"
+
+  roles:
+    - role: create_project_directories
+    - role: port_manager
+    - role: jdk
+      vars:
+        jdk_major_version: '8'
+    - role: tomcat
+      vars:
+        tomcat_major_version: '9'

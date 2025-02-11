@@ -1,14 +1,7 @@
 # General properties
-run_user: "wwwsvr"
-install_user: "wwwadm"
 
-apps_home: "/apps_ux"
-apps_logs: "/apps_data/logs"
-apps_data: "/apps_data"
+polaris_apps_project_name: "sample"
+polaris_apps_service_name: "service"
+polaris_apps_service_install_name: "artifact"
 
-s6_services: /apps_ux/s6_services
-s6_home:  /sw_ux/s6
-
-pd_prop_service_install_directory: "artifact"
-pd_prop_project_name: "sample"
-pd_prop_service_name: "service"
+proxy_env: "none"

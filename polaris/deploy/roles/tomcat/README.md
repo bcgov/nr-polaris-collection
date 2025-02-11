@@ -1,51 +1,17 @@
-# Tomcat
+# tomcat - Install tomcat
 
 Installs a specified version of Tomcat, following Ministry conventions. Optionally, an arbitrary number of webapps may be installed.
 
 This role observes a number of conventions:
-* Tomcat will be installed to `tomcat_install_dir`, which defaults to `pd_prop_service_install_directory`/tomcat;
-* The tomcat/temp and tomcat/work folders are moved to `pd_prop_service_data`/tomcat/*, referenced by `tomcat_data_dir`;
-* Logs are written to `pd_prop_service_logs`/, referenced by `tomcat_log_dir`;
+* Tomcat will be installed to `tomcat_install_dir`, which defaults to `pd_service_install_directory`/tomcat;
+* The tomcat/temp and tomcat/work folders are moved to `pd_service_data`/tomcat/*, referenced by `tomcat_data_dir`;
+* Logs are written to `pd_service_logs`/, referenced by `tomcat_log_dir`;
 * Java is assumed to be located in `cd_app_home`/jdk, referenced by `tomcat_java_home`
 * HTTPS is enabled, referenced by `tomcat_use_https`
 * Shutdown port is disabled by default (set to -1), referenced by `tomcat_shutdown_port`
 * A JDK will not be installed as part of this role, it must be provided (i.e. by using the [jdk role](../jdk)).
-* Webapps are installed to `pd_prop_service_install_directory`/webapps, referenced by `tomcat_webapp_dir`
+* Webapps are installed to `pd_service_install_directory`/webapps, referenced by `tomcat_webapp_dir`
 * A default port of 8001 is applied, but it is **strongly** recommended that this be provided at deploy time by setting a variable of `tomcat_https_port`
-
-The state of this role is: **Preview**
-* Only HTTPS is supported
-* Only Tomcat 8.5.20 is supported
-
-*****
-
-## Installation visualization
-
-```
-.
-├─ <pd_prop_service_install_directory>/
-|   ├─ <tomcat_install_dir>/
-|   |   ├─ bin/
-|   |   |   ├─ catalina.sh
-|   |   |   ├─ setenv.sh
-|   |   |   ├─ startup.sh
-|   |   |   └─ shutdown.sh
-|   |   └─ conf/
-|   |       ├─ context.xml
-|   |       ├─ server.xml
-|   |       └─ logging.properties
-|   ├─ webapps/   # exists outside of the tomcat directory to allow easier upgrades of the container
-|   └─ jdk/       # this folder is assumbed to exist by convention, but it will not be created by the role. Override it by setting tomcat_java_home
-├─ <pd_prop_service_data>/
-|   └─ <tomcat_data_dir>/
-|       ├─ temp/
-|       └─ work/
-└─ <pd_prop_service_logs>/
-    ├─ localhost.access.log
-    └─ catalina.out
-```
-
-*****
 
 ## Role Variables
 
@@ -53,10 +19,10 @@ The state of this role is: **Preview**
 | -------- | ------- | ----------- |
 | `tomcat_webapps` | {} | See [Webapps map](#webapps-map) |
 | `tomcat_jndi_resources` | [] | See [JNDI resources](#jndi-resources) |
-| `tomcat_install_root` | `pd_prop_service_install_directory` | The root that tomcat should be installed in to. By default, this will create a subfolder called Tomcat |
-| `tomcat_data_dir` | `pd_prop_service_data` | |
-| `tomcat_log_dir` | `pd_prop_service_logs` | |
-| `tomcat_service_dir` | `pd_prop_service_s6_path` |  required if using s6 |
+| `tomcat_install_root` | `pd_service_install_directory` | The root that tomcat should be installed in to. By default, this will create a subfolder called Tomcat |
+| `tomcat_data_dir` | `pd_service_data` | |
+| `tomcat_log_dir` | `pd_service_logs` | |
+| `tomcat_service_dir` | `pd_service_s6_path` |  required if using s6 |
 | `tomcat_use_https` | yes | |
 | `tomcat_https_port` | 8001 | required if `tomcat_use_https` is true |
 | `tomcat_keystore_file` | `tomcat_install_root`/.keys/key.jks | This default uses knowledge of the [self-signed certificate](../ssc) role |
@@ -76,8 +42,6 @@ The state of this role is: **Preview**
 | `tomcat_compressibleMimeType` | text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml | The value is a comma separated list of MIME types for which HTTP compression may be used. |
 | `tomcat_env_dict` | {} | Dictionary of values to output as environment variables in setenv.sh for tomcat applications to use. |
 
-*****
-
 ## `tomcat_webapps` map
 This role can deploy an arbitrary number of webapps to the Tomcat container, by accepting an optional list of webapps via the `tomcat_webapps` property. If provided, each listen item must contain a map with the following structure:
 
@@ -90,7 +54,6 @@ This role can deploy an arbitrary number of webapps to the Tomcat container, by 
 
 **Note**: Webapps will be extracted to the Tomcat webapps directory, but it is up to the calling playbook to perform any necessary configuration.
 
-*****
 
 ## JNDI Resources
 The role can accept an optional list of JNDI resource maps that will create resource entries in the container's server.xml file.
@@ -109,7 +72,31 @@ The role can accept an optional list of JNDI resource maps that will create reso
 | `max_idle` | no | 20 | |
 | `max_wait` | no | -1 | |
 
-*****
+## Installation visualization
+
+```
+.
+├─ <pd_service_install_directory>/
+|   ├─ <tomcat_install_dir>/
+|   |   ├─ bin/
+|   |   |   ├─ catalina.sh
+|   |   |   ├─ setenv.sh
+|   |   |   ├─ startup.sh
+|   |   |   └─ shutdown.sh
+|   |   └─ conf/
+|   |       ├─ context.xml
+|   |       ├─ server.xml
+|   |       └─ logging.properties
+|   ├─ webapps/   # exists outside of the tomcat directory to allow easier upgrades of the container
+|   └─ bin/jdk    # this folder is assumbed to exist by convention, but it will not be created by the role. Override it by setting tomcat_java_home
+├─ <pd_service_data>/
+|   └─ <tomcat_data_dir>/
+|       ├─ temp/
+|       └─ work/
+└─ <pd_service_logs>/
+    ├─ localhost.access.log
+    └─ catalina.out
+```
 
 ## Example Playbook
 ```yml
@@ -124,7 +111,7 @@ The role can accept an optional list of JNDI resource maps that will create reso
       - { url: "{{ artifact.uri }}", md5: "{{ artifact.md5 }}", context: "int#e2edemo##{{ artifact.version }}" }
   roles:
     - cd-prepare
-    - { role: jdk, jdk_install_root: "{{ pd_prop_service_install_directory }}", jdk_version: "8" }
-    - { role: self-signed-cert, ssc_dir: "{{ pd_prop_service_install_directory }}/.keys", ssc_java_home: "{{ pd_prop_service_install_directory }}/jdk", ssc_format: 'pkcs12' }
+    - { role: jdk, jdk_install_root: "{{ pd_service_install_directory }}", jdk_version: "8" }
+    - { role: self-signed-cert, ssc_dir: "{{ pd_service_install_directory }}/.keys", ssc_java_home: "{{ pd_service_install_directory }}/jdk", ssc_format: 'pkcs12' }
     - { role: tomcat, tomcat_version_number: '8.5.20', tomcat_webapps: "{{ webapps }}" }
 ```

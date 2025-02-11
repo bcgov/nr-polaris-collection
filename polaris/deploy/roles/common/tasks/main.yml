@@ -1,0 +1,18 @@
+---
+- ansible.builtin.debug:
+    msg: "Set common role variables"
+
+- name: Fail if polaris_apps_project_name is empty or undefined
+  fail:
+    msg: "The variable 'polaris_apps_project_name' is either undefined or empty."
+  when: (polaris_apps_project_name | default('')) | length == 0
+
+- name: Fail if polaris_apps_service_name is empty or undefined
+  fail:
+    msg: "The variable 'polaris_apps_service_name' is either undefined or empty."
+  when: (polaris_apps_service_name | default('')) | length == 0
+
+- name: Fail if polaris_apps_service_install_name is empty or undefined
+  fail:
+    msg: "The variable 'polaris_apps_service_install_name' is either undefined or empty."
+  when: (polaris_apps_service_install_name | default('')) | length == 0

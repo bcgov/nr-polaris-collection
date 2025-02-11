@@ -1,0 +1,67 @@
+---
+- name: Ensure create_project_directories was called before
+  fail:
+    msg: "Error: create_project_directories must be called before!"
+  when: not role_create_project_directories_called | default(false) | bool
+
+- name: "Ensuring service is stopped"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "stop"
+    service_control_user: "{{ nodejs_app_install_user }}"
+    service_control_handler: "{{ nodejs_app_control_handler }}"
+
+- name: "Setup handler {{ nodejs_app_control_handler }}"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "setup"
+    service_control_home: "{{ nodejs_app_service_current_home }}"
+    service_control_user: "{{ nodejs_app_install_user }}"
+    service_control_handler: "{{ nodejs_app_control_handler }}"
+
+- name: "required directories"
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0775"
+  with_items:
+    - "{{ nodejs_app_service_install_app_home }}"
+    - "{{ nodejs_app_service_data_home }}"
+    - "{{ nodejs_app_service_log_home }}"
+  become: yes
+  become_user: "{{ nodejs_app_install_user }}"
+
+- name: "copy nodejs app folders to server"
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  ansible.builtin.copy:
+    src: "{{ nodejs_app_service_copy_src }}"
+    dest: "{{ nodejs_app_service_install_app_home }}/"
+    mode: "0755"
+  become: yes
+  become_user: "{{ nodejs_app_install_user }}"
+
+- name: Deploy start script
+  template:
+    src: "start.sh.j2"
+    dest: "{{ nodejs_app_service_install_home }}/start.sh"
+    mode: "0755"
+  become: yes
+  become_user: "{{ nodejs_app_install_user }}"
+
+- name: Deploy env script
+  template:
+    src: "setenv.sh.j2"
+    dest: "{{ nodejs_app_service_install_home }}/setenv.sh"
+    mode: "0755"
+  become: yes
+  become_user: "{{ nodejs_app_install_user }}"
+
+- name: "Start service"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "start"
+    service_control_user: "{{ nodejs_app_install_user }}"
+    service_control_handler: "{{ nodejs_app_control_handler }}"

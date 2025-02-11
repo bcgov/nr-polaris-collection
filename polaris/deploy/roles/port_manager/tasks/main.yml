@@ -1,43 +1,57 @@
 ---
+- name: Ensure create_project_directories was called before
+  fail:
+    msg: "Error: create_project_directories must be called before!"
+  when: not role_create_project_directories_called | default(false) | bool
+
 # Create port manager script on target host
-# -----------------------------------------
 - name: Port manager script
   template:
     src: "{{ portmanager_script_name }}.j2"
     dest: "/tmp/{{ portmanager_script_name }}"
     mode: "0700"
   become: yes
-  become_user: "{{ install_user }}"
+  become_user: "{{ portmanager_install_user }}"
 
 # Run the port manager script
-# ---------------------------
 - name: Port check
   shell: "/tmp/{{ portmanager_script_name }} {{ portmanager_first_dir }}"
   register: port_check
   become: yes
-  become_user: "{{ install_user }}"
+  become_user: "{{ portmanager_install_user }}"
 
 # Quit if the script did not return normally
-# ------------------------------------------
 - fail:
     msg: "ERROR: port_check.stdout"
   when: port_check.rc > 0
 
 # Add the port or ports to the list
-# ---------------------------------
 - name: Add port(s) to list
   set_fact:
     portmanager_assignments: "{{ portmanager_assignments | combine( { ansible_host: item } ) }}"
-    tomcat_port: "{{ port_check.stdout.split(':')[0] }}"
+    polaris_apps_service_port: "{{ port_check.stdout.split(':')[0] }}"
     cacheable: true
   with_items: "{{ port_check.stdout.split(':') }}"
 
 # Remove the script when done
-# ---------------------------
 - name: cleanup
   file:
     path: "/tmp/{{ portmanager_script_name }}"
     state: absent
   become: yes
-  become_user: "{{ install_user }}"
+  become_user: "{{ portmanager_install_user }}"
   when: not portmanager_debug
+
+- name: Until CMDB is ready, register port for port-manager
+  file:
+    path: "{{ portmanager_service_home }}/port:{{ polaris_apps_service_port }}"
+    state: touch
+  become: yes
+  become_user: "{{ portmanager_install_user }}"
+
+- name: Release port reservation
+  file:
+    path: "/tmp/ports-tmp/port:{{ polaris_apps_service_port }}"
+    state: absent
+  become: yes
+  become_user: "{{ portmanager_install_user }}"

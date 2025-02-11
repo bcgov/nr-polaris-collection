@@ -1,0 +1,50 @@
+---
+- name: start app via s6
+  s6_service:
+    name: "{{ service_control_target }}"
+    state: 'running'
+  listen: 'start service - s6'
+  become: yes
+  become_user: "{{ service_control_user }}"
+
+- name: restart app via s6
+  s6_service:
+    name: "{{ service_control_target }}"
+    state: 'restarted'
+  listen: 'restart service - s6'
+  become: yes
+  become_user: "{{ service_control_user }}"
+
+- name: stop app via s6
+  s6_service:
+    name: "{{ service_control_target }}"
+    state: 'stopped'
+  listen: 'stop service - s6'
+  become: yes
+  become_user: "{{ service_control_user }}"
+
+- name: start app using script
+  command:
+    cmd: "{{ service_control_service_script_start }}"
+    chdir: "/"
+  listen: 'start service - script'
+  become: yes
+  become_user: "{{ service_control_user }}"
+
+- name: stop app using script
+  command:
+    cmd: "{{ service_control_service_script_stop }}"
+    chdir: "/"
+  listen: 'stop service - script'
+  become: yes
+  become_user: "{{ service_control_user }}"
+  ignore_errors: yes
+
+- name: restart app using script
+  shell:
+    cmd: "{{ service_control_service_script_stop }}; sleep 40; {{ service_control_service_script_start }}"
+    chdir: "/"
+  listen: 'restart service - script'
+  become: yes
+  become_user: "{{ service_control_user }}"
+  ignore_errors: yes

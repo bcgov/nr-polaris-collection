@@ -1,9 +1,11 @@
 ---
 # defaults file for self-signed-cert
-ssc_dir:                        "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}/.keys"
-ssc_java_home:                  "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}/jdk"
-ssc_user:                       "{{ install_user | default('wwwadm') }}"
+ssc_dir:                        "{{ polaris_apps_service_install_home }}/.keys"
+ssc_user:                       "{{ polaris_install_user }}"
 ssc_format:                     'pkcs12'
+
+ssc_java_install: "no"
+ssc_java_home:                  "{{ polaris_apps_service_install_home }}/bin/jdk"
 
 ssc_keystore:                   "{{ ssc_dir }}/key.jks" #"{{ ssc_java_home }}/jre/lib/security/cacerts"
 # this is now set in the main.yml file using set_fact

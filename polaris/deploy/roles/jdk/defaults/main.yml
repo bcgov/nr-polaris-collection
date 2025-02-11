@@ -1,13 +1,13 @@
 ---
 # Required
-jdk_install_root:       "{{ apps_home }}/{{ pd_prop_project_name }}/{{ pd_prop_service_name }}/{{ pd_prop_service_install_directory }}"
+jdk_install_root:       "{{ polaris_apps_service_install_bin_home }}"
 
 # Optional
 jdk_major_version: '21'
 jdk_type:               'openjdk'
 jdk_pinned_release_name: ''
 jdk_install_dir:        'jdk'
-jdk_install_as:         '{{ install_user | default("wwwadm") }}'
+jdk_install_as:         '{{ polaris_install_user }}'
 
 # Derived
 jdk_jce_archive:        'java-jce-{{ jdk_major_version }}-2020.zip'
@@ -24,9 +24,3 @@ jdk_certs:
   - { name: IDIR_Infrastructure_Authority4.cer, url: '{{ artifactory_url }}/ext-binaries-local/certs/IDIR_Infrastructure_Authority4.cer' }
   - { name: wildcard.nrs.bcgov.cer,             url: '{{ artifactory_url }}/ext-binaries-local/certs/wildcard.nrs.bcgov.cer' }
   - { name: lets-encrypt-x3-cross-signed.der,   url: '{{ artifactory_url }}/ext-binaries-local/certs/lets-encrypt-x3-cross-signed.der' }
-
-proxy_env_dev_test:
-  https_proxy: http://test-forwardproxy.nrs.bcgov:23128
-
-proxy_env_prod:
-  https_proxy: http://forwardproxy.nrs.bcgov:23128

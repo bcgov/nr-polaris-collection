@@ -35,3 +35,4 @@
   become: yes
   become_user: "{{ ssc_user }}"
   ignore_errors: True
+  when: ssc_java_install | bool

@@ -1,9 +1,6 @@
-# Tomcat
+# webapp - Install a war file for Tomcat
 
 Configures and deploys a WAR file to an existing Tomcat container
-The state of this role is: **Preview**
-
-*****
 
 ## Role Variables
 
@@ -11,18 +8,16 @@ The state of this role is: **Preview**
 | -------- | -------- | ------- | ----------- |
 | `webapp_war` | yes | {} | See [webapp_war map](#webapp-war-map) |
 | `webapp_component` | no | `cd_component` | The component name that this webapp manifests |
-| `webapp_tomcat_webapps_dir` | no | `pd_prop_service_install_directory`/webapps | |
-| `webapp_log_archive_filename_pattern` | no | `pd_prop_service_name`.%d.log.gz | |
-| `webapp_log_dir` | no | `apps_logs`/`pd_prop_project_name`/`pd_prop_service_name` | |
-| `webapp_log_filename` | no | `pd_prop_service_name`.log| |
+| `webapp_tomcat_webapps_dir` | no | `pd_service_install_directory`/webapps | |
+| `webapp_log_archive_filename_pattern` | no | `pd_service_name`.%d.log.gz | |
+| `webapp_log_dir` | no | `apps_logs`/`pd_project_name`/`pd_service_name` | |
+| `webapp_log_filename` | no | `pd_service_name`.log| |
 | `webapp_log_provider` | no | log4j2 | |
 | `webapp_root_log_level` | no | INFO | |
 | `webapp_staging_dir` | no | `cd_app_home` | Directory to use to extract & configure the webapp prior to deployment |
 | `webapp_user` | no | wwwadm | |
 | `webapp_configure_log4j_enabled` | no | True | If true, overwrite any existing `WEB-INF/classes/log4j2.xml` with template |
 | `webapp_configure_context_enabled` | no | True | If true, overwrite any existing `META-INF/context.xml` with template |
-
-*****
 
 ## `webapp_war` map
 
@@ -49,8 +44,6 @@ webapp_war:
       password: "{{ bootstrap_password }}"
 ```
 
-*****
-
 ## `webapp_war.jndi_resources` map
 
 | key | required | value (e.g.) | description |
@@ -67,8 +60,6 @@ webapp_war:
 | `max_idle` | no | 20 | |
 | `max_wait` | no | -1 | |
 
-
-*****
 
 ## Logging and the `webapp_war.loggers` map
 
@@ -112,7 +103,6 @@ The role can accept an optional list of JNDI resource maps that will create reso
 | `removeAbandoned` | no | yes | |
 | `removeAbandonedTimeout` | no | 60000 |
 
-*****
 
 ## Example Playbook
 ```yml
@@ -127,7 +117,7 @@ The role can accept an optional list of JNDI resource maps that will create reso
       - { url: "{{ artifact.uri }}", md5: "{{ artifact.md5 }}", context: "int#e2edemo##{{ artifact.version }}" }
   roles:
     - cd-prepare
-    - { role: jdk, jdk_install_root: "{{ pd_prop_service_install_directory }}", jdk_version: "8" }
-    - { role: self-signed-cert, ssc_dir: "{{ pd_prop_service_install_directory }}/.keys", ssc_java_home: "{{ pd_prop_service_install_directory }}/jdk", ssc_format: 'pkcs12' }
+    - { role: jdk, jdk_install_root: "{{ pd_service_install_directory }}", jdk_version: "8" }
+    - { role: self-signed-cert, ssc_dir: "{{ pd_service_install_directory }}/.keys", ssc_java_home: "{{ pd_service_install_directory }}/jdk", ssc_format: 'pkcs12' }
     - { role: tomcat, tomcat_version_number: '8.5.20', tomcat_webapps: "{{ webapps }}" }
 ```

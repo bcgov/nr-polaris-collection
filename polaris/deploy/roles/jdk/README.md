@@ -1,11 +1,15 @@
-# Ansible Role: JDK Installation and Configuration
+# jdk: JDK Installation and Configuration
 
 This Ansible role automates the installation and configuration of Adoptium OpenJDK on a Linux system. It supports downloading and installing both latest
 and specific versions, configuring certificates and managing the JCE policy files.
 
+## Role Variables
+
+TBD
+
 ## Tasks
 
-This role includes the following tasks:
+The role performs the following tasks:
 
 1. **Create JDK Home Directory:** Creates the directory specified by `jdk_home` with the appropriate permissions.
 2. **Fetch Asset Information:** Retrieves metadata for the specified JDK version using the Adoptium API.
@@ -13,6 +17,10 @@ This role includes the following tasks:
 4. **Manage Certificates:** Downloads and imports certificates into the JDK's cacerts file.
 5. **Configure JCE:** Downloads and installs the JCE policy files (for JDK 8).
 6. **Patch Intention:** Patches the intention with the JDK version.
+
+## Dependencies
+
+This role's default values are dependant on the values in the common role.
 
 ## Example Playbooks
 
@@ -61,7 +69,3 @@ To deploy a specific pinned version, call the role with the following variables:
 ```
 
 Use the Adoptium API to determine the release name: https://api.adoptium.net/q/swagger-ui/#/Assets/searchReleases.
-
-## License
-
-This role is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.

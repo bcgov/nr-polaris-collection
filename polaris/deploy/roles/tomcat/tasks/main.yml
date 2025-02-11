@@ -1,4 +1,9 @@
 ---
+- name: Ensure create_project_directories was called before
+  fail:
+    msg: "Error: create_project_directories must be called before!"
+  when: not role_create_project_directories_called | default(false) | bool
+
 - name: Get Latest Tomcat Minor Version
   shell: "curl -s {{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
@@ -17,12 +22,24 @@
     using_alt_app_dir: true
   when: alt_app_dir_name is defined
 
-- debug:
-    msg: 'ensuring Tomcat is stopped'
-  changed_when: true
-  notify: stop tomcat - {{ tomcat_handler_style }}
+- name: "Service: stop"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "stop"
+    service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
+    service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
+    service_control_user: "{{ tomcat_run_user }}"
+    service_control_handler: "{{ tomcat_handler_style }}"
 
-- meta: flush_handlers
+- name: "Setup handler {{ nodejs_app_control_handler }}"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "setup"
+    service_control_home: "{{ tomcat_install_root_current }}"
+    service_control_user: "{{ tomcat_run_user }}"
+    service_control_handler: "{{ tomcat_handler_style }}"
 
 - name: required directories
   file:
@@ -35,7 +52,7 @@
     - "{{ tomcat_log_dir }}"
     - "{{ tomcat_webapp_dir }}"
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: Set Tomcat Download URL
   set_fact:
@@ -59,7 +76,7 @@
     mode: "0755"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: load task list for Tomcat {{ tomcat_version }}
   include: "install-tomcat.yml"
@@ -70,7 +87,7 @@
     mode: "0775"
     state: directory
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: run script {{ tomcat_service_dir }}/run
   template:
@@ -78,28 +95,14 @@
     dest: "{{ tomcat_service_dir }}/run"
     mode: "0775"
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
 
 - name: Patch intention
   include_role:
     name: patch_intention
   vars:
     _tomcat_version: "{{ tomcat_version }}"
-    _tomcat_port: "{{ tomcat_port }}"
-
-- name: Until CMDB is ready, register port for port-manager
-  file:
-    path: "{{ tomcat_install_dir }}/port:{{ tomcat_https_port }}"
-    state: touch
-  become: yes
-  become_user: "{{ tomcat_install_as }}"
-
-- name: Release port reservation
-  file:
-    path: "/tmp/ports-tmp/port:{{ tomcat_https_port }}"
-    state: absent
-  become: yes
-  become_user: wwwadm
+    _tomcat_port: "{{ polaris_apps_service_port }}"
 
 - name: Enable rotation of catalina.out
   blockinfile:
@@ -108,4 +111,18 @@
     insertafter: '= "run"'
     block: "{{ lookup('file', 'files/rotate_catalina') }}"
   become: yes
-  become_user: "{{ tomcat_install_as }}"
+  become_user: "{{ polaris_install_user }}"
+
+- name: "Service: start"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "start"
+    service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
+    service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
+    service_control_user: "{{ tomcat_run_user }}"
+    service_control_handler: "{{ tomcat_handler_style }}"
+
+- name: Mark tomcat as called
+  set_fact:
+    role_tomcat_called: true

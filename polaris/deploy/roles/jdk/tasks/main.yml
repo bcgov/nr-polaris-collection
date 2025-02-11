@@ -1,22 +1,27 @@
 ---
+- name: Ensure create_project_directories was called before
+  fail:
+    msg: "Error: create_project_directories must be called before!"
+  when: not role_create_project_directories_called | default(false) | bool
+
 - name: 'Create JDK home directory: {{ jdk_home }}'
   file:
     path: '{{ jdk_home }}'
     state: directory
     mode: '0755'
   become: yes
-  become_user: '{{ jdk_install_as }}'
+  become_user: '{{ polaris_install_user }}'
 
 - name: 'Get asset info'
-  uri:
+  ansible.builtin.uri:
     url: >-
-      {% if jdk_pinned_release_name | length > 0 %}
+      {% if jdk_pinned_release_name | length > 0 -%}
       https://api.adoptium.net/v3/assets/release_name/eclipse/{{ jdk_pinned_release_name | urlencode }}?architecture=x64&heap_size=normal&image_type=jdk&jvm_impl=hotspot&os=linux&project=jdk
-      {% else %}
+      {%- else -%}
       https://api.adoptium.net/v3/assets/latest/{{ jdk_major_version }}/hotspot?architecture=x64&image_type=jdk&os=linux&vendor=eclipse
-      {% endif %}
+      {%- endif %}
     return_content: yes
-  environment: '{{ (proxy_env_dev_test if proxy_env == "dev" or proxy_env == "test") or (proxy_env_prod if proxy_env == "prod") | default({}) }}'
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   register: json_response
   when: jdk_type == 'openjdk'
 
@@ -50,9 +55,9 @@
     checksum: "sha256:{{ jdk_checksum_value }}"
     validate_certs: false
     timeout: 1000
-  environment: '{{ (proxy_env_dev_test if proxy_env == "dev" or proxy_env == "test") or (proxy_env_prod if proxy_env == "prod") | default({}) }}'
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   become: yes
-  become_user: '{{ jdk_install_as }}'
+  become_user: '{{ polaris_install_user }}'
   when: jdk_type == 'openjdk'
 
 - name: 'Extract the downloaded archive'
@@ -62,14 +67,14 @@
     extra_opts: ['--transform=s,/*[^/]*,{{ jdk_install_dir | basename }},i', '--show-stored-names']
     remote_src: yes
   become: yes
-  become_user: '{{ jdk_install_as }}'
+  become_user: '{{ polaris_install_user }}'
 
 - name: 'Remove the downloaded archive'
   file:
     path: "{{ jdk_install_root }}/{{ jdk_package_name }}"
     state: absent
   become: yes
-  become_user: '{{ jdk_install_as }}'
+  become_user: '{{ polaris_install_user }}'
 
 - name: 'Download IMB trust certs'
   get_url:
@@ -79,7 +84,7 @@
     timeout: 100
   with_items: "{{ jdk_certs }}"
   become: yes
-  become_user: '{{ jdk_install_as }}'
+  become_user: '{{ polaris_install_user }}'
 
 - name: 'Set jdk cacerts file'
   set_fact:
@@ -94,7 +99,7 @@
     keystore_path: "{{ jdk_cacerts_file }}"
   with_items: "{{ jdk_certs }}"
   become: yes
-  become_user: '{{ jdk_install_as }}'
+  become_user: '{{ polaris_install_user }}'
 
 - name: 'Download JCE to /tmp/{{ jdk_jce_archive }}'
   get_url:
@@ -104,7 +109,7 @@
     timeout: 100
     mode: '0777'
   become: yes
-  become_user: '{{ jdk_install_as }}'
+  become_user: '{{ polaris_install_user }}'
   when: jdk_major_version == '8'
 
 - name: 'Extract JCE JARs to {{ jdk_home }}/jre/lib/security/'
@@ -112,7 +117,7 @@
   args:
     chdir: "{{ jdk_home }}/jre/lib/security/"
   become: yes
-  become_user: '{{ jdk_install_as }}'
+  become_user: '{{ polaris_install_user }}'
   when: jdk_major_version == '8'
 
 - name: 'Patch intention'
@@ -123,3 +128,7 @@
     _jdk_major_version: "{{ jdk_major_version }}"
     _jdk_url: "{{ jdk_package_link }}"
     _jdk_release_name: "{{ jdk_release_name }}"
+
+- name: Mark jdk as called
+  set_fact:
+    role_jdk_called: true

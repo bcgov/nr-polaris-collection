@@ -20,10 +20,12 @@ Vagrant.configure("2") do |config|
     sudo dnf update -y
     sudo dnf install -y ansible-core
     sudo dnf install -y ansible
+    sudo dnf install -y python3-jmespath
   SHELL
 
   config.vm.provision "shell", inline: <<-SHELL
     sudo mkdir -p /fs/u02/apps_ux /fs/u02/apps_data /fs/u02/sw_ux
+    sudo touch /fs/u02/apps_ux/range:8000-8080
     sudo chmod -R 775 /fs/u02
     sudo ln -s /fs/u02/apps_data /apps_data
     sudo ln -s /fs/u02/apps_ux /apps_ux
