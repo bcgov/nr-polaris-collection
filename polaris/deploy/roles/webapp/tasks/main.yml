@@ -1,4 +1,9 @@
 ---
+- name: Ensure role_tomcat_called was called before
+  fail:
+    msg: "Error: role_tomcat_called must be called before!"
+  when: not role_tomcat_called | default(false) | bool
+
 - name: Set alt app dir name
   set_fact:
     webapp_app_dir_name: "{{ alt_app_dir_name }}"

@@ -1,9 +1,9 @@
 ---
-
+# Global vars - users
 polaris_install_user: "wwwadm"
 polaris_service_user: "wwwsvr"
 
-# Global directories
+# Global vars - directories
 
 polaris_apps_home:      "/apps_ux"
 polaris_apps_data_home: "/apps_data"
@@ -28,7 +28,10 @@ polaris_apps_service_install_tmp_home: "{{polaris_apps_service_install_home}}/{{
 
 polaris_apps_service_data_home: "{{ polaris_apps_data_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
 polaris_apps_service_logs_home: "{{ polaris_apps_logs_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
+
+# Port number should be overriden by playbook by using role that defines one
 polaris_apps_service_port: "8080"
+something: ""
 
 polaris_control_handler: "s6"
 

@@ -1,4 +1,9 @@
 ---
+- name: Ensure create_project_directories was called before
+  fail:
+    msg: "Error: create_project_directories must be called before!"
+  when: not role_create_project_directories_called | default(false) | bool
+
 - name: Get Latest Tomcat Minor Version
   shell: "curl -s {{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
@@ -117,3 +122,7 @@
     service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
     service_control_user: "{{ tomcat_run_user }}"
     service_control_handler: "{{ tomcat_handler_style }}"
+
+- name: Mark tomcat as called
+  set_fact:
+    role_tomcat_called: true

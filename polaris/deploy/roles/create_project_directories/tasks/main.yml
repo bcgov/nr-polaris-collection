@@ -23,8 +23,6 @@
     - "{{ pd_apps_project_home }}"
     - "{{ pd_apps_service_home }}"
     - "{{ pd_apps_service_install_home }}"
-    - "{{ pd_apps_service_logs_home }}"
-    - "{{ pd_apps_service_data_home }}"
 
 - name: "set version {{ pd_apps_service_install_home }} as current"
   ansible.builtin.file:
@@ -58,3 +56,7 @@
   become_user: "{{ pd_install_user }}"
   when:
     - found_dirs.files | count > 3
+
+- name: Mark create_project_directories as called
+  set_fact:
+    role_create_project_directories_called: true

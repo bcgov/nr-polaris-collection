@@ -1,4 +1,9 @@
 ---
+- name: Ensure create_project_directories was called before
+  fail:
+    msg: "Error: create_project_directories must be called before!"
+  when: not role_create_project_directories_called | default(false) | bool
+
 - name: 'Create JDK home directory: {{ jdk_home }}'
   file:
     path: '{{ jdk_home }}'
@@ -123,3 +128,7 @@
     _jdk_major_version: "{{ jdk_major_version }}"
     _jdk_url: "{{ jdk_package_link }}"
     _jdk_release_name: "{{ jdk_release_name }}"
+
+- name: Mark jdk as called
+  set_fact:
+    role_jdk_called: true

@@ -1,4 +1,9 @@
 ---
+- name: Ensure create_project_directories was called before
+  fail:
+    msg: "Error: create_project_directories must be called before!"
+  when: not role_create_project_directories_called | default(false) | bool
+
 - debug:
     msg: "Starting service {{ service_control_target }} ({{ service_control_handler }})"
   changed_when: true
