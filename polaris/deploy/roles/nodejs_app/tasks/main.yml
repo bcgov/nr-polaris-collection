@@ -39,11 +39,20 @@
     dest: "{{ nodejs_app_service_copy_src }}app.zip"
     format: zip
 
+- name: Check if the zip file exists on the local
+  ansible.builtin.command: ls -lh {{ nodejs_app_service_copy_src }}
+  register: zip_check
+  changed_when: false
+
+- name: Debug the output
+  ansible.builtin.debug:
+    var: zip_check.stdout
+
 - name: Copy zip file to remote server
   ansible.builtin.copy:
     src: "{{ nodejs_app_service_copy_src }}app.zip"
     dest: "{{ nodejs_app_service_install_tmp_home }}/app.zip"
-    mode: "0644"
+    mode: "0755"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
