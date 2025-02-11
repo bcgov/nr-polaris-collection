@@ -1,9 +1,6 @@
-# Tomcat
+# webapp - Install a war file for Tomcat
 
 Configures and deploys a WAR file to an existing Tomcat container
-The state of this role is: **Preview**
-
-*****
 
 ## Role Variables
 
@@ -21,8 +18,6 @@ The state of this role is: **Preview**
 | `webapp_user` | no | wwwadm | |
 | `webapp_configure_log4j_enabled` | no | True | If true, overwrite any existing `WEB-INF/classes/log4j2.xml` with template |
 | `webapp_configure_context_enabled` | no | True | If true, overwrite any existing `META-INF/context.xml` with template |
-
-*****
 
 ## `webapp_war` map
 
@@ -49,8 +44,6 @@ webapp_war:
       password: "{{ bootstrap_password }}"
 ```
 
-*****
-
 ## `webapp_war.jndi_resources` map
 
 | key | required | value (e.g.) | description |
@@ -67,8 +60,6 @@ webapp_war:
 | `max_idle` | no | 20 | |
 | `max_wait` | no | -1 | |
 
-
-*****
 
 ## Logging and the `webapp_war.loggers` map
 
@@ -112,7 +103,6 @@ The role can accept an optional list of JNDI resource maps that will create reso
 | `removeAbandoned` | no | yes | |
 | `removeAbandonedTimeout` | no | 60000 |
 
-*****
 
 ## Example Playbook
 ```yml

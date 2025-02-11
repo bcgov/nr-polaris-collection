@@ -1,21 +1,6 @@
-# Node.js installation
+# nodejs - Node.js installation
 
-Installs a specified version of Node.js, following Ministry conventions.
-
-This role observes a number of conventions:
-* Node.js will be installed to `nodejs_install_dir`, which defaults to `pd_service_install_directory`/nodejs;
-
-*****
-
-## Installation visualization
-
-```
-├─ /{{ apps_home }}/{{ pd_project_name }}/{{ pd_service_name }}/
-├─  ├─ <pd_service_install_directory>/
-|   |   ├─ {{ polaris_bin_folder }}/{{ nodejs_install_dir }}/...
-```
-
-*****
+Installs the specified version of Node.js, following Ministry conventions.
 
 ## Role Variables
 
@@ -28,10 +13,20 @@ This role observes a number of conventions:
 | `nodejs_version_number` | no default value                    |                                                                                                        |
 | `nodejs_install_dir`    | `nodejs_install_root`/nodejs        |                                                                                                        |
 | `nodejs_webapp_dir`     | `nodejs_install_root`/webapps       |                                                                                                        |
+## Dependencies
 
-*****
+This role's default values are dependant on the values in the common role.
 
-## Example Playbook
+## Installation visualization
+
+```
+├─ /{{ apps_home }}/{{ pd_project_name }}/{{ pd_service_name }}/
+├─  ├─ <pd_service_install_directory>/
+|   |   ├─ {{ polaris_bin_folder }}/{{ nodejs_install_dir }}/...
+```
+
+## Example Playbooks
+
 ```yml
 ---
 - hosts: all

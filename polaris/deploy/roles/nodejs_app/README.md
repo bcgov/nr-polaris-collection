@@ -1,4 +1,4 @@
-# Node.js Application installation
+# nodejs_app Node.js Application installation
 
 Installs a Node.js application, following Ministry conventions.
 
@@ -6,22 +6,6 @@ This role observes a number of conventions:
 * Node.js will be installed to `nodejs_install_dir`, which defaults to `pd_service_install_directory`/nodejs;
 * Logs are written to `pd_service_logs`/, referenced by `nodejs_log_dir`;
 * Webapps are installed to `pd_service_install_directory`/webapps, referenced by `nodejs_webapp_dir`
-
-*****
-
-## Installation visualization
-
-```
-.
-├─ <pd_service_install_directory>/
-|   ├─ bin/<nodejs_install_dir>/
-|   |   ├─ bin/
-|   ├─ # exists outside of the nodejs directory to allow easier upgrades of the container
-└─ <pd_service_logs>/
-    ├─ nodejs.log
-```
-
-*****
 
 ## Role Variables
 
@@ -35,7 +19,27 @@ This role observes a number of conventions:
 | `nodejs_install_dir`    | `nodejs_install_root`/nodejs        |                                                                                                        |
 | `nodejs_webapp_dir`     | `nodejs_install_root`/webapps       |                                                                                                        |
 
-*****
+## Tasks
+
+The role performs the following tasks:
+
+
+
+## Dependencies
+
+This role's default values are dependant on the values in the common role.
+
+## Installation visualization
+
+```
+.
+├─ <pd_service_install_directory>/
+|   ├─ bin/<nodejs_install_dir>/
+|   |   ├─ bin/
+|   ├─ # exists outside of the nodejs directory to allow easier upgrades of the container
+└─ <pd_service_logs>/
+    ├─ nodejs.log
+```
 
 ## Example Playbook
 ```yml

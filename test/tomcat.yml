@@ -7,10 +7,10 @@
 
   roles:
     - role: create_project_directories
-    - name: port_manager
-    - name: jdk
+    - role: port_manager
+    - role: jdk
       vars:
         jdk_major_version: '8'
-    - name: tomcat
+    - role: tomcat
       vars:
         tomcat_major_version: '9'

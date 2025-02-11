@@ -1,4 +1,4 @@
-# Tomcat
+# tomcat - Install tomcat
 
 Installs a specified version of Tomcat, following Ministry conventions. Optionally, an arbitrary number of webapps may be installed.
 
@@ -12,40 +12,6 @@ This role observes a number of conventions:
 * A JDK will not be installed as part of this role, it must be provided (i.e. by using the [jdk role](../jdk)).
 * Webapps are installed to `pd_service_install_directory`/webapps, referenced by `tomcat_webapp_dir`
 * A default port of 8001 is applied, but it is **strongly** recommended that this be provided at deploy time by setting a variable of `tomcat_https_port`
-
-The state of this role is: **Preview**
-* Only HTTPS is supported
-* Only Tomcat 8.5.20 is supported
-
-*****
-
-## Installation visualization
-
-```
-.
-├─ <pd_service_install_directory>/
-|   ├─ <tomcat_install_dir>/
-|   |   ├─ bin/
-|   |   |   ├─ catalina.sh
-|   |   |   ├─ setenv.sh
-|   |   |   ├─ startup.sh
-|   |   |   └─ shutdown.sh
-|   |   └─ conf/
-|   |       ├─ context.xml
-|   |       ├─ server.xml
-|   |       └─ logging.properties
-|   ├─ webapps/   # exists outside of the tomcat directory to allow easier upgrades of the container
-|   └─ jdk/       # this folder is assumbed to exist by convention, but it will not be created by the role. Override it by setting tomcat_java_home
-├─ <pd_service_data>/
-|   └─ <tomcat_data_dir>/
-|       ├─ temp/
-|       └─ work/
-└─ <pd_service_logs>/
-    ├─ localhost.access.log
-    └─ catalina.out
-```
-
-*****
 
 ## Role Variables
 
@@ -76,8 +42,6 @@ The state of this role is: **Preview**
 | `tomcat_compressibleMimeType` | text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml | The value is a comma separated list of MIME types for which HTTP compression may be used. |
 | `tomcat_env_dict` | {} | Dictionary of values to output as environment variables in setenv.sh for tomcat applications to use. |
 
-*****
-
 ## `tomcat_webapps` map
 This role can deploy an arbitrary number of webapps to the Tomcat container, by accepting an optional list of webapps via the `tomcat_webapps` property. If provided, each listen item must contain a map with the following structure:
 
@@ -90,7 +54,6 @@ This role can deploy an arbitrary number of webapps to the Tomcat container, by 
 
 **Note**: Webapps will be extracted to the Tomcat webapps directory, but it is up to the calling playbook to perform any necessary configuration.
 
-*****
 
 ## JNDI Resources
 The role can accept an optional list of JNDI resource maps that will create resource entries in the container's server.xml file.
@@ -109,7 +72,31 @@ The role can accept an optional list of JNDI resource maps that will create reso
 | `max_idle` | no | 20 | |
 | `max_wait` | no | -1 | |
 
-*****
+## Installation visualization
+
+```
+.
+├─ <pd_service_install_directory>/
+|   ├─ <tomcat_install_dir>/
+|   |   ├─ bin/
+|   |   |   ├─ catalina.sh
+|   |   |   ├─ setenv.sh
+|   |   |   ├─ startup.sh
+|   |   |   └─ shutdown.sh
+|   |   └─ conf/
+|   |       ├─ context.xml
+|   |       ├─ server.xml
+|   |       └─ logging.properties
+|   ├─ webapps/   # exists outside of the tomcat directory to allow easier upgrades of the container
+|   └─ bin/jdk    # this folder is assumbed to exist by convention, but it will not be created by the role. Override it by setting tomcat_java_home
+├─ <pd_service_data>/
+|   └─ <tomcat_data_dir>/
+|       ├─ temp/
+|       └─ work/
+└─ <pd_service_logs>/
+    ├─ localhost.access.log
+    └─ catalina.out
+```
 
 ## Example Playbook
 ```yml

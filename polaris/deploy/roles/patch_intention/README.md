@@ -1,10 +1,6 @@
-# Ansible Role: patch_intention
+# patch_intention - Send intention patch to NR Broker
 
 This Ansible role is responsible for generating and sending a PATCH request to the NR Broker. It takes input variables to customize the payload sent in the request.
-
-## Requirements
-
-This role requires the `nr-polaris-collection` Ansible collection to be installed on the system where it will be executed.
 
 ## Role Variables
 
