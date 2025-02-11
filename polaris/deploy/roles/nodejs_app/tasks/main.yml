@@ -33,14 +33,8 @@
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
 
-- name: Archive Node.js application locally
-  community.general.archive:
-    path: "{{ nodejs_app_service_copy_src }}"
-    dest: "{{ nodejs_app_service_copy_src }}app.zip"
-    format: zip
-
 - name: Check if the zip file exists on the local
-  ansible.builtin.command: ls -lh {{ nodejs_app_service_copy_src }}
+  ansible.builtin.command: ls -lh /ansible/downloads/app.zip
   register: zip_check
   changed_when: false
 
@@ -50,7 +44,7 @@
 
 - name: Copy zip file to remote server
   ansible.builtin.copy:
-    src: "{{ nodejs_app_service_copy_src }}app.zip"
+    src: "/ansible/downloads/app.zip"
     dest: "{{ nodejs_app_service_install_tmp_home }}/app.zip"
     mode: "0755"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
