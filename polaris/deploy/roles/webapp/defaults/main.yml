@@ -23,3 +23,5 @@ webapp_user:                      "{{ polaris_install_user }}"
 ojdbc_file: "ojdbc7-12.1.3-0-0.jar"
 ojdbc_url: "http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/com.oracle"
 skip_ojdbc_install: false
+
+webapp_artifact_name: "{{ lookup('ansible.builtin.env', 'PODMAN_ARTIFACT_NAME') }}"
