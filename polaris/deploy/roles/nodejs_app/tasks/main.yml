@@ -37,6 +37,8 @@
   ansible.builtin.command: ls -lh /ansible/downloads/app.zip
   register: zip_check
   changed_when: false
+  become: yes
+  become_user: "{{ nodejs_app_install_user }}"
 
 - name: Debug the output
   ansible.builtin.debug:
