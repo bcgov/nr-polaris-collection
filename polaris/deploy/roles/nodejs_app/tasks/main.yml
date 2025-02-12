@@ -34,9 +34,10 @@
   become_user: "{{ nodejs_app_install_user }}"
 
 - name: Archive the pulled package locally
-  shell: |
-    zip -r {{ nodejs_app_service_zip_path }}app.zip {{ nodejs_app_service_copy_src }}*
-    chmod 755 {{ nodejs_app_service_zip_path }}app.zip
+  archive:
+    path: "{{ nodejs_app_service_copy_src }}"
+    dest: "{{ nodejs_app_service_zip_path }}app.zip"
+    format: zip
   delegate_to: localhost
   register: zip_output
   changed_when: zip_output.rc == 0
@@ -49,6 +50,7 @@
   ansible.builtin.find:
     paths: "{{ nodejs_app_service_zip_path }}"
     file_type: any  # List both files and directories
+  delegate_to: localhost
   register: zip_folder_contents
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
@@ -63,14 +65,6 @@
     src: "{{ nodejs_app_service_zip_path }}app.zip"
     dest: "{{ nodejs_app_service_install_app_home }}"
     extra_opts: [ "-o" ]  # Overwrite existing files if needed
-    remote_src: yes
-  become: yes
-  become_user: "{{ nodejs_app_install_user }}"
-
-- name: Remove zip file from remote server (optional)
-  ansible.builtin.file:
-    path: "{{ nodejs_app_service_install_tmp_home }}/app.zip"
-    state: absent
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
 
