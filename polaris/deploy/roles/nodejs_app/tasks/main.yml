@@ -53,10 +53,6 @@
   ansible.builtin.debug:
     var: folder_contents.files
 
-- name: Debug the output
-  ansible.builtin.debug:
-    var: zip_check.stdout
-
 - name: Copy zip file to remote server
   ansible.builtin.copy:
     src: "/tmp/app.zip"
