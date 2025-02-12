@@ -5,7 +5,7 @@
     state: 'running'
   listen: 'start service - s6'
   become: yes
-  become_user: "{{ service_control_user }}"
+  become_user: "{{ service_control_service_user }}"
 
 - name: restart app via s6
   s6_service:
@@ -13,7 +13,7 @@
     state: 'restarted'
   listen: 'restart service - s6'
   become: yes
-  become_user: "{{ service_control_user }}"
+  become_user: "{{ service_control_service_user }}"
 
 - name: stop app via s6
   s6_service:
@@ -21,7 +21,7 @@
     state: 'stopped'
   listen: 'stop service - s6'
   become: yes
-  become_user: "{{ service_control_user }}"
+  become_user: "{{ service_control_service_user }}"
 
 - name: start app using script
   command:
@@ -29,7 +29,7 @@
     chdir: "/"
   listen: 'start service - script'
   become: yes
-  become_user: "{{ service_control_user }}"
+  become_user: "{{ service_control_service_user }}"
 
 - name: stop app using script
   command:
@@ -37,7 +37,7 @@
     chdir: "/"
   listen: 'stop service - script'
   become: yes
-  become_user: "{{ service_control_user }}"
+  become_user: "{{ service_control_service_user }}"
   ignore_errors: yes
 
 - name: restart app using script
@@ -46,5 +46,5 @@
     chdir: "/"
   listen: 'restart service - script'
   become: yes
-  become_user: "{{ service_control_user }}"
+  become_user: "{{ service_control_service_user }}"
   ignore_errors: yes
