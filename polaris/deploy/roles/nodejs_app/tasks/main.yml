@@ -48,7 +48,7 @@
 
 - name: List contents of the folder
   ansible.builtin.find:
-    paths: "/ansible/tmp"  # Replace with your actual folder path
+    paths: "/ansible/tmp/"
     file_type: any  # List both files and directories
   register: folder_contents
   become: yes
