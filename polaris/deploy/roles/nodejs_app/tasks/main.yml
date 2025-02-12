@@ -46,18 +46,17 @@
     var: folder_contents.files
 
 - name: Archive the pulled package locally
-  community.general.archive:
-    path: "{{ nodejs_app_service_copy_src }}"
-    dest: "{{ nodejs_app_service_zip_path }}app.zip"
-    format: zip
-    mode: '0755'
+  shell: |
+    zip -r {{ nodejs_app_service_zip_path }}app.zip {{ nodejs_app_service_copy_src }}*
+    chmod 755 {{ nodejs_app_service_zip_path }}app.zip
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
-  register: archive_result
+  register: zip_output
+  changed_when: zip_output.rc == 0
 
-- name: Show archive result
+- name: Show zip result
   ansible.builtin.debug:
-    var: archive_result
+    var: zip_output
 
 - name: List contents of the zip folder
   ansible.builtin.find:
@@ -71,20 +70,13 @@
   ansible.builtin.debug:
     var: zip_folder_contents.files
 
-- name: Copy zip file to remote server
-  ansible.builtin.copy:
-    src: "{{ nodejs_app_service_zip_path }}app.zip"
-    dest: "{{ nodejs_app_service_install_tmp_home }}/app.zip"
-    mode: "0755"
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
-  become: yes
-  become_user: "{{ nodejs_app_install_user }}"
-
 - name: Unzip application on remote server
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   ansible.builtin.unarchive:
-    src: "{{ nodejs_app_service_install_tmp_home }}/app.zip"
+    src: "{{ nodejs_app_service_zip_path }}app.zip"
     dest: "{{ nodejs_app_service_install_app_home }}"
     extra_opts: [ "-o" ]  # Overwrite existing files if needed
+    remote_src: yes
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
 
