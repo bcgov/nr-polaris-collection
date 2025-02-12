@@ -33,11 +33,24 @@
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
 
+- name: List contents of the oci package folder
+  ansible.builtin.find:
+    paths: "{{ nodejs_app_service_copy_src }}"
+    file_type: any  # List both files and directories
+  register: folder_contents
+  become: yes
+  become_user: "{{ nodejs_app_install_user }}"
+
+- name: Show oci package folder contents
+  ansible.builtin.debug:
+    var: folder_contents.files
+
 - name: Archive the pulled package locally
-  ansible.builtin.archive:
+  community.general.archive:
     path: "{{ nodejs_app_service_copy_src }}"
-    dest: "/ansible/tmp/app.zip"
+    dest: "{{ nodejs_app_service_zip_path }}app.zip"
     format: zip
+    mode: '0755'
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
   register: archive_result
@@ -46,21 +59,21 @@
   ansible.builtin.debug:
     var: archive_result
 
-- name: List contents of the folder
+- name: List contents of the zip folder
   ansible.builtin.find:
-    paths: "/ansible/tmp/"
+    paths: "{{ nodejs_app_service_zip_path }}"
     file_type: any  # List both files and directories
-  register: folder_contents
+  register: zip_folder_contents
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
 
-- name: Show folder contents
+- name: Show zip folder contents
   ansible.builtin.debug:
-    var: folder_contents.files
+    var: zip_folder_contents.files
 
 - name: Copy zip file to remote server
   ansible.builtin.copy:
-    src: "/ansible/tmp/app.zip"
+    src: "{{ nodejs_app_service_zip_path }}app.zip"
     dest: "{{ nodejs_app_service_install_tmp_home }}/app.zip"
     mode: "0755"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
@@ -69,16 +82,15 @@
 
 - name: Unzip application on remote server
   ansible.builtin.unarchive:
-    src: "/ansible/tmp/app.zip"
+    src: "{{ nodejs_app_service_install_tmp_home }}/app.zip"
     dest: "{{ nodejs_app_service_install_app_home }}"
-    remote_src: yes
     extra_opts: [ "-o" ]  # Overwrite existing files if needed
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
 
 - name: Remove zip file from remote server (optional)
   ansible.builtin.file:
-    path: "/ansible/tmp/app.zip"
+    path: "{{ nodejs_app_service_install_tmp_home }}/app.zip"
     state: absent
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
