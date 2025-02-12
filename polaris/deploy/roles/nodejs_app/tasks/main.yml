@@ -34,19 +34,24 @@
   become_user: "{{ nodejs_app_install_user }}"
 
 - name: Archive the pulled package locally
-  community.general.archive:
+  ansible.builtin.archive:
     path: "{{ nodejs_app_service_copy_src }}"
     dest: "/tmp/app.zip"
     format: zip
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
 
-- name: Check if the zip file exists on the local
-  ansible.builtin.command: ls -lh /tmp/app.zip
-  register: zip_check
-  changed_when: false
+- name: List contents of the folder
+  ansible.builtin.find:
+    paths: "/tmp"  # Replace with your actual folder path
+    file_type: any  # List both files and directories
+  register: folder_contents
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
+
+- name: Show folder contents
+  ansible.builtin.debug:
+    var: folder_contents.files
 
 - name: Debug the output
   ansible.builtin.debug:
