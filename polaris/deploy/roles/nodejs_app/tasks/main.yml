@@ -40,7 +40,6 @@
     format: zip
   delegate_to: localhost
   register: zip_output
-  changed_when: zip_output.rc == 0
 
 - name: Show zip result
   ansible.builtin.debug:
