@@ -2,6 +2,11 @@
 - ansible.builtin.debug:
     msg: "Service installation directory: {{ pd_apps_service_install_home }}"
 
+- name: Fail if polaris_apps_service_install_home is the same as polaris_apps_service_current_home
+  fail:
+    msg: "The variable 'polaris_apps_service_install_home' is the same as 'polaris_apps_service_current_home'."
+  when: polaris_apps_service_install_home == polaris_apps_service_current_home
+
 - name: Remove existing install directory if present
   ansible.builtin.file:
     path: "{{ item }}"

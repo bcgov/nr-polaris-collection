@@ -42,7 +42,7 @@
 
 - name: restart app using script
   shell:
-    cmd: "{{ service_control_service_script_stop }}; sleep 40; {{ service_control_service_script_start }}"
+    cmd: "{{ service_control_service_script_stop }}; sleep {{ service_control_restart_delay | default(40) }}; {{ service_control_service_script_start }}"
     chdir: "/"
   listen: 'restart service - script'
   become: yes

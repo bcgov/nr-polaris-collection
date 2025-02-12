@@ -1,6 +1,6 @@
-# tomcat - Install tomcat
+# tomcat - Install and Configure Apache Tomcat
 
-Installs a specified version of Tomcat, following Ministry conventions. Optionally, an arbitrary number of webapps may be installed.
+This Ansible role automates the installation and configuration of Apache Tomcat on a Linux system, following Ministry conventions. It allows for the installation of multiple web applications and supports HTTPS configuration, logging, and JNDI resources.
 
 This role observes a number of conventions:
 * Tomcat will be installed to `tomcat_install_dir`, which defaults to `pd_service_install_directory`/tomcat;
