@@ -1,8 +1,8 @@
 ---
-- name: Ensure create_project_directories was called before
+- name: Validate service_control_action
   fail:
-    msg: "Error: create_project_directories must be called before!"
-  when: not role_create_project_directories_called | default(false) | bool
+    msg: "Invalid service_control_action '{{ service_control_action }}'. Allowed values: start, stop, restart, setup"
+  when: service_control_action not in ['start', 'stop', 'restart', 'setup']
 
 - debug:
     msg: "Starting service {{ service_control_target }} ({{ service_control_handler }})"
@@ -11,16 +11,16 @@
   when: service_control_action == 'start'
 
 - debug:
-    msg: "Restart service {{ service_control_target }} ({{ service_control_handler }})"
-  changed_when: true
-  notify: "restart service - {{ service_control_handler }}"
-  when: service_control_action == 'restart'
-
-- debug:
     msg: "Stop service {{ service_control_target }} ({{ service_control_handler }})"
   changed_when: true
   notify: "stop service - {{ service_control_handler }}"
   when: service_control_action == 'stop'
+
+- debug:
+    msg: "Restart service {{ service_control_target }} ({{ service_control_handler }})"
+  changed_when: true
+  notify: "restart service - {{ service_control_handler }}"
+  when: service_control_action == 'restart'
 
 - name: Setup handler
   ansible.builtin.include_tasks: "handler_setup_{{ service_control_handler }}.yml"
