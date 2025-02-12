@@ -11,7 +11,7 @@ Only variables users are expected to be set are listed here.
 |-------------------------------------|------------------------------------|--------------------|
 | `polaris_apps_project_name`         | The project name (folder name)     | `` (must be set)   |
 | `polaris_apps_service_name`         | The service name (folder name)     | `` (must be set)   |
-| `polaris_apps_service_install_name` | The install name (folder name)     | `` (must be set)   |
+| `polaris_apps_service_install_name` | The install name (folder name)     | `{{polaris_current_folder}}` (must be set if installing)   |
 | `polaris_apps_service_port`         | Port number. May use role to set.  | `8080`             |
 
 

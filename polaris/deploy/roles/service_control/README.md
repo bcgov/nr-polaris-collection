@@ -35,6 +35,8 @@ This role performs the following tasks if the action is `setup`:
 
 ## Example Playbooks
 
+The following playbooks assume that the variables `polaris_apps_service_name` and `polaris_apps_project_name` are set. The variable `polaris_apps_service_current_home` will be set the correct location by the common role.
+
 ### Start the Service
 ```yaml
 - hosts: all
