@@ -33,24 +33,11 @@
   become: yes
   become_user: "{{ nodejs_app_install_user }}"
 
-- name: List contents of the oci package folder
-  ansible.builtin.find:
-    paths: "{{ nodejs_app_service_copy_src }}"
-    file_type: any  # List both files and directories
-  register: folder_contents
-  become: yes
-  become_user: "{{ nodejs_app_install_user }}"
-
-- name: Show oci package folder contents
-  ansible.builtin.debug:
-    var: folder_contents.files
-
 - name: Archive the pulled package locally
   shell: |
     zip -r {{ nodejs_app_service_zip_path }}app.zip {{ nodejs_app_service_copy_src }}*
     chmod 755 {{ nodejs_app_service_zip_path }}app.zip
-  become: yes
-  become_user: "{{ nodejs_app_install_user }}"
+  delegate_to: localhost
   register: zip_output
   changed_when: zip_output.rc == 0
 
