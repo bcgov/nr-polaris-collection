@@ -51,8 +51,6 @@
     file_type: any  # List both files and directories
   delegate_to: localhost
   register: zip_folder_contents
-  become: yes
-  become_user: "{{ nodejs_app_install_user }}"
 
 - name: Show zip folder contents
   ansible.builtin.debug:
