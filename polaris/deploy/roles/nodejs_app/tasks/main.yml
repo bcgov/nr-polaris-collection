@@ -41,21 +41,6 @@
   delegate_to: localhost
   register: zip_output
 
-- name: Show zip result
-  ansible.builtin.debug:
-    var: zip_output
-
-- name: List contents of the zip folder
-  ansible.builtin.find:
-    paths: "{{ nodejs_app_service_zip_path }}"
-    file_type: any  # List both files and directories
-  delegate_to: localhost
-  register: zip_folder_contents
-
-- name: Show zip folder contents
-  ansible.builtin.debug:
-    var: zip_folder_contents.files
-
 - name: Unzip application on remote server
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   ansible.builtin.unarchive:
