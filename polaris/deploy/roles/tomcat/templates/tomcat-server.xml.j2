@@ -99,7 +99,7 @@
 
 {% if using_alt_app_dir %}
                 <Context path="/{{ context | regex_replace('#', '/') }}" docBase="{{ tomcat_webapp_dir }}/{{ alt_app_dir_name }}">
-                 {% for link in tomcat_jndi_resource_inks %}
+                 {% for link in tomcat_jndi_resource_links %}
                     <ResourceLink global="{{ link.global }}" name="{{ link.name }}" type="{{ link.type }}" />
                  {% endfor %}
                 </Context>

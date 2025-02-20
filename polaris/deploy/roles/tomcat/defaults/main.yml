@@ -59,6 +59,7 @@ tomcat_deployOnStartup:           yes
 tomcat_shutdown_port:             -1
 tomcat_keystore_pass:             "{{ ssc_keystore_pass | default(default_ssc_keystore_pass) }}"
 tomcat_jndi_resources:            []
+tomcat_jndi_resource_link:            []
 
 # logging.properties
 tomcat_configure_logging_properties:  yes
