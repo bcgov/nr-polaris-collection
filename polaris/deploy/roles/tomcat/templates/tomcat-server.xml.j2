@@ -98,7 +98,11 @@
                 workDir="{{ tomcat_work_dir }}" >
 
 {% if using_alt_app_dir %}
-                <Context path="/{{ context | regex_replace('#', '/') }}" docBase="{{ tomcat_webapp_dir }}/{{ alt_app_dir_name }}"></Context>
+                <Context path="/{{ context | regex_replace('#', '/') }}" docBase="{{ tomcat_webapp_dir }}/{{ alt_app_dir_name }}">
+                 {% for link in tomcat_jndi_resource_inks %}
+                    <ResourceLink global="{{ link.global }}" name="{{ link.name }}" type="{{ link.type }}" />
+                 {% endfor %}
+                </Context>
 {% endif %}
 
                 <Valve className="org.apache.catalina.valves.AccessLogValve"
