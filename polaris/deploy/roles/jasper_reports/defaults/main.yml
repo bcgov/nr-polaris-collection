@@ -1,12 +1,12 @@
 ---
-jasper_server_instance: "{{ jasper_server_instance | upper | default('') }}"
-jasper_project_name: "{{ jasper_project_name | upper | default('') }}"
-jasper_ds_0_url: "{{ lookup('ansible.builtin.env', 'PODMAN_cfg_jasper_ds_0_url') | default('') }}"
-jasper_ds_0_user: "{{ lookup('ansible.builtin.env', 'PODMAN_cfg_jasper_ds_0_user') | default('') }}"
-jasper_ds_0_password: "{{ lookup('ansible.builtin.env', 'PODMAN_cfg_jasper_ds_0_password') | default('') }}"
-jasper_deployer_url: "{{ lookup('ansible.builtin.env', 'PODMAN_cfg_jasper_deployer_url') | default('') }}"
-jasper_deployer_user: "{{ lookup('ansible.builtin.env', 'PODMAN_cfg_jasper_deployer_user') | default('') }}"
-jasper_deployer_password: "{{ lookup('ansible.builtin.env', 'PODMAN_cfg_jasper_deployer_password') | default('') }}"
+jasper_server_instance: ""
+jasper_project_name: ""
+jasper_ds_0_url: ""
+jasper_ds_0_user: ""
+jasper_ds_0_password: ""
+jasper_deployer_url: ""
+jasper_deployer_user: ""
+jasper_deployer_password: ""
 jasper_cookie_key: "{{ 'ROUTEID' if jasper_server_instance == 'NRSRS' else 'ROUTEID0' if jasper_server_instance == 'JCRS' else '' }}"
 jasper_route_id: ".1"
 
@@ -17,5 +17,6 @@ jasper_invalid_project_names:
   - HOME
   - Admin
   - Common
+  - ''
 
 jasper_staging_dir: "{{ playbook_dir }}/jasper-staging"
