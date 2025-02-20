@@ -1,6 +1,13 @@
 ---
 - name: Create packages
   block:
+  - name: Ensure all required inputs are valid or not blank
+    fail:
+      msg: "Error: invalid inputs"
+    when: |
+      jasper_server_instance not in ['JCRS', 'NRSRS'] or
+      jasper_project_name in jasper_invalid_project_names or jasper_project_name != jasper_project_name.upper()
+
   - name: Copy source files
     copy:
       src: "{{ item.src }}"
@@ -33,10 +40,10 @@
   block:
   - name: Ensure all required inputs are valid or not blank
     fail:
-      msg: "Error: server instance, project name, environment, or deployer credentials are invalid!"
+      msg: "Error: invalid inputs"
     when: |
-      jasper_server_instance == '' or jasper_server_instance not in ['JCRS', 'NRSRS'] or
-      jasper_project_name == '' or jasper_project_name in jasper_invalid_project_names or
+      jasper_server_instance not in ['JCRS', 'NRSRS'] or
+      jasper_project_name in jasper_invalid_project_names or jasper_project_name != jasper_project_name.upper() or
       jasper_ds_0_url == '' or
       jasper_ds_0_user == '' or
       jasper_ds_0_password == '' or
