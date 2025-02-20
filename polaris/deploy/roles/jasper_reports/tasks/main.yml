@@ -1,0 +1,152 @@
+---
+- name: Create packages
+  block:
+  - name: Copy source files
+    copy:
+      src: "{{ item.src }}"
+      dest: "{{ item.dest }}"
+    loop:
+      - { src: ../src/jasper-server/src/main/resources/, dest: "{{ jasper_staging_dir }}/main" }
+      - { src: ../src/jasper-server/src/main/common/, dest: "{{ jasper_staging_dir }}/main/resources/{{ jasper_server_instance }}/Common" }
+      - { src: ../src/jasper-server/src/main/template/, dest: "{{ jasper_staging_dir }}/_template" }
+      - { src: "../src/jasper-server/src/main/template/resources/{{ jasper_server_instance }}/Data_Sources", dest: "{{ jasper_staging_dir }}/main/resources/{{ jasper_server_instance }}" }
+
+  - name: Generate config files
+    template:
+      src: "templates/{{ jasper_server_instance }}_{{ jasper_project_name }}.xml.j2"
+      dest: "{{ item }}"
+    loop:
+      - "{{ jasper_staging_dir }}/_template/resources/{{ jasper_server_instance }}/Data_Sources/{{ jasper_server_instance }}_{{ jasper_project_name }}.xml"
+      - "{{ jasper_staging_dir }}/main/resources/{{ jasper_server_instance }}/Data_Sources/{{ jasper_server_instance }}_{{ jasper_project_name }}.xml"
+
+  - name: Create archives
+    archive:
+      path: "{{ item.path }}"
+      dest: "{{ item.dest }}"
+      format: zip
+    loop:
+      - { path: "{{ jasper_staging_dir }}/main/", dest: "{{ jasper_staging_dir }}/main.zip" }
+      - { path: "{{ jasper_staging_dir }}/_template/", dest: "{{ jasper_staging_dir}}/template.zip" }
+  tags: create_packages
+
+- name: Deploy packages
+  block:
+  - name: Ensure all required inputs are valid or not blank
+    fail:
+      msg: "Error: server instance, project name, environment, or deployer credentials are invalid!"
+    when: |
+      jasper_server_instance == '' or jasper_server_instance not in ['JCRS', 'NRSRS'] or
+      jasper_project_name == '' or jasper_project_name in jasper_invalid_project_names or
+      jasper_ds_0_url == '' or
+      jasper_ds_0_user == '' or
+      jasper_ds_0_password == '' or
+      jasper_deployer_url == '' or
+      jasper_deployer_user == '' or
+      jasper_deployer_password == '' or
+      jasper_cookie_key == '' or
+      jasper_route_id == ''
+
+  - name: Install xmllint on Alpine Linux
+    apk:
+      name: libxml2-utils
+      state: present
+    when: ansible_os_family == "Alpine"
+
+  - name: "Delete the reports and datasource on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    uri:
+      url: "{{ jasper_deployer_url }}/rest/resource/{{ item }}"
+      force_basic_auth: yes
+      user: "{{ jasper_deployer_user }}"
+      password: "{{ jasper_deployer_password }}"
+      method: DELETE
+      headers:
+        Cookie: "{{ jasper_cookie_key }}={{ jasper_route_id }}"
+      return_content: true
+      validate_certs: false
+    loop:
+      - "{{ jasper_server_instance }}/{{ jasper_project_name }}"
+      - "{{ jasper_server_instance }}/Data_Sources/{{ jasper_server_instance }}_{{ jasper_project_name }}"
+    ignore_errors: true
+
+  - name: "Import the template and main packages on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    uri:
+      url: "{{ jasper_deployer_url }}/rest_v2/import"
+      force_basic_auth: yes
+      user: "{{ jasper_deployer_user }}"
+      password: "{{ jasper_deployer_password }}"
+      method: POST
+      headers:
+        Content-Type: application/zip
+        Cookie: "{{ jasper_cookie_key }}={{ jasper_route_id }}"
+      src: "{{ item }}"
+      return_content: true
+      validate_certs: false
+    register: import_responses
+    loop:
+      - "{{ jasper_staging_dir }}/template.zip"
+      - "{{ jasper_staging_dir }}/main.zip"
+
+  - name: "Clear the import contents for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    set_fact:
+      import_contents: []
+
+  - name: "Get the content for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    set_fact:
+      import_contents: "{{ import_contents | default([]) + [{ 'file': item.item, 'content': item.content }] }}"
+    loop: "{{ import_responses.results }}"
+    loop_control:
+      label: "file: {{ item.item }}, content: {{ item.content | default('') }}"
+
+  - name: "Extract the state id for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    shell: |
+      echo "{{ item.content }}" \
+      | sed 's/<?xml version=1.0 encoding=UTF-8 standalone=yes?>/<?xml version="1.0" encoding="UTF-8" standalone="yes"?>/' \
+      | xmllint --xpath '/state/id/text()' -
+    register: import_routes
+    loop: "{{ import_contents }}"
+
+  - name: pause
+    pause:
+      seconds: 5
+
+  - name: "Check the import status for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    uri:
+      url: "{{ jasper_deployer_url }}/rest_v2/import/{{ item.stdout }}/state"
+      force_basic_auth: yes
+      user: "{{ jasper_deployer_user }}"
+      password: "{{ jasper_deployer_password }}"
+      method: GET
+      headers:
+        Cookie: "{{ jasper_cookie_key }}={{ jasper_route_id }}"
+      return_content: true
+      validate_certs: false
+    register: import_statuses
+    loop: "{{ import_routes.results }}"
+    loop_control:
+      label: "file: {{ item.item.file }}, state_id: {{ item.stdout }}"
+
+  - name: "Extract the message for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    shell: |
+      echo "{{ item.content }}" \
+      | sed 's/<?xml version=1.0 encoding=UTF-8 standalone=yes?>/<?xml version="1.0" encoding="UTF-8" standalone="yes"?>/' \
+      | xmllint --xpath '/state/message/text()' -
+    register: message_routes
+    loop: "{{ import_statuses.results }}"
+    loop_control:
+      label: "file: {{ item.item.item.file }}, state_id: {{ item.item.stdout }}"
+
+  - name: "Print the import status for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    debug:
+      msg: "file: {{ item.item.item.item.file }}, state_id: {{ item.item.item.stdout }}, message: {{ item.stdout }}"
+    tags: debug
+    loop: "{{ message_routes.results }}"
+    loop_control:
+      label: "file: {{ item.item.item.item.file }}, state_id: {{ item.item.item.stdout }}, message: {{ item.stdout }}"
+    failed_when: item.stdout != "Import succeeded."
+  tags: deploy_packages
+
+- name: Delete staging directory
+  file:
+    path: "{{ jasper_staging_dir}}"
+    state: absent
+  tags: delete_staging_dir
