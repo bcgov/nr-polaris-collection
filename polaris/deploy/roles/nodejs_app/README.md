@@ -6,6 +6,8 @@ If the application needs a different entrypoint, update nodejs_app_service_entry
 
 ## Role Variables
 
+All variables are prefixed with `nodejs_app_` to indicate they are specific to this role.
+
 | Variable Name                            | Description                                                  | Default Value  |
 |------------------------------------------|--------------------------------------------------------------|---------------|
 | `nodejs_app_service_copy_src`            | Source directory containing the application files            | `/ansible/downloads/app/` |

@@ -6,6 +6,8 @@ If a specific version of Node.js is required, override nodejs_version_number in 
 
 ## Role Variables
 
+All variables are prefixed with `nodejs_` to indicate they are specific to this role.
+
 | Variable Name           | Description                         | Default Value            |
 |-------------------------|-------------------------------------|--------------------------|
 | `nodejs_version_number` | The node version to install         | `latest-v22.x`           |

@@ -4,6 +4,8 @@ Configures and deploys a WAR file to an existing Tomcat container
 
 ## Role Variables
 
+All variables are prefixed with `webapp_` to indicate they are specific to this role.
+
 | variable | required | default | description |
 | -------- | -------- | ------- | ----------- |
 | `webapp_war` | yes | {} | See [webapp_war map](#webapp-war-map) |

@@ -10,6 +10,8 @@ This role deploys reports to JasperReports Server instances.
 
 ## Role Variables
 
+All variables are prefixed with `jasper_` to indicate they are specific to this role.
+
 The following variables can be set to customize the role's behavior:
 
 - `jasper_server_instance`: The instance of the JasperReports Server. Must be either 'JCRS' or 'NRSRS'.

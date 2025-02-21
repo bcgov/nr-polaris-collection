@@ -6,6 +6,8 @@ The assigned port can be accessed via `polaris_apps_service_port` for use in app
 
 ## **Role Variables**
 
+All variables are prefixed with `portmanager_` to indicate they are specific to this role.
+
 These variables control the behavior of the port management process and can be overridden as needed:
 
 | Variable Name                  | Description                                                | Default Value                                    |

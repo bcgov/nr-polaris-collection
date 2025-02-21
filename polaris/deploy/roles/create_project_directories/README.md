@@ -4,6 +4,8 @@ This Ansible role ensures the correct directory structure for a service is in pl
 
 ## Role Variables
 
+All variables are prefixed with `pd_` to indicate they are specific to this role.
+
 | Variable Name                     | Description                                | Default Value                           |
 |-----------------------------------|--------------------------------------------|-----------------------------------------|
 | `pd_install_user`                 | User to perform the directory operations   | `{{polaris_install_user}}`              |
