@@ -5,6 +5,8 @@ to include this role as it is listed as a dependency of most roles.
 
 ## Role Variables
 
+All common variables are prefixed with `polaris_` to indicate they are specific to this role.
+
 Only variables users are expected to be set are listed here.
 
 | Variable Name                       | Description                        | Default Value      |

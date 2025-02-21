@@ -1,6 +1,6 @@
 # webade-connection-jar
 
-Creates and installs a WebADE connection JAR file.  
+Creates and installs a WebADE connection JAR file.
 
 The password should be entered via prompt in the playbook.
 
@@ -10,6 +10,8 @@ The state of this role is: **Preview**
 
 
 ## Role Variables
+
+All variables are prefixed with `webade_` to indicate they are specific to this role.
 
 ### Required
 

@@ -4,6 +4,8 @@ This Ansible role manages a service using either the **s6 service manager** or c
 
 ## Role Variables
 
+All variables are prefixed with `service_control_` to indicate they are specific to this role.
+
 The following variables can be customized in your playbook or inventory:
 
 | Variable | Default | Description |
