@@ -44,7 +44,7 @@ using_alt_app_dir:          false
 default_ssc_keystore_pass:  "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
 # setenv.sh
-tomcat_java_home:         "{{ tomcat_install_root }}/bin/jdk" # educated assumption based on conventions
+tomcat_java_home:         "{{ tomcat_install_root }}/jdk" # educated assumption based on conventions
 tomcat_env_dict:          {}
 
 # server.xml
