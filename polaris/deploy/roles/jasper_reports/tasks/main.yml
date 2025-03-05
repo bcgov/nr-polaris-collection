@@ -58,7 +58,6 @@
       name: libxml2-utils
       state: present
     when: ansible_os_family == "Alpine"
-    # environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
 
   - name: "Delete the reports and datasource on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     uri:
@@ -74,8 +73,6 @@
     loop:
       - "{{ jasper_server_instance }}/{{ jasper_project_name }}"
       - "{{ jasper_server_instance }}/Data_Sources/{{ jasper_server_instance }}_{{ jasper_project_name }}"
-    environment:
-      NO_PROXY: "https://dlvrapps.nrs.bcgov,https://testapps.nrs.bcgov,https://apps.nrs.bcgov"
     ignore_errors: true
 
   - name: "Import the template and main packages on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
@@ -95,8 +92,6 @@
     loop:
       - "{{ jasper_staging_dir }}/template.zip"
       - "{{ jasper_staging_dir }}/main.zip"
-    environment:
-      NO_PROXY: "https://dlvrapps.nrs.bcgov,https://testapps.nrs.bcgov,https://apps.nrs.bcgov"
 
   - name: "Clear the import contents for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     set_fact:
@@ -136,8 +131,6 @@
     loop: "{{ import_routes.results }}"
     loop_control:
       label: "file: {{ item.item.file }}, state_id: {{ item.stdout }}"
-    environment:
-      NO_PROXY: "https://dlvrapps.nrs.bcgov,https://testapps.nrs.bcgov,https://apps.nrs.bcgov"
 
   - name: "Extract the message for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     shell: |
