@@ -20,11 +20,3 @@ jasper_invalid_project_names:
   - ''
 
 jasper_staging_dir: "{{ playbook_dir }}/jasper-staging"
-
-proxy_env_dev_test:
-  HTTPS_PROXY: "http://test-forwardproxy.nrs.bcgov:23128"
-  NO_PROXY: "https://dlvrapps.nrs.bcgov,https://testapps.nrs.bcgov"
-
-proxy_env_prod:
-  HTTPS_PROXY: "http://forwardproxy.nrs.bcgov:23128"
-  NO_PROXY: "https://apps.nrs.bcgov"
