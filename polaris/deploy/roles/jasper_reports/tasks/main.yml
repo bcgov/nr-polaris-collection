@@ -59,6 +59,24 @@
       state: present
     when: ansible_os_family == "Alpine"
 
+  - name: "Get server info for {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    uri:
+      url: "{{ jasper_deployer_url }}/rest_v2/serverInfo"
+      force_basic_auth: yes
+      user: "{{ jasper_deployer_user }}"
+      password: "{{ jasper_deployer_password }}"
+      method: GET
+      headers:
+        Cookie: "{{ jasper_cookie_key }}={{ jasper_route_id }}"
+      return_content: true
+      validate_certs: false
+    register: server_info
+    failed_when: server_info.status != 200
+
+  - name: Print server info for {{ jasper_server_instance }} server instance node {{ jasper_route_id }}
+    debug:
+      msg: "Requesting URL: {{ server_info.url }}"
+
   - name: "Delete the reports and datasource on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     uri:
       url: "{{ jasper_deployer_url }}/rest/resource/{{ item }}"
@@ -67,13 +85,16 @@
       password: "{{ jasper_deployer_password }}"
       method: DELETE
       headers:
+        Content-Type: application/x-www-form-urlencoded
         Cookie: "{{ jasper_cookie_key }}={{ jasper_route_id }}"
       return_content: true
       validate_certs: false
+      status_code: [200, 404]
     loop:
+      - "{{ jasper_server_instance }}/{{ jasper_project_name }}/Reports"
+      - "{{ jasper_server_instance }}/{{ jasper_project_name }}/Input_Controls"
       - "{{ jasper_server_instance }}/{{ jasper_project_name }}"
       - "{{ jasper_server_instance }}/Data_Sources/{{ jasper_server_instance }}_{{ jasper_project_name }}"
-    ignore_errors: true
 
   - name: "Import the template and main packages on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     uri:
