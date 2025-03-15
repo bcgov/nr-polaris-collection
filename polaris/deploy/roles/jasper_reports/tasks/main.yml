@@ -85,6 +85,7 @@
       password: "{{ jasper_deployer_password }}"
       method: DELETE
       headers:
+        Content-Type: application/x-www-form-urlencoded
         Cookie: "{{ jasper_cookie_key }}={{ jasper_route_id }}"
       return_content: true
       validate_certs: false
