@@ -71,6 +71,8 @@
       return_content: true
       validate_certs: false
     loop:
+      - "{{ jasper_server_instance }}/{{ jasper_project_name }}/Reports"
+      - "{{ jasper_server_instance }}/{{ jasper_project_name }}/Input_Controls"
       - "{{ jasper_server_instance }}/{{ jasper_project_name }}"
       - "{{ jasper_server_instance }}/Data_Sources/{{ jasper_server_instance }}_{{ jasper_project_name }}"
     ignore_errors: true
