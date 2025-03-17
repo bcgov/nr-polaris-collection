@@ -13,6 +13,11 @@
       src: "../src/jasper-server/src/main/resources/"
       dest: "{{ jasper_staging_dir }}/jcrs-reports"
 
+  - name: Copy common files
+    copy:
+      src: "../src/jasper-server/src/main/common/resources/JCRS/Common"
+      dest: "{{ jasper_staging_dir }}/jcrs-reports/resources/JCRS"
+
   - name: Copy template files
     copy:
       src: "../src/jasper-server/src/main/template/"
