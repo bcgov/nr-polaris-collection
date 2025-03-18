@@ -90,8 +90,6 @@
       validate_certs: false
       status_code: [200, 404]
     loop:
-      - "{{ jasper_server_instance }}/{{ jasper_project_name }}/Reports"
-      - "{{ jasper_server_instance }}/{{ jasper_project_name }}/Input_Controls"
       - "{{ jasper_server_instance }}/{{ jasper_project_name }}"
       - "{{ jasper_server_instance }}/Data_Sources/{{ jasper_server_instance }}_{{ jasper_project_name }}"
 
