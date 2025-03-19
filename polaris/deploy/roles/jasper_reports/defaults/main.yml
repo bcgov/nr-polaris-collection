@@ -21,3 +21,4 @@ jasper_invalid_project_names:
 
 jasper_staging_dir: "{{ playbook_dir }}/jasper-staging"
 jasper_source_path: "{{ playbook_dir }}/../src"
+jasper_pause_seconds: 5
