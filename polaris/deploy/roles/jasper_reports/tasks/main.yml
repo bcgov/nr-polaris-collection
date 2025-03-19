@@ -10,17 +10,17 @@
 
   - name: Copy resource files
     copy:
-      src: "{{ jasper_source_root_dir }}/jasper-server/src/main/resources/"
+      src: "{{ jasper_source_path }}/jasper-server/src/main/resources/"
       dest: "{{ jasper_staging_dir }}/jcrs-reports"
 
   - name: Copy common files
     copy:
-      src: "{{ jasper_source_root_dir }}/jasper-server/src/main/common/resources/JCRS/Common"
+      src: "{{ jasper_source_path }}/jasper-server/src/main/common/resources/JCRS/Common"
       dest: "{{ jasper_staging_dir }}/jcrs-reports/resources/JCRS"
 
   - name: Copy template files
     copy:
-      src: "{{ jasper_source_root_dir }}/jasper-server/src/main/template/"
+      src: "{{ jasper_source_path }}/jasper-server/src/main/template/"
       dest: "{{ jasper_staging_dir }}/jcrs-reports"
 
   - name: Generate config files
