@@ -8,20 +8,12 @@
       jasper_server_instance not in ['JCRS', 'NRSRS'] or
       jasper_project_name in jasper_invalid_project_names or jasper_project_name != jasper_project_name.upper()
 
-  - name: Copy resource files
-    copy:
-      src: "{{ jasper_source_path }}/jasper-server/src/main/resources/"
-      dest: "{{ jasper_staging_dir }}/jcrs-reports"
-
-  - name: Copy common files
-    copy:
-      src: "{{ jasper_source_path }}/jasper-server/src/main/common/resources/JCRS/Common"
-      dest: "{{ jasper_staging_dir }}/jcrs-reports/resources/JCRS"
-
-  - name: Copy template files
-    copy:
-      src: "{{ jasper_source_path }}/jasper-server/src/main/template/"
-      dest: "{{ jasper_staging_dir }}/jcrs-reports"
+  - name: Copy source files
+    shell: |
+      mkdir -p "{{ jasper_staging_dir }}/jcrs-reports"
+      rsync -rt "{{ jasper_source_path }}/jasper-server/src/main/resources/" "{{ jasper_staging_dir }}/jcrs-reports"
+      rsync -rt "{{ jasper_source_path }}/jasper-server/src/main/common/resources/JCRS/Common/" "{{ jasper_staging_dir }}/jcrs-reports/resources/JCRS/Common"
+      rsync -rt "{{ jasper_source_path }}/jasper-server/src/main/template/" "{{ jasper_staging_dir }}/jcrs-reports"
 
   - name: Generate config files
     template:
