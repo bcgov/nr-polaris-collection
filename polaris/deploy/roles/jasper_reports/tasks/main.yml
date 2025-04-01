@@ -13,7 +13,7 @@
       mkdir -p "{{ jasper_staging_dir }}/jcrs-reports"
       rsync -rt "{{ jasper_source_path }}/jasper-server/src/main/resources/" "{{ jasper_staging_dir }}/jcrs-reports"
       rsync -rt "{{ jasper_source_path }}/jasper-server/src/main/common/resources/JCRS/Common/" "{{ jasper_staging_dir }}/jcrs-reports/resources/JCRS/Common"
-      rsync -rt --exclude "{{ jasper_staging_dir }}/jcrs-reports/resources/JCRS/{{ jasper_project_name }}/Reports/.folder.xml" "{{ jasper_source_path }}/jasper-server/src/main/template/" "{{ jasper_staging_dir }}/jcrs-reports"
+      rsync -rt --exclude "resources/JCRS/{{ jasper_project_name }}/Reports/.folder.xml" "{{ jasper_source_path }}/jasper-server/src/main/template/" "{{ jasper_staging_dir }}/jcrs-reports"
 
   - name: Generate config files
     template:
