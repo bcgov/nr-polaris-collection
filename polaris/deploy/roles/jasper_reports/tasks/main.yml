@@ -15,10 +15,8 @@
       rsync -rt "{{ jasper_source_path }}/jasper-server/src/main/common/resources/JCRS/Common/" "{{ jasper_staging_dir }}/jcrs-reports/resources/JCRS/Common"
       rsync -rt --exclude "resources/JCRS/{{ jasper_project_name }}/Reports/.folder.xml" "{{ jasper_source_path }}/jasper-server/src/main/template/" "{{ jasper_staging_dir }}/jcrs-reports"
 
-  - name: Generate config files
-    template:
-      src: "templates/{{ jasper_server_instance }}_{{ jasper_project_name }}.xml.j2"
-      dest: "{{ jasper_staging_dir }}/jcrs-reports/resources/{{ jasper_server_instance }}/Data_Sources/{{ jasper_server_instance }}_{{ jasper_project_name }}.xml"
+  - name: Generate Jasper datasource files
+    include_tasks: "{{ playbook_dir }}/jasper-datasource.yaml"
 
   - name: Create import package
     archive:
