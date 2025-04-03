@@ -66,7 +66,7 @@
     debug:
       msg: "Requesting URL: {{ server_info.url }}"
 
-  - name: "Delete the reports on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+  - name: "Delete the application folder on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     uri:
       url: "{{ jasper_deployer_url }}/rest/resource/{{ jasper_server_instance }}/{{ jasper_project_name }}"
       force_basic_auth: yes
@@ -80,7 +80,7 @@
       validate_certs: false
       status_code: [200, 404]
 
-  - name: "Delete the datasources on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+  - name: "Delete the datasource folders on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     uri:
       url: "{{ jasper_deployer_url }}/rest/resource/{{ jasper_server_instance }}/Data_Sources/{{ item }}"
       force_basic_auth: yes
