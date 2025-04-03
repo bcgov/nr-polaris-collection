@@ -66,9 +66,9 @@
     debug:
       msg: "Requesting URL: {{ server_info.url }}"
 
-  - name: "Delete the reports and datasource on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+  - name: "Delete the reports on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     uri:
-      url: "{{ jasper_deployer_url }}/rest/resource/{{ item }}"
+      url: "{{ jasper_deployer_url }}/rest/resource/{{ jasper_server_instance }}/{{ jasper_project_name }}"
       force_basic_auth: yes
       user: "{{ jasper_deployer_user }}"
       password: "{{ jasper_deployer_password }}"
@@ -79,9 +79,21 @@
       return_content: true
       validate_certs: false
       status_code: [200, 404]
-    loop:
-      - "{{ jasper_server_instance }}/{{ jasper_project_name }}"
-      - "{{ jasper_server_instance }}/Data_Sources/{{ jasper_server_instance }}_{{ jasper_project_name }}"
+
+  - name: "Delete the datasources on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
+    uri:
+      url: "{{ jasper_deployer_url }}/rest/resource/{{ jasper_server_instance }}/Data_Sources/{{ item }}"
+      force_basic_auth: yes
+      user: "{{ jasper_deployer_user }}"
+      password: "{{ jasper_deployer_password }}"
+      method: DELETE
+      headers:
+        Content-Type: application/x-www-form-urlencoded
+        Cookie: "{{ jasper_cookie_key }}={{ jasper_route_id }}"
+      return_content: true
+      validate_certs: false
+      status_code: [200, 404]
+    loop: "{{ jasper_datasource_names | default([]) }}"
 
   - name: "Import the package on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     uri:
