@@ -7,7 +7,7 @@ polaris_service_user: "wwwsvr"
 
 polaris_apps_home:      "/apps_ux"
 polaris_apps_data_home: "/apps_data"
-polaris_apps_logs_home: "/apps_data/logs"
+polaris_apps_logs_home: "/apps_ux/logs"
 polaris_bin_folder:     "bin"
 polaris_app_folder:     "app"
 polaris_tmp_folder:     "tmp"
