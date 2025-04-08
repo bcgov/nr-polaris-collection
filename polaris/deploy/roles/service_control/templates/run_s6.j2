@@ -1,6 +1,3 @@
 #!{{ service_control_s6_home }}/bin/execlineb -P
 
-#{{ service_control_home }}/start.sh
-
-# workaround (andrwong)
-{{ service_control_home }}/bin/nodejs/bin/node  {{ service_control_home }}/app/dist/src/main.js
+{{ service_control_home }}/start.sh
