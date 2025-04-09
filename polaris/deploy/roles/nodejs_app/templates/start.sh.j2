@@ -8,6 +8,4 @@ if [ -f "./setenv-custom.sh" ]; then
     source "./setenv-custom.sh"
 fi
 
-{{ nodejs_app_node_home }}/bin/node\
-  {{ nodejs_app_node_options }}\
-  {{ nodejs_app_service_entrypoint }}
+exec {{ nodejs_app_node_home }}/bin/node {{ nodejs_app_node_options }} {{ nodejs_app_service_entrypoint }}
