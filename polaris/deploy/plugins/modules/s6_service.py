@@ -19,7 +19,7 @@ description:
     - Manages the state of services that are already registered with S6.
     - This module will not create S6 service directories for you.
 version_added: "2.3"
-author: "Brenden Black (@ratioprosperous)" 
+author: "Brenden Black (@ratioprosperous)"
         "DrydenLinden"
 options:
     name:
@@ -87,7 +87,7 @@ class SkarnetS6(object):
         result = self.module.run_command("%s -up %s" % (self.tools['svstat'], self.service_dir), path_prefix=self.bin_dir)
         print("Executing command: %s -up %s" % (self.tools['svstat'], self.service_dir))
         self.module.debug(result)
-        if (result[0] is 0):
+        if (result[0] == 0):
             split = result[1].split()
             running = split[0].lower().endswith('true')
             return { 'running': running, 'pid': split[1] }
@@ -99,7 +99,7 @@ class SkarnetS6(object):
             else:
                 self.module.warn(result[2])
                 return { 'running': False, 'pid': -1 }
-    
+
     def check_down(self):
         change = True
         result = ""
@@ -117,7 +117,7 @@ class SkarnetS6(object):
             # s6-svc -wd -d /apps_ux/s6_services/npe-e2edemo-war
             print("Executing command: sudo %s -wD -d %s" % (self.tools['svc'], self.service_dir))
             result = self.module.run_command("%s -wD -d %s" % (self.tools['svc'], self.service_dir), path_prefix=self.bin_dir)
-            if (result[0] is 0):
+            if (result[0] == 0):
                 self.changed = True
                 self.state = 'Stopping'
             else:
@@ -137,14 +137,14 @@ class SkarnetS6(object):
             print("still here")
             print("Executing command: %s -wu -u %s" % (self.tools['svc'], self.service_dir))
             result = self.module.run_command("%s -wu -u %s" % (self.tools['svc'], self.service_dir), path_prefix=self.bin_dir)
-            if (result[0] is 0):
+            if (result[0] == 0):
                 self.changed = True
                 self.state = 'Starting'
             else:
                 print(result[0])
                 self.module.fail_json(msg=result)
 
-    
+
     def restart(self):
         status = self.get_current_state()
         self.check_down()
@@ -159,7 +159,7 @@ class SkarnetS6(object):
             # print("Executing sudo %s -wD -d %s" % (self.tools['svc'], self.service_dir))
             # result = self.module.run_command("%s -wD -u %s" % (self.tools['svc'], self.service_dir), path_prefix=self.bin_dir)
             # self.state = 'Stopping'
-            # if(result[0] is 0):
+            # if(result[0] == 0):
                 # self.changed = True
                 # self.start()
         # else:
