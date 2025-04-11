@@ -79,7 +79,7 @@
   become_user: "{{ polaris_install_user }}"
 
 - name: load task list for Tomcat {{ tomcat_version }}
-  include: "install-tomcat.yml"
+  include_tasks: "install-tomcat.yml"
 
 - name: service directory {{ tomcat_service_dir }}
   file:
