@@ -23,7 +23,7 @@
   become: yes
   become_user: "{{ ssc_user }}"
 
-- include: "{{ ssc_format }}.yml"
+- include_tasks: "{{ ssc_format }}.yml"
 
 - name: certificate exists in trust store
   java_cert:

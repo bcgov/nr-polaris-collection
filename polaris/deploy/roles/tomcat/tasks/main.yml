@@ -32,6 +32,8 @@
     service_control_user: "{{ tomcat_run_user }}"
     service_control_handler: "{{ tomcat_handler_style }}"
 
+- meta: flush_handlers
+
 - name: "Setup handler {{ nodejs_app_control_handler }}"
   ansible.builtin.include_role:
     name: service_control
@@ -79,7 +81,7 @@
   become_user: "{{ polaris_install_user }}"
 
 - name: load task list for Tomcat {{ tomcat_version }}
-  include: "install-tomcat.yml"
+  include_tasks: "install-tomcat.yml"
 
 - name: service directory {{ tomcat_service_dir }}
   file:
