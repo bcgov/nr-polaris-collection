@@ -14,7 +14,6 @@ All variables are prefixed with `webapp_` to indicate they are specific to this 
 | `webapp_log_archive_filename_pattern` | no | `pd_service_name`.%d.log.gz | |
 | `webapp_log_dir` | no | `apps_logs`/`pd_project_name`/`pd_service_name` | |
 | `webapp_log_filename` | no | `pd_service_name`.log| |
-| `webapp_log_provider` | no | log4j2 | |
 | `webapp_root_log_level` | no | INFO | |
 | `webapp_staging_dir` | no | `cd_app_home` | Directory to use to extract & configure the webapp prior to deployment |
 | `webapp_user` | no | wwwadm | |

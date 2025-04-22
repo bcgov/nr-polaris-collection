@@ -14,7 +14,6 @@ The following variables can be customized to modify the behavior of the role:
 - `_jdk_release_name`: The name of the jdk release. (Default: empty string)
 - `_log_dir`: The base path to logs. (Default: empty string)
 - `_log_level`: The log level. (Default: empty string)
-- `_log_provider`: The component providing the logs (log4j2). (Default: empty string)
 - `_log_type`: The log type (tomcat). (Default: empty string)
 - `_tomcat_version`: The tomcat version for the PATCH request payload. (Default: empty string)
 - `_tomcat_port`: The tomcat port for the PATCH request payload. (Default: empty string)
