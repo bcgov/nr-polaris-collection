@@ -4,7 +4,6 @@ webapp_configure_context_enabled: True
 webapp_log_archive_filename_pattern: "{{ polaris_apps_service_name }}.%d.log.gz"
 webapp_log_dir:                   "{{ polaris_apps_service_logs_home }}"
 webapp_log_filename:              "{{ polaris_apps_service_name }}.log"
-webapp_log_provider:              "log4j2"
 webapp_log_quartzdesk_enabled:    False
 webapp_loggers:                   []
 webapp_root_log_level:            'INFO'

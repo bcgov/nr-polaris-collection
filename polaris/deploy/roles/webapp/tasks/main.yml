@@ -101,7 +101,6 @@
     _log_dir: "{{ webapp_log_dir }}"
     _log_filename: "{{ webapp_log_filename }}"
     _log_level: "{{ webapp_root_log_level }}"
-    _log_provider: "{{ webapp_log_provider }}"
     _log_type: "tomcat"
 
 - name: "deploy {{ webapp_app_dir_name }}"
