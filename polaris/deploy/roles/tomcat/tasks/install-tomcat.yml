@@ -1,4 +1,4 @@
-- unarchive:
+- ansible.builtin.unarchive:
     src: "{{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}"
     dest: "{{ tomcat_download_tmp_dir }}"
     exclude:
@@ -14,12 +14,12 @@
 
 # TODO: replace this workaround, it's ugly and causes configuration steps to be 'changed' on every run
 - name: copy files from extracted archive
-  shell: cp -r {{ tomcat_download_tmp_dir }}/apache-tomcat-{{ tomcat_version }}/* {{ tomcat_install_dir }}
+  ansible.builtin.shell: cp -r {{ tomcat_download_tmp_dir }}/apache-tomcat-{{ tomcat_version }}/* {{ tomcat_install_dir }}
   become: yes
   become_user: "{{ tomcat_install_user }}"
 
 - name: configuration directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     mode: '0775'
     state: directory
@@ -30,7 +30,7 @@
     - "{{ tomcat_install_dir }}/conf/Catalina/localhost"
 
 - name: work and temp dirs
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: '0775'
@@ -41,7 +41,7 @@
     - "{{ tomcat_temp_dir }}"
 
 - name: Configure server.xml
-  template:
+  ansible.builtin.template:
     src: "tomcat-server.xml.j2"
     dest: "{{ tomcat_install_dir }}/conf/server.xml"
     mode: '0755'
@@ -51,7 +51,7 @@
   tags: [ 'configure' ]
 
 - name: logging.properties configuration
-  template:
+  ansible.builtin.template:
     src: "logging.properties.j2"
     dest: "{{ tomcat_install_dir }}/conf/logging.properties"
     mode: '0775'
@@ -61,7 +61,7 @@
   tags: [ 'configure' ]
 
 - name: setenv script
-  template:
+  ansible.builtin.template:
     src: "setenv.sh.j2"
     dest: "{{ tomcat_install_dir }}/bin/setenv.sh"
     mode: '0755'
@@ -70,7 +70,7 @@
   tags: [ 'configure' ]
 
 - name: scripts are executable
-  file:
+  ansible.builtin.file:
     path: "{{ tomcat_install_dir }}/{{ item }}"
     mode: '0775'
   with_items:

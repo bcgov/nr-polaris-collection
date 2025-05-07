@@ -2,14 +2,14 @@
 - name: Create package
   block:
   - name: Ensure all required inputs are valid or not blank
-    fail:
+    ansible.builtin.fail:
       msg: "Error: invalid inputs"
     when: |
       jasper_server_instance not in ['JCRS', 'NRSRS'] or
       jasper_project_name in jasper_invalid_project_names or jasper_project_name != jasper_project_name.upper()
 
   - name: Copy source files
-    shell: |
+    ansible.builtin.shell: |
       mkdir -p "{{ jasper_staging_dir }}/jcrs-reports"
       rsync -rt "{{ jasper_source_path }}/jasper-server/src/main/resources/" "{{ jasper_staging_dir }}/jcrs-reports"
       rsync -rt "{{ jasper_source_path }}/jasper-server/src/main/common/resources/JCRS/Common/" "{{ jasper_staging_dir }}/jcrs-reports/resources/JCRS/Common"
@@ -28,7 +28,7 @@
 - name: Deploy package
   block:
   - name: Ensure all required inputs are valid or not blank
-    fail:
+    ansible.builtin.fail:
       msg: "Error: invalid inputs"
     when: |
       jasper_server_instance not in ['JCRS', 'NRSRS'] or
@@ -49,7 +49,7 @@
     when: ansible_os_family == "Alpine"
 
   - name: "Get server info for {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
-    uri:
+    ansible.builtin.uri:
       url: "{{ jasper_deployer_url }}/rest_v2/serverInfo"
       force_basic_auth: yes
       user: "{{ jasper_deployer_user }}"
@@ -63,11 +63,11 @@
     failed_when: server_info.status != 200
 
   - name: Print server info for {{ jasper_server_instance }} server instance node {{ jasper_route_id }}
-    debug:
+    ansible.builtin.debug:
       msg: "Requesting URL: {{ server_info.url }}"
 
   - name: "Delete the application folder on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
-    uri:
+    ansible.builtin.uri:
       url: "{{ jasper_deployer_url }}/rest/resource/{{ jasper_server_instance }}/{{ jasper_project_name }}"
       force_basic_auth: yes
       user: "{{ jasper_deployer_user }}"
@@ -81,7 +81,7 @@
       status_code: [200, 404]
 
   - name: "Delete the datasource folder(s) on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
-    uri:
+    ansible.builtin.uri:
       url: "{{ jasper_deployer_url }}/rest/resource/{{ jasper_server_instance }}/Data_Sources/{{ item }}"
       force_basic_auth: yes
       user: "{{ jasper_deployer_user }}"
@@ -96,7 +96,7 @@
     loop: "{{ jasper_datasource_folders | default([]) }}"
 
   - name: "Import the package on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
-    uri:
+    ansible.builtin.uri:
       url: "{{ jasper_deployer_url }}/rest_v2/import"
       force_basic_auth: yes
       user: "{{ jasper_deployer_user }}"
@@ -111,18 +111,18 @@
     register: import_response
 
   - name: "Extract the state id for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
-    shell: |
+    ansible.builtin.shell: |
       echo "{{ import_response.content }}" \
       | sed 's/<?xml version=1.0 encoding=UTF-8 standalone=yes?>/<?xml version="1.0" encoding="UTF-8" standalone="yes"?>/' \
       | xmllint --xpath '/state/id/text()' -
     register: state_id
 
   - name: pause
-    pause:
+    ansible.builtin.pause:
       seconds: "{{ jasper_pause_seconds }}"
 
   - name: "Request the import status from the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
-    uri:
+    ansible.builtin.uri:
       url: "{{ jasper_deployer_url }}/rest_v2/import/{{ state_id.stdout }}/state"
       force_basic_auth: yes
       user: "{{ jasper_deployer_user }}"
@@ -135,20 +135,20 @@
     register: import_status
 
   - name: "Extract the import status message for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
-    shell: |
+    ansible.builtin.shell: |
       echo "{{ import_status.content }}" \
       | sed 's/<?xml version=1.0 encoding=UTF-8 standalone=yes?>/<?xml version="1.0" encoding="UTF-8" standalone="yes"?>/' \
       | xmllint --xpath '/state/message/text()' -
     register: import_status_message
 
   - name: "Print the import status message for the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
-    debug:
+    ansible.builtin.debug:
       msg: "{{ import_status_message.stdout }}"
     failed_when: import_status_message.stdout != "Import succeeded."
   tags: deploy_package
 
 - name: Delete staging directory
-  file:
+  ansible.builtin.file:
     path: "{{ jasper_staging_dir}}"
     state: absent
   tags: delete_staging_dir

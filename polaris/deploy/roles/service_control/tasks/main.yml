@@ -1,22 +1,22 @@
 ---
 - name: Validate service_control_action
-  fail:
+  ansible.builtin.fail:
     msg: "Invalid service_control_action '{{ service_control_action }}'. Allowed values: start, stop, restart, setup"
   when: service_control_action not in ['start', 'stop', 'restart', 'setup']
 
-- debug:
+- ansible.builtin.debug:
     msg: "Starting service {{ service_control_target }} ({{ service_control_handler }})"
   changed_when: true
   notify: "start service - {{ service_control_handler }}"
   when: service_control_action == 'start'
 
-- debug:
+- ansible.builtin.debug:
     msg: "Stop service {{ service_control_target }} ({{ service_control_handler }})"
   changed_when: true
   notify: "stop service - {{ service_control_handler }}"
   when: service_control_action == 'stop'
 
-- debug:
+- ansible.builtin.debug:
     msg: "Restart service {{ service_control_target }} ({{ service_control_handler }})"
   changed_when: true
   notify: "restart service - {{ service_control_handler }}"

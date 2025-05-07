@@ -1,16 +1,16 @@
 - name: Generate a self-signed private key/certificate in PKCS#5 format
-  shell: "openssl req -newkey rsa:2048 {{ ssc_certificate_options }} -keyout {{ ssc_pkcs5_key }} -out {{ ssc_rest_tls_cert_file }} -batch"
+  ansible.builtin.shell: "openssl req -newkey rsa:2048 {{ ssc_certificate_options }} -keyout {{ ssc_pkcs5_key }} -out {{ ssc_rest_tls_cert_file }} -batch"
   args:
     creates: "{{ ssc_pkcs5_key }}"
   become: yes
   become_user: "{{ ssc_user }}"
 
 - name: Convert PKCS#5 key to PKCS#8
-  shell: 'openssl pkcs8 -in {{ ssc_pkcs5_key }} -topk8 -nocrypt -out {{ ssc_pkcs8_key }}'
+  ansible.builtin.shell: 'openssl pkcs8 -in {{ ssc_pkcs5_key }} -topk8 -nocrypt -out {{ ssc_pkcs8_key }}'
   args:
     creates: "{{ ssc_pkcs8_key }}"
   become: yes
   become_user: "{{ ssc_user }}"
 
-  set_fact:
+  ansible.builtin.set_fact:
     - ssc_key: "{{ ssc_pkcs8_key }}"

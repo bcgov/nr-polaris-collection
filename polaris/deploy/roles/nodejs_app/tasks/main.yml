@@ -1,6 +1,6 @@
 ---
 - name: Ensure create_project_directories was called before
-  fail:
+  ansible.builtin.fail:
     msg: "Error: create_project_directories must be called before!"
   when: not role_create_project_directories_called | default(false) | bool
 
@@ -24,7 +24,7 @@
     service_control_handler: "{{ nodejs_app_control_handler }}"
 
 - name: "required directories"
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: "0775"
@@ -53,7 +53,7 @@
   become_user: "{{ nodejs_app_install_user }}"
 
 - name: Deploy start script
-  template:
+   ansible.builtin.template:
     src: "start.sh.j2"
     dest: "{{ nodejs_app_service_install_home }}/start.sh"
     mode: "0755"
@@ -61,7 +61,7 @@
   become_user: "{{ nodejs_app_install_user }}"
 
 - name: Deploy env script
-  template:
+  ansible.builtin.template:
     src: "setenv.sh.j2"
     dest: "{{ nodejs_app_service_install_home }}/setenv.sh"
     mode: "0755"

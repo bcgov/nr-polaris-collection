@@ -1,6 +1,6 @@
 ---
 - name: service directory {{ service_control_service_s6_home }}
-  file:
+  ansible.builtin.file:
     path: "{{ service_control_service_s6_home }}"
     mode: "0775"
     state: directory
@@ -8,7 +8,7 @@
   become_user: "{{ service_control_install_user }}"
 
 - name: Deploy s6 run script
-  template:
+  ansible.builtin.template:
     src: "run_s6.j2"
     dest: "{{ service_control_service_s6_home }}/run"
     mode: "0755"
