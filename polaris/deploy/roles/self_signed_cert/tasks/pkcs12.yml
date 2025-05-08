@@ -1,11 +1,11 @@
 - name: remove old key file
-  shell: "rm {{ ssc_keystore }}"
+  ansible.builtin.shell: "rm {{ ssc_keystore }}"
   ignore_errors: True
   become: yes
   become_user: "{{ ssc_user }}"
 
 - name: self-signed private key/certificate in PKCS#12 format
-  shell: "{{ ssc_java_home }}/bin/keytool -genkey -noprompt -validity {{ ssc_certificate_age }} -alias {{ ssc_certificate_alias }} -keyalg RSA -dname \"CN=tomcat, OU=IMB, O=NRS, L=Victoria, ST=BC, C=CA\" -keystore {{ ssc_keystore }} -storepass {{ ssc_keystore_pass }} -keypass {{ ssc_key_pass }}"
+  ansible.builtin.shell: "{{ ssc_java_home }}/bin/keytool -genkey -noprompt -validity {{ ssc_certificate_age }} -alias {{ ssc_certificate_alias }} -keyalg RSA -dname \"CN=tomcat, OU=IMB, O=NRS, L=Victoria, ST=BC, C=CA\" -keystore {{ ssc_keystore }} -storepass {{ ssc_keystore_pass }} -keypass {{ ssc_key_pass }}"
   args:
     creates: "{{ ssc_keystore }}"
   become: yes

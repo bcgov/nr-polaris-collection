@@ -1,11 +1,11 @@
 ---
 - name: Ensure create_project_directories was called before
-  fail:
+  ansible.builtin.fail:
     msg: "Error: create_project_directories must be called before!"
   when: not role_create_project_directories_called | default(false) | bool
 
 - name: 'Create JDK home directory: {{ jdk_home }}'
-  file:
+  ansible.builtin.file:
     path: '{{ jdk_home }}'
     state: directory
     mode: '0755'
@@ -26,12 +26,12 @@
   when: jdk_type == 'openjdk'
 
 - name: 'Print asset info'
-  debug:
+  ansible.builtin.debug:
     var: json_response.json
   when: jdk_type == 'openjdk'
 
 - name: 'Set asset info for latest release'
-  set_fact:
+  ansible.builtin.set_fact:
     jdk_checksum_value: '{{ json_response.json | json_query("[0].binary.package.checksum") }}'
     jdk_release_name: '{{ json_response.json | json_query("[0].release_name") }}'
     jdk_major_version: '{{ json_response.json | json_query("[0].version.major") }}'
@@ -40,7 +40,7 @@
   when: jdk_type == 'openjdk' and jdk_pinned_release_name | length == 0
 
 - name: 'Set asset info for pinned release'
-  set_fact:
+  ansible.builtin.set_fact:
     jdk_checksum_value: '{{ json_response.json | json_query("binaries[0].package.checksum") }}'
     jdk_release_name: '{{ json_response.json | json_query("release_name") }}'
     jdk_major_version: '{{ json_response.json | json_query("version_data.major") }}'
@@ -49,7 +49,7 @@
   when: jdk_type == 'openjdk' and jdk_pinned_release_name | length > 0
 
 - name: 'Download the release'
-  get_url:
+  ansible.builtin.get_url:
     url: 'https://api.adoptium.net/v3/binary/version/{{ jdk_release_name | urlencode }}/linux/x64/jdk/hotspot/normal/eclipse?project=jdk'
     dest: '{{ jdk_install_root }}/{{ jdk_package_name }}'
     checksum: "sha256:{{ jdk_checksum_value }}"
@@ -61,7 +61,7 @@
   when: jdk_type == 'openjdk'
 
 - name: 'Extract the downloaded archive'
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ jdk_install_root }}/{{ jdk_package_name }}"
     dest: "{{ jdk_install_root }}"
     extra_opts: ['--transform=s,/*[^/]*,{{ jdk_install_dir | basename }},i', '--show-stored-names']
@@ -70,14 +70,14 @@
   become_user: '{{ polaris_install_user }}'
 
 - name: 'Remove the downloaded archive'
-  file:
+  ansible.builtin.file:
     path: "{{ jdk_install_root }}/{{ jdk_package_name }}"
     state: absent
   become: yes
   become_user: '{{ polaris_install_user }}'
 
 - name: 'Download IMB trust certs'
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ item.url }}"
     dest: "{{ jdk_home }}"
     validate_certs: false
@@ -87,7 +87,7 @@
   become_user: '{{ polaris_install_user }}'
 
 - name: 'Set jdk cacerts file'
-  set_fact:
+  ansible.builtin.set_fact:
     jdk_cacerts_file: '{{ jdk_home }}/{{ "jre/lib/security/cacerts" if jdk_major_version == "8" else "lib/security/cacerts" }}'
 
 - name: 'Import certs'
@@ -102,7 +102,7 @@
   become_user: '{{ polaris_install_user }}'
 
 - name: 'Download JCE to /tmp/{{ jdk_jce_archive }}'
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ jdk_jce_download_url }}"
     dest: "/tmp/{{ jdk_jce_archive }}"
     validate_certs: false
@@ -113,7 +113,7 @@
   when: jdk_major_version == '8'
 
 - name: 'Extract JCE JARs to {{ jdk_home }}/jre/lib/security/'
-  shell: unzip -j -o /tmp/{{ jdk_jce_archive }} '*.jar'
+  ansible.builtin.shell: unzip -j -o /tmp/{{ jdk_jce_archive }} '*.jar'
   args:
     chdir: "{{ jdk_home }}/jre/lib/security/"
   become: yes
@@ -130,5 +130,5 @@
     _jdk_release_name: "{{ jdk_release_name }}"
 
 - name: Mark jdk as called
-  set_fact:
+  ansible.builtin.set_fact:
     role_jdk_called: true

@@ -1,5 +1,5 @@
 - name: Generate a self-signed private key/certificate in PKCS#5 format
-  shell: "openssl req -newkey rsa:2048 {{ ssc_certificate_options }} -keyout {{ ssc_key }} -out {{ ssc_certificate }} -batch"
+  ansible.builtin.shell: "openssl req -newkey rsa:2048 {{ ssc_certificate_options }} -keyout {{ ssc_key }} -out {{ ssc_certificate }} -batch"
   args:
     creates: "{{ ssc_key }}"
   become: yes

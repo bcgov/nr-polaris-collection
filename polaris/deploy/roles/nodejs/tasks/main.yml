@@ -1,6 +1,6 @@
 ---
 - name: Ensure create_project_directories was called before
-  fail:
+  ansible.builtin.fail:
     msg: "Error: create_project_directories must be called before!"
   when: not role_create_project_directories_called | default(false) | bool
 
@@ -17,40 +17,40 @@
     - "{{ nodejs_tmp_home }}"
 
 - name: Get Node.js Package Name
-  shell: "curl -sL {{ nodejs_mirror }}/{{ nodejs_version_number }}/ | grep -oP 'node-v\\d+\\.\\d+\\.\\d+-linux-x64.tar.xz' | head -n1"
+  ansible.builtin.shell: "curl -sL {{ nodejs_mirror }}/{{ nodejs_version_number }}/ | grep -oP 'node-v\\d+\\.\\d+\\.\\d+-linux-x64.tar.xz' | head -n1"
   register: nodejs_package_name
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   failed_when: nodejs_package_name.stdout | length == 0
 
 - name: Set Node.js Package Name
-  set_fact:
+  ansible.builtin.set_fact:
     nodejs_package: "{{ nodejs_package_name.stdout }}"
 
 - name: "Show download info"
-  debug:
+  ansible.builtin.debug:
     msg: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/{{ nodejs_package }}"
 
 - name: Set Node.js Download URL
-  set_fact:
+  ansible.builtin.set_fact:
     nodejs_download_url: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/{{ nodejs_package }}"
 
 - name: Get Node.js package checksum
-  uri:
+  ansible.builtin.uri:
     url: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/SHASUMS256.txt"
     return_content: true
   register: nodejs_checksum_all
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
 
 - name: "Show checksum information"
-  debug:
+  ansible.builtin.debug:
     msg: "Node.js package checksum: {{ ((nodejs_checksum_all.content | split('\n') | select('search',  nodejs_package))[0] | split(' '))[0]  }}"
 
-- set_fact:
+- ansible.builtin.set_fact:
     nodejs_checksum: "{{ ((nodejs_checksum_all.content | split('\n') | select('search',  nodejs_package))[0] | split(' '))[0]  }}"
     nodejs_package_name: "{{ nodejs_download_url | basename }}"
 
 - name: "download to {{ nodejs_tmp_home }}/{{ nodejs_package_name }}"
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ nodejs_download_url }}"
     dest: "{{ nodejs_tmp_home }}/{{ nodejs_package_name }}"
     checksum: "{{ nodejs_checksum_protocol }}:{{ nodejs_checksum }}"
@@ -61,7 +61,7 @@
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
 
 - name: 'Extract the downloaded archive'
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ nodejs_tmp_home }}/{{ nodejs_package_name }}"
     dest: "{{ nodejs_home }}"
     extra_opts: ['--strip-components=1', '--show-stored-names']
@@ -71,12 +71,12 @@
   become_user: "{{ nodejs_install_user }}"
 
 - name: 'Remove the downloaded archive'
-  file:
+  ansible.builtin.file:
     path: "{{ nodejs_tmp_home }}/{{ nodejs_package_name }}"
     state: absent
   become: yes
   become_user: "{{ nodejs_install_user }}"
 
 - name: Extract Node.js package version
-  set_fact:
+  ansible.builtin.set_fact:
     nodejs_package_version: "{{ nodejs_package_name | replace('.tar.xz', '') }}"

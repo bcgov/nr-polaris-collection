@@ -14,7 +14,7 @@
     decoded_json: "{{ json_data.content | b64decode | from_json }}"
 
 - name: Display decoded JSON
-  debug:
+  ansible.builtin.debug:
     msg: "{{ decoded_json }}"
 
 - name: Patch intention

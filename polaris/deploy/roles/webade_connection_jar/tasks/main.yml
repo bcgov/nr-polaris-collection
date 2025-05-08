@@ -5,26 +5,26 @@
   stat:
     path: "{{ webade_java_home }}"
   register: java_home
-- fail:
+- ansible.builtin.fail:
     msg: "JDK not found at {{ webade_java_home }}. Cannot proceed."
   when: not java_home.stat.exists
 
 # Build directory
 # ---------------
 - name: Temporary build directory
-  file:
+  ansible.builtin.file:
     path: "{{ webade_build_dir }}"
     state: directory
     mode: "0777"
 
 - name: Build dir name
-  debug:
+  ansible.builtin.debug:
     msg: "Build directory name: {{ webade_build_dir }}"
 
 # WebADEConnection.java template
 # ------------------------------
 - name: WebADEConnection.java
-  template:
+  ansible.builtin.template:
     src: WebADEConnection.java.j2
     dest: "{{ webade_build_dir }}/WebADEConnection.java"
     mode: "0600"
@@ -32,11 +32,11 @@
 # Compile
 # -------
 - name: Compile WebADEConnection.class
-  shell: "{{ webade_java_home }}/bin/javac {{ webade_build_dir }}/WebADEConnection.java"
+  ansible.builtin.shell: "{{ webade_java_home }}/bin/javac {{ webade_build_dir }}/WebADEConnection.java"
 - stat:
     path: "{{ webade_build_dir }}/WebADEConnection.class"
   register: class_file
-- fail:
+- ansible.builtin.fail:
     msg: "The class file failed to build.  Cannot proceed."
   when: not class_file.stat.exists
 
@@ -50,23 +50,23 @@
 # Insert the newly compiled class file
 # ------------------------------------
 - name: Insert class file
-  shell: "mv {{ webade_build_dir }}/WebADEConnection.class {{ webade_build_dir }}/jar-files/ca/bc/gov/webade/datastore/"
+  ansible.builtin.shell: "mv {{ webade_build_dir }}/WebADEConnection.class {{ webade_build_dir }}/jar-files/ca/bc/gov/webade/datastore/"
 
 # Create the JAR file
 # -------------------
 - name: Create JAR file
-  shell: "{{ webade_java_home }}/bin/jar -cf {{ webade_build_dir }}/webade-connection.jar ."
+  ansible.builtin.shell: "{{ webade_java_home }}/bin/jar -cf {{ webade_build_dir }}/webade-connection.jar ."
   args:
     chdir: "{{ webade_build_dir }}/jar-files"
 
 # Install the JAR file
 # --------------------
 - name: Install JAR file
-  shell: "mv {{ webade_build_dir }}/webade-connection.jar {{ webade_install_dir }}"
+  ansible.builtin.shell: "mv {{ webade_build_dir }}/webade-connection.jar {{ webade_install_dir }}"
 
 # Remove the temporary build directory
 # ------------------------------------
 - name: Remove temporary build directory
-  file:
+  ansible.builtin.file:
     path: "{{ webade_build_dir }}"
     state: absent

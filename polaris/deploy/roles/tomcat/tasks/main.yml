@@ -1,24 +1,24 @@
 ---
 - name: Ensure create_project_directories was called before
-  fail:
+  ansible.builtin.fail:
     msg: "Error: create_project_directories must be called before!"
   when: not role_create_project_directories_called | default(false) | bool
 
 - name: Get Latest Tomcat Minor Version
-  shell: "curl -s {{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
+  ansible.builtin.shell: "curl -s {{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   register: latest_tomcat_minor_version
 
 - name: Set Tomcat Version number
-  set_fact:
+  ansible.builtin.set_fact:
     tomcat_version: "{{ tomcat_version_number | default(latest_tomcat_minor_version.stdout, true) }}"
 
 - name: "Show download info"
-  debug:
+  ansible.builtin.debug:
     msg: "tomcat_major_version: {{ tomcat_major_version }} and tomcat_version: {{ tomcat_version }}"
 
 - name: Checking for alternate app directory name
-  set_fact:
+  ansible.builtin.set_fact:
     using_alt_app_dir: true
   when: alt_app_dir_name is defined
 
@@ -44,7 +44,7 @@
     service_control_handler: "{{ tomcat_handler_style }}"
 
 - name: required directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: "0775"
@@ -57,20 +57,20 @@
   become_user: "{{ polaris_install_user }}"
 
 - name: Set Tomcat Download URL
-  set_fact:
+  ansible.builtin.set_fact:
     tomcat_download_url: "{{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/v{{ tomcat_version }}/bin/apache-tomcat-{{ tomcat_version }}.zip"
 
-- uri:
+- ansible.builtin.uri:
     url: "{{ tomcat_download_url + '.' + tomcat_checksum_protocol }}"
     return_content: true
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
   register: tomcat_checksum
 
-- set_fact:
+- ansible.builtin.set_fact:
     tomcat_checksum: "{{ tomcat_checksum.content.split(' ')[0] }}"      # there are 2 spaces
 
 - name: download to {{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ tomcat_download_url }}"
     dest: "{{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}"
     checksum: "{{ tomcat_checksum_protocol }}:{{ tomcat_checksum }}"
@@ -84,7 +84,7 @@
   include_tasks: "install-tomcat.yml"
 
 - name: service directory {{ tomcat_service_dir }}
-  file:
+  ansible.builtin.file:
     path: "{{ tomcat_service_dir }}"
     mode: "0775"
     state: directory
@@ -92,7 +92,7 @@
   become_user: "{{ polaris_install_user }}"
 
 - name: run script {{ tomcat_service_dir }}/run
-  template:
+  ansible.builtin.template:
     src: "run.j2"
     dest: "{{ tomcat_service_dir }}/run"
     mode: "0775"
@@ -126,5 +126,5 @@
     service_control_handler: "{{ tomcat_handler_style }}"
 
 - name: Mark tomcat as called
-  set_fact:
+  ansible.builtin.set_fact:
     role_tomcat_called: true

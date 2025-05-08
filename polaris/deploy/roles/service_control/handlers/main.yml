@@ -24,7 +24,7 @@
   become_user: "{{ service_control_service_user }}"
 
 - name: start app using script
-  command:
+  ansible.builtin.command:
     cmd: "{{ service_control_service_script_start }}"
     chdir: "/"
   listen: 'start service - script'
@@ -32,7 +32,7 @@
   become_user: "{{ service_control_service_user }}"
 
 - name: stop app using script
-  command:
+  ansible.builtin.command:
     cmd: "{{ service_control_service_script_stop }}"
     chdir: "/"
   listen: 'stop service - script'
@@ -41,7 +41,7 @@
   ignore_errors: yes
 
 - name: restart app using script
-  shell:
+  ansible.builtin.shell:
     cmd: "{{ service_control_service_script_stop }}; sleep {{ service_control_restart_delay | default(40) }}; {{ service_control_service_script_start }}"
     chdir: "/"
   listen: 'restart service - script'

@@ -1,21 +1,21 @@
 ---
 - name: Ensure role_tomcat_called was called before
-  fail:
+  ansible.builtin.fail:
     msg: "Error: role_tomcat_called must be called before!"
   when: not role_tomcat_called | default(false) | bool
 
 - name: Set alt app dir name
-  set_fact:
+  ansible.builtin.set_fact:
     webapp_app_dir_name: "{{ alt_app_dir_name }}"
   when: alt_app_dir_name is defined
 
 - name: Set standard app dir name
-  set_fact:
+  ansible.builtin.set_fact:
     webapp_app_dir_name: "{{ webapp_war.context }}"
   when: alt_app_dir_name is not defined
 
 - name: "undeploy {{ webapp_app_dir_name }} from {{ webapp_tomcat_webapps_dir }}"
-  file:
+  ansible.builtin.file:
     path: "{{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
     state: absent
   become: yes
@@ -31,14 +31,14 @@
   become_user: "{{ polaris_install_user }}"
 
 - name: ""
-  file:
+  ansible.builtin.file:
     path: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
     state: directory
   become: yes
   become_user: "{{ polaris_install_user }}"
 
 - name: "extract webapp war"
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ webapp_staging_dir }}/{{ webapp_artifact_name }}"
     dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}"
     remote_src: yes
@@ -46,7 +46,7 @@
   become_user: "{{ polaris_install_user }}"
 
 - name: 'remove superfluous logging files'
-  file:
+  ansible.builtin.file:
     path: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/classes/log4j.properties"
     state: 'absent'
   become: yes
@@ -54,25 +54,37 @@
   when: webapp_configure_log4j_enabled
 
 - name: 'configure logging log4j v2'
-  template:
+  ansible.builtin.template:
     src: 'log4j2.xml.j2'
     dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/classes/log4j2.xml"
   become: yes
   become_user: "{{ polaris_install_user }}"
   when: webapp_configure_log4j_enabled
+  register: template_result
+
+- name: 'Log template replacement'
+  ansible.builtin.debug:
+    msg: "Warning! Replaced existing log4j2.xml"
+  when: webapp_configure_log4j_enabled and template_result.changed
 
 - name: 'configure context'
-  template:
+  ansible.builtin.template:
     src: 'context.xml.j2'
     dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/META-INF/context.xml"
   become: yes
   become_user: "{{ polaris_install_user }}"
   when: webapp_configure_context_enabled
+  register: template_result
+
+- name: 'Log template replacement'
+  ansible.builtin.debug:
+    msg: "Warning! Replaced existing context.xml"
+  when: webapp_configure_context_enabled and template_result.changed
 
 # Default ojdbc version set in role defaults, but can be overridden in playbook or
 # sdk-config. Target ojdbc URL needs to be IIT Artifactory and file needs to exist there.
 - name: install ojdbc
-  get_url:
+  ansible.builtin.get_url:
     url: "{{ ojdbc_url }}/{{ ojdbc_file }}"
     dest: "{{ webapp_staging_dir }}/.{{ webapp_war.context }}/WEB-INF/lib/{{ ojdbc_file }}"
     timeout: 100
@@ -82,12 +94,12 @@
   when: not skip_ojdbc_install
 
 - name: show installed ojdbc source and version for reference purposes
-  debug:
+  ansible.builtin.debug:
     msg: "{{ ojdbc_url }}/{{ ojdbc_file }}"
   when: not skip_ojdbc_install
 
 - name: "directory {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
-  file:
+  ansible.builtin.file:
     path: "{{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
     state: "directory"
     mode: "0755"
@@ -104,12 +116,12 @@
     _log_type: "tomcat"
 
 - name: "deploy {{ webapp_app_dir_name }}"
-  command: "cp -a {{ webapp_staging_dir }}/.{{ webapp_war.context }}/. {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
+  ansible.builtin.command: "cp -a {{ webapp_staging_dir }}/.{{ webapp_war.context }}/. {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"
   become: yes
   become_user: "{{ polaris_install_user }}"
 
 - name: 'clean up staging assets'
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: 'absent'
   become: yes
