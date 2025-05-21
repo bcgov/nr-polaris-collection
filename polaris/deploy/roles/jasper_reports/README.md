@@ -47,9 +47,9 @@ Use the following playbook to deploy reports to a single server (node 1) in dev,
     jasper_deployer_url: "https://jasper.example.com"
     jasper_deployer_user: "deployer"
     jasper_deployer_password: "password"
-    # Increase the number of seconds to wait before requesting the import status (for large numbers
-    # of reports where the import can take longer to complete).
-    jasper_pause_seconds: 20
+    # Increase the number of seconds to wait before requesting the import status.
+    # Only used for large numbers of reports where the import can take longer than 5 seconds to complete.
+    jasper_pause_seconds: 60
 
   tasks:
     - name: Deploy reports to a single server
