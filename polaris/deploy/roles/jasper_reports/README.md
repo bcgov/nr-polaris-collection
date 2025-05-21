@@ -23,6 +23,7 @@ The following variables can be set to customize the role's behavior:
 - `jasper_deployer_user`: The username for deploying reports to the JasperReports Server.
 - `jasper_deployer_password`: The password for deploying reports to the JasperReports Server.
 - `jasper_cookie_key`: The key for the JasperReports Server loadbalancing cookie.
+- `jasper_pause_seconds`: The number of seconds to pause before requesting the import status from the Jasper server
 
 ## Example Playbooks
 
@@ -46,6 +47,9 @@ Use the following playbook to deploy reports to a single server (node 1) in dev,
     jasper_deployer_url: "https://jasper.example.com"
     jasper_deployer_user: "deployer"
     jasper_deployer_password: "password"
+    # Increase the number of seconds to wait before requesting the import status (for large numbers
+    # of reports where the import can take longer to complete).
+    jasper_pause_seconds: 20
 
   tasks:
     - name: Deploy reports to a single server
