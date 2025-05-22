@@ -13,6 +13,11 @@
   ansible.builtin.set_fact:
     tomcat_version: "{{ tomcat_version_number | default(latest_tomcat_minor_version.stdout, true) }}"
 
+- name: Fail if tomcat_version is empty or not set
+  ansible.builtin.fail:
+    msg: "Tomcat version is not set. Please set tomcat_version_number or ensure the latest Tomcat version is retrievable."
+  when: tomcat_version is not defined or tomcat_version == ""
+    
 - name: "Show download info"
   ansible.builtin.debug:
     msg: "tomcat_major_version: {{ tomcat_major_version }} and tomcat_version: {{ tomcat_version }}"
