@@ -38,7 +38,8 @@ All variables are prefixed with `tomcat_`. Key variables include:
 | `tomcat_use_https` | `yes` | Enable HTTPS |
 | `tomcat_https_port` | `8001` | HTTPS port |
 | `tomcat_keystore_file` | `{{ tomcat_install_root }}/.keys/key.jks` | Keystore file |
-| `tomcat_major_version` | `10` | Tomcat version |
+| `tomcat_major_version` | `10` | Tomcat major version |
+| `tomcat_version_number` | | Tomcat semantic version (e.g., `9.0.100`). If not set, the latest available version for the specified `tomcat_major_version` is used. |
 | `tomcat_java_home` | `{{ tomcat_install_root }}/bin/jdk` | Java home directory |
 | `tomcat_install_user` | `{{ polaris_install_user }}` | Install user |
 | `tomcat_run_user` | `{{ polaris_service_user }}` | Run user |
@@ -96,7 +97,7 @@ Define JNDI resources in `tomcat_jndi_resources` as a list of maps:
 
 ## Example Playbooks
 
-Install the default Tomcat version:
+Install the latest release for the default Tomcat major version:
 
 ```yaml
 - hosts: all
@@ -104,14 +105,25 @@ Install the default Tomcat version:
   - name: tomcat
 ```
 
-Install a specific major version:
+Install the latest release for a specific major version:
 
 ```yaml
 - hosts: all
   roles:
   - role: tomcat
     vars:
-    tomcat_major_version: '9'
+      tomcat_major_version: '9'
+```
+
+Install a specific (pinned) release for a given major version:
+
+```yaml
+- hosts: all
+  roles:
+  - role: tomcat
+    vars:
+      tomcat_major_version: '9'
+      tomcat_version_number: '9.0.100'
 ```
 
 ---
