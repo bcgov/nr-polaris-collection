@@ -32,7 +32,7 @@ All variables are prefixed with `jdk_` to indicate they are specific to this rol
 | `lets-encrypt-x3-cross-signed.der`       | `{{ artifactory_url }}/ext-binaries-local/certs/lets-encrypt-x3-cross-signed.der` |
 
 
-## Tasks
+## Role Tasks
 
 The role performs the following tasks:
 
@@ -48,28 +48,30 @@ This role depends on values from the common role for default variable settings.
 
 Additionally, before running this role, ensure that the `create_project_directories` role has been executed to set up necessary directories.
 
+## Deploy Adoptium OpenJDK
+
+By default, this role deploys the latest Adoptium OpenJDK LTS release for the major version specified by the `jdk_major_version` variable (see role
+defaults for the specific major version).
+
+You can override which Adoptium JDK release gets deployed by providing the following variables in your playbook:
+
+- Set `jdk_major_version` to deploy the latest release of a different major version (e.g., `8`, `11`, `17`, `21`).
+- Set `jdk_pinned_release_name` to deploy a specific pinned Adoptium release (e.g., `jdk17u80-b01`).
+
+This approach allows you to flexibly control which Adoptium JDK version is installed.
+
 ## Example Playbooks
 
-Use this role to deploy an Adoptium OpenJDK package in one of three ways:
-
-1. **Latest version of the default major version**
-2. **Latest version of a specific major version**
-3. **Pinned version of JDK**
-
-The role fetches JDK release information and downloads packages from Adoptium API.
-
-### Deploy the Latest Version of the Default Major Version
+Deploy the latest default Adoptium OpenJDK LTS release:
 
 ```yaml
 ---
 - hosts: all
   roles:
     - name: jdk
-      vars:
-        proxy_env: '{{ env_vars }}'
 ```
 
-### Deploy the Latest Version of a Specific Major Version
+Deploy the latest release for a specific major version:
 
 ```yaml
 ---
@@ -78,10 +80,9 @@ The role fetches JDK release information and downloads packages from Adoptium AP
     - name: jdk
       vars:
         jdk_major_version: '8'
-        proxy_env: '{{ env_vars }}'
 ```
 
-### Deploy a Specific Pinned Version
+Deploy a specific (pinned) release:
 
 ```yaml
 ---
@@ -90,7 +91,6 @@ The role fetches JDK release information and downloads packages from Adoptium AP
     - name: jdk
       vars:
         jdk_pinned_release_name: 'jdk8u412-b08'
-        proxy_env: '{{ env_vars }}'
 ```
 
 To determine the available release names, refer to the Adoptium API:

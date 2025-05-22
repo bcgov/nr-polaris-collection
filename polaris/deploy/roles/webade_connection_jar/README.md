@@ -31,9 +31,10 @@ All variables are prefixed with `webade_` to indicate they are specific to this 
 | `webade_build_dir` | /tmp/webade-connection-jar | Directory where the JAR is built |
 | `webade_min_connections` | 0 | Minimum number of DB connections |
 | `webade_max_connections` | 10 | Maximum number of DB connections |
-
+| `webade_datastore` | ca.bc.gov.webade.DefaultWebADEDatabaseDatastore | The datastore for webade configuration |
 
 ### Example Usage
+
 The role is included in another role's main tasks file.
 
 ```
@@ -58,3 +59,12 @@ The password is prompted in the playbook.
     - name: wso2am_webade_db_pass
       prompt: "[ WebADE Connection ]: Enter Oracle DB password or Enter for none: "
 ```
+
+### Override webade datastore
+
+Apps can use different webade datastores. To override the default datastore, provide a variable in your role call (or vars file):
+
+# create a WebADE connection jar for the container
+- name: webade_connection_jar
+  vars:
+    webade_datastore: "ca.bc.gov.webade.mof.MOFOrganizationDatastore"
