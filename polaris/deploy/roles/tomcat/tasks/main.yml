@@ -4,6 +4,21 @@
     msg: "Error: create_project_directories must be called before!"
   when: not role_create_project_directories_called | default(false) | bool
 
+- name: Check Tomcat Connectivity via Proxy
+  uri:
+    url: "{{ tomcat_mirror }}/dist/tomcat/"
+    method: GET
+    status_code: 200
+    return_content: no
+    timeout: 10
+  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  register: tomcat_connection_check
+  failed_when: tomcat_connection_check.status != 200
+
+- name: Show Tomcat Connected Message
+  debug:
+    msg: "Successfully connected to Tomcat Mirror: {{ tomcat_mirror }}."
+
 - name: Get Latest Tomcat Minor Version
   ansible.builtin.shell: "curl -s {{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
   environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
@@ -12,7 +27,7 @@
 - name: Set Tomcat Version number
   ansible.builtin.set_fact:
     tomcat_version: "{{ tomcat_version_number | default(latest_tomcat_minor_version.stdout, true) }}"
-
+    
 - name: "Show download info"
   ansible.builtin.debug:
     msg: "tomcat_major_version: {{ tomcat_major_version }} and tomcat_version: {{ tomcat_version }}"
