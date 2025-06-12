@@ -70,6 +70,12 @@
     service_control_user: "{{ tomcat_run_user }}"
     service_control_handler: "{{ tomcat_handler_style }}"
 
+- name: Scan s6 home directory
+  ansible.builtin.shell: "{{ polaris_s6_home }}/bin/s6-svscanctl -a {{ polaris_s6_services_home }}"
+  become: yes
+  become_user: "{{ polaris_service_user }}"
+  when: not s6_service_run_file.stat.exists
+
 - name: required directories
   ansible.builtin.file:
     path: "{{ item }}"
