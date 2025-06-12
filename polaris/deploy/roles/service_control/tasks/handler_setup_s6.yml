@@ -14,8 +14,3 @@
     mode: "0755"
   become: yes
   become_user: "{{ service_control_install_user }}"
-
-- name: Scan s6 home directory
-  ansible.builtin.shell: "{{ polaris_s6_home }}/bin/s6-svscanctl -h {{ polaris_s6_services_home }}"
-  become: yes
-  become_user: "{{ service_control_service_user }}"
