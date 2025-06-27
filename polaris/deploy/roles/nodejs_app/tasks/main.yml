@@ -21,6 +21,7 @@
     service_control_action: "stop"
     service_control_user: "{{ nodejs_app_install_user }}"
     service_control_handler: "{{ nodejs_app_control_handler }}"
+  when: s6_service_run_file.stat.exists
 
 - meta: flush_handlers
   when: s6_service_run_file.stat.exists
