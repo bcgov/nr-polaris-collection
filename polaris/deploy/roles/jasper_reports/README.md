@@ -24,7 +24,7 @@ The following variables can be set to customize the role's behavior:
 - `jasper_deployer_password`: The password for deploying reports to the JasperReports Server.
 - `jasper_cookie_key`: The key for the JasperReports Server loadbalancing cookie.
 - `jasper_pause_seconds`: The number of seconds to pause before requesting the import status from the Jasper server
-- `jasper_skip_delete`: If set to `true`, skips deleting existing reports before importing new ones. Defaults to `false`.
+- `jasper_skip_delete`: If set to `true`, skips deleting existing reports and datasources before importing new ones. Defaults to `false`.
 
 ## Example Playbooks
 
