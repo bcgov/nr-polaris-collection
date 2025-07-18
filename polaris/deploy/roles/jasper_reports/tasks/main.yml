@@ -79,6 +79,7 @@
       return_content: true
       validate_certs: false
       status_code: [200, 404]
+    when: jasper_skip_delete | default(false) | bool
 
   - name: "Delete the datasource folder(s) on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     ansible.builtin.uri:
@@ -94,6 +95,7 @@
       validate_certs: false
       status_code: [200, 404]
     loop: "{{ jasper_datasource_folders | default([]) }}"
+    when: jasper_skip_delete | default(false) | bool
 
   - name: "Import the package on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     ansible.builtin.uri:
