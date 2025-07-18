@@ -51,6 +51,8 @@ Use the following playbook to deploy reports to a single server (node 1) in dev,
     # Increase the number of seconds to wait before requesting the import status.
     # Only used for large numbers of reports where the import can take longer than 5 seconds to complete.
     jasper_pause_seconds: 60
+    # Override the default to skip deleting the package
+    jasper_package_delete: false
 
   tasks:
     - name: Deploy reports to a single server
