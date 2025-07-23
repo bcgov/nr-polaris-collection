@@ -81,7 +81,7 @@
       status_code: [200, 404]
     when: jasper_package_delete | bool
     retries: 5
-    delay: 120
+    delay: 300
     until: result is succeeded
     register: result
 
@@ -101,7 +101,7 @@
     loop: "{{ jasper_datasource_folders | default([]) }}"
     when: jasper_package_delete | bool
     retries: 5
-    delay: 120
+    delay: 300
     until: result is succeeded
     register: result
 
