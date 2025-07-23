@@ -80,6 +80,10 @@
       validate_certs: false
       status_code: [200, 404]
     when: jasper_package_delete | bool
+    retries: 5
+    delay: 60
+    until: result is succeeded
+    register: result
 
   - name: "Delete the datasource folder(s) on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     ansible.builtin.uri:
@@ -96,6 +100,10 @@
       status_code: [200, 404]
     loop: "{{ jasper_datasource_folders | default([]) }}"
     when: jasper_package_delete | bool
+    retries: 5
+    delay: 60
+    until: result is succeeded
+    register: result
 
   - name: "Import the package on the {{ jasper_server_instance }} server instance node {{ jasper_route_id }}"
     ansible.builtin.uri:
