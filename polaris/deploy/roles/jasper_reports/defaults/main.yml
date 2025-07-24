@@ -9,6 +9,7 @@ jasper_deployer_user: ""
 jasper_deployer_password: ""
 jasper_cookie_key: "{{ 'ROUTEID' if jasper_server_instance == 'NRSRS' else 'ROUTEID0' if jasper_server_instance == 'JCRS' else '' }}"
 jasper_route_id: ".1"
+jasper_package_delete: true
 
 jasper_invalid_project_names:
   - JCRS

@@ -4,6 +4,16 @@
     msg: "Error: create_project_directories must be called before!"
   when: not role_create_project_directories_called | default(false) | bool
 
+- name: Check if s6 service run file exists
+  ansible.builtin.stat:
+    path: "{{ polaris_apps_service_s6_home }}/run"
+  register: s6_service_run_file
+
+- name: Debug s6 service run file existence
+  ansible.builtin.debug:
+    msg: "s6 service run file exists."
+  when: s6_service_run_file.stat.exists
+
 - name: "Ensuring service is stopped"
   ansible.builtin.include_role:
     name: service_control
@@ -11,8 +21,10 @@
     service_control_action: "stop"
     service_control_user: "{{ nodejs_app_install_user }}"
     service_control_handler: "{{ nodejs_app_control_handler }}"
+  when: s6_service_run_file.stat.exists
 
 - meta: flush_handlers
+  when: s6_service_run_file.stat.exists
 
 - name: "Setup handler {{ nodejs_app_control_handler }}"
   ansible.builtin.include_role:
