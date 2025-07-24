@@ -4,4 +4,6 @@ polaris_apps_project_name: "sample"
 polaris_apps_service_name: "service"
 polaris_apps_service_install_name: "artifact"
 
+polaris_control_handler: "systemd"
+
 proxy_env: "none"

@@ -1,4 +1,5 @@
 ---
+# ─── S6 HANDLERS ──────────────────────────────────────────────────────
 - name: start app via s6
   s6_service:
     name: "{{ service_control_target }}"
@@ -23,6 +24,7 @@
   become: yes
   become_user: "{{ service_control_service_user }}"
 
+# ─── SCRIPT HANDLERS ──────────────────────────────────────────────────
 - name: start app using script
   ansible.builtin.command:
     cmd: "{{ service_control_service_script_start }}"
@@ -48,3 +50,32 @@
   become: yes
   become_user: "{{ service_control_service_user }}"
   ignore_errors: yes
+
+# ─── SYSTEMD HANDLERS ─────────────────────────────────────────────────
+- name: start app via systemd
+  ansible.builtin.systemd:
+    name: "{{ service_control_target }}"
+    state: started
+    scope: user
+  listen: 'start service - systemd'
+  become: yes
+  become_user: "{{ service_control_service_user }}"
+
+- name: stop app via systemd
+  ansible.builtin.systemd:
+    name: "{{ service_control_target }}"
+    state: stopped
+    scope: user
+  listen: 'stop service - systemd'
+  become: yes
+  become_user: "{{ service_control_service_user }}"
+  ignore_errors: True
+
+- name: restart app via systemd
+  ansible.builtin.systemd:
+    name: "{{ service_control_target }}"
+    state: restarted
+    scope: user
+  listen: 'restart service - systemd'
+  become: yes
+  become_user: "{{ service_control_service_user }}"

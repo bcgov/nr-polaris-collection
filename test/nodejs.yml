@@ -6,10 +6,22 @@
     - "vars/nodejs.yml"
 
   roles:
+    # prepare the installation environment by creating the necessary folders
+    # See: https://github.com/bcgov/nr-polaris-collection/tree/main/polaris/deploy/roles/create_project_directories
     - role: create_project_directories
+
+    # Establish the port number
+    # See: https://github.com/bcgov/nr-polaris-collection/tree/main/polaris/deploy/roles/port_manager
     - role: port_manager
+
+    # Install nodejs
+    # See: https://github.com/bcgov/nr-polaris-collection/tree/main/polaris/deploy/roles/nodejs
     - role: nodejs
+
+    # Install nodejs application
+    # See: https://github.com/bcgov/nr-polaris-collection/tree/main/polaris/deploy/roles/nodejs_app
     - role: nodejs_app
       vars:
         nodejs_app_service_copy_src: "/home/vagrant/polaris/deploy/samples/nodejs/"
+        nodejs_app_service_zip_path: "/tmp/"
         nodejs_app_service_entrypoint: "app/main.js"
