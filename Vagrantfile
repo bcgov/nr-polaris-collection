@@ -46,6 +46,7 @@ Vagrant.configure("2") do |config|
     sudo mkdir -p /fs/u02/apps_ux/wwwsvr/.config/systemd/user
     sudo chown wwwsvr:wwwadm /fs/u02/apps_ux/wwwsvr/.config /fs/u02/apps_ux/wwwsvr/.config/systemd /fs/u02/apps_ux/wwwsvr/.config/systemd/user
     sudo chmod 775 /fs/u02/apps_ux/wwwsvr/.config /fs/u02/apps_ux/wwwsvr/.config/systemd /fs/u02/apps_ux/wwwsvr/.config/systemd/user
+    sudo chmod 755 /fs/u02/apps_ux/wwwsvr
   SHELL
 
 end
