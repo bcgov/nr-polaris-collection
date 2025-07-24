@@ -41,6 +41,11 @@ Vagrant.configure("2") do |config|
     sudo systemctl restart sshd
     sudo -i echo "vagrant ALL=(wwwadm) NOPASSWD: ALL" >> /etc/sudoers
     sudo -i echo "vagrant ALL=(wwwsvr) NOPASSWD: ALL" >> /etc/sudoers
+    sudo loginctl enable-linger wwwsvr
+    sudo loginctl user-status wwwsvr || echo "Lingering enabled, systemd user session will start on demand."
+    sudo mkdir -p /fs/u02/apps_ux/wwwsvr/.config/systemd/user
+    sudo chown wwwsvr:wwwadm /fs/u02/apps_ux/wwwsvr/.config /fs/u02/apps_ux/wwwsvr/.config/systemd /fs/u02/apps_ux/wwwsvr/.config/systemd/user
+    sudo chmod 775 /fs/u02/apps_ux/wwwsvr/.config /fs/u02/apps_ux/wwwsvr/.config/systemd /fs/u02/apps_ux/wwwsvr/.config/systemd/user
   SHELL
 
 end

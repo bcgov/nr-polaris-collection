@@ -1,0 +1,12 @@
+[Unit]
+Description={{ service_control_target | default("MyApp Service") }}
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ service_control_home }}/start.sh
+Restart=on-failure
+EnvironmentFile=-{{ env_file | default("/etc/myapp.env") }}
+
+[Install]
+WantedBy=multi-user.target
