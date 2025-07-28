@@ -82,13 +82,20 @@ ansible-playbook nodejs.yml
 curl localhost:8080
 ```
 
-### Run an application playbook locally
+### Run an application playbook locally - NodeJs
 
 ```
 vagrant up
 vagrant upload polaris
-cd <application root>
-vagrant upload . polaris/app
+vagrant upload <application root>/playbooks polaris/deploy
+vagrant upload overlay_nodejs polaris/deploy
+vagrant ssh
+mkdir -p polaris/app
+cd polaris/app
+oras pull ghcr.io/bcgov/nodejs-sample/package:v3.1.0
+cd ../deploy
+export ANSIBLE_LIBRARY=/home/vagrant/polaris/deploy/plugins
+ansible-playbook -e env_vars=vagrant playbook.yaml
 ```
 
 ### Why no container?

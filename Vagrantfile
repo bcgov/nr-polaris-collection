@@ -47,6 +47,12 @@ Vagrant.configure("2") do |config|
     sudo chown wwwsvr:wwwadm /fs/u02/apps_ux/wwwsvr/.config /fs/u02/apps_ux/wwwsvr/.config/systemd /fs/u02/apps_ux/wwwsvr/.config/systemd/user
     sudo chmod 775 /fs/u02/apps_ux/wwwsvr/.config /fs/u02/apps_ux/wwwsvr/.config/systemd /fs/u02/apps_ux/wwwsvr/.config/systemd/user
     sudo chmod 755 /fs/u02/apps_ux/wwwsvr
+    ORAS_VERSION="1.2.2"
+    curl -LO "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_amd64.tar.gz"
+    mkdir -p oras-install/
+    tar -zxf oras_${ORAS_VERSION}_*.tar.gz -C oras-install/
+    sudo mv oras-install/oras /usr/local/bin/
+    rm -rf oras_${ORAS_VERSION}_*.tar.gz oras-install/
   SHELL
 
 end
