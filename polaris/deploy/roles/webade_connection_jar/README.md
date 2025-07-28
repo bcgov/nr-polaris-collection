@@ -1,4 +1,4 @@
-# webade-connection-jar
+# webade-connection-jar - Configure connection
 
 Creates and installs a WebADE connection JAR file.
 

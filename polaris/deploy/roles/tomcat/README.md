@@ -1,4 +1,4 @@
-# Tomcat Ansible Role
+# tomcat - Tomcat installation
 
 This Ansible role automates the installation and configuration of Apache Tomcat on Linux systems. It supports deploying multiple web applications, HTTPS configuration, logging, and JNDI resources.
 
