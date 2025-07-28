@@ -9,4 +9,4 @@ Restart=on-failure
 EnvironmentFile=-{{ env_file | default("/etc/myapp.env") }}
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
