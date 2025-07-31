@@ -2,6 +2,8 @@
 # Global vars - users
 polaris_install_user: "wwwadm"
 polaris_service_user: "wwwsvr"
+polaris_install_user_home: "/apps_ux/wwwadm"
+polaris_service_user_home: "/apps_ux/wwwsvr"
 
 # Global vars - directories
 
@@ -39,6 +41,8 @@ polaris_s6_services_home: "/apps_ux/s6_services"
 polaris_s6_home:  "/sw_ux/s6"
 polaris_apps_service_s6_home: "{{ polaris_s6_services_home }}/{{polaris_apps_service_name}}"
 polaris_apps_service_s6_name: "{{ polaris_apps_service_name }}"
+
+# systemd - Used if polaris_control_handler == 'systemd'
 
 proxy_env: "dev"
 proxy_env_dev_test:

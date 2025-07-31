@@ -4,11 +4,16 @@ service_control_action: ""
 service_control_handler: "{{ polaris_control_handler }}"
 service_control_target: "{{ polaris_apps_service_name }}"
 service_control_service_user: "{{ polaris_service_user }}"
+service_control_service_user_home: "{{ polaris_service_user_home }}"
 service_control_install_user: "{{ polaris_install_user }}"
 service_control_home: "{{ polaris_apps_service_current_home }}"
+
 # handler: s6
 service_control_service_s6_home: "{{ polaris_apps_service_s6_home }}"
 service_control_s6_home: "{{ polaris_s6_home }}"
+
 # handler: script
 service_control_service_script_start: "{{ polaris_apps_service_current_home }}/startup.sh"
 service_control_service_script_stop: "{{ polaris_apps_service_current_home }}/shutdown.sh"
+
+# handler: systemd

@@ -1,6 +1,8 @@
 # webapp - Install a war file for Tomcat
 
-Configures and deploys a WAR file to an existing Tomcat container
+Configures and deploys a WAR file to an existing Tomcat container.
+
+See: [tomcat](../tomcat/README.md)
 
 ## Role Variables
 

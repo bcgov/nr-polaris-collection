@@ -1,0 +1,34 @@
+---
+- name: Ensure systemd user config directory exists
+  ansible.builtin.file:
+    path: "{{ service_control_service_user_home }}/.config/systemd/user"
+    state: directory
+    mode: '0775'
+  become: yes
+  become_user: "{{ service_control_install_user }}"
+
+- name: Copy systemd user service file
+  ansible.builtin.template:
+    src: run_systemd.j2
+    dest: "{{ service_control_service_user_home }}/.config/systemd/user/{{ service_control_target }}.service"
+    mode: '0644'
+  become: yes
+  become_user: "{{ service_control_install_user }}"
+
+- name: Get UID of wwwsvr
+  ansible.builtin.command: id -u wwwsvr
+  register: wwwsvr_uid_result
+  changed_when: false
+
+- name: Enable user service
+  shell: |
+    systemctl --user daemon-reexec
+    systemctl --user daemon-reload
+    systemctl --user enable {{ service_control_target }}.service
+    # systemctl --user restart {{ service_control_target }}.service
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ wwwsvr_uid_result.stdout }}"
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: "{{ service_control_service_user }}"
