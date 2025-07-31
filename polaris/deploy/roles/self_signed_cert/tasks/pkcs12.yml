@@ -1,6 +1,7 @@
-- name: remove old key file
-  ansible.builtin.shell: "rm {{ ssc_keystore }}"
-  ignore_errors: True
+- name: Remove old key file if present
+  ansible.builtin.file:
+    path: "{{ ssc_keystore }}"
+    state: absent
   become: yes
   become_user: "{{ ssc_user }}"
 
