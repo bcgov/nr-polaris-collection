@@ -31,8 +31,8 @@ Vagrant.configure("2") do |config|
     sudo ln -s /fs/u02/apps_ux /apps_ux
     sudo ln -s /fs/u02/sw_ux /sw_ux
     sudo groupadd -g 778 wwwadm
-    sudo useradd -u 778 -g 778 -c "apache user" -m -d /fs/u02/apps_ux/wwwadm -s /sbin/nologin wwwadm
-    sudo useradd -u 779 -g 778 -c "apache service" -m -d /fs/u02/apps_ux/wwwsvr -s /sbin/nologin wwwsvr
+    sudo useradd -u 778 -g 778 -c "apache user" -m -d /fs/u02/apps_ux/wwwadm -s /bin/bash wwwadm
+    sudo useradd -u 779 -g 778 -c "apache service" -m -d /fs/u02/apps_ux/wwwsvr -s /bin/bash wwwsvr
     sudo chown wwwadm:wwwadm /fs/u02 /fs/u02/apps_ux /fs/u02/apps_data /fs/u02/sw_ux
     sudo -i echo "umask 022" >> /apps_ux/wwwadm/.bashrc
     sudo -i echo "umask 022" >> /apps_ux/wwwsvr/.bashrc
