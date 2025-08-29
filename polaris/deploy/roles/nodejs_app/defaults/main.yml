@@ -17,6 +17,3 @@ nodejs_app_service_entrypoint: "app/dist/main.js"
 nodejs_app_node_install_dir:   "nodejs"
 nodejs_app_node_home:          "{{ nodejs_app_service_install_home }}/{{ polaris_bin_folder }}/{{ nodejs_app_node_install_dir }}"
 nodejs_app_node_options:       ""
-
-nodejs_app_control_handler: "{{ polaris_control_handler }}"
-

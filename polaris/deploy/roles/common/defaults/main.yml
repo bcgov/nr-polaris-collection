@@ -31,18 +31,21 @@ polaris_apps_service_install_tmp_home: "{{polaris_apps_service_install_home}}/{{
 polaris_apps_service_data_home: "{{ polaris_apps_data_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
 polaris_apps_service_logs_home: "{{ polaris_apps_logs_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
 
+polaris_apps_service_script_start: "{{ polaris_apps_service_current_home }}/startup.sh"
+polaris_apps_service_script_stop: "{{ polaris_apps_service_current_home }}/shutdown.sh"
+
 # Port number should be overriden by playbook by using role that defines one
 polaris_apps_service_port: "8080"
 
-polaris_control_handler: "s6"
+polaris_control_handler:      "s6"
 
 # s6 - Used if polaris_control_handler == 's6'
-polaris_s6_services_home: "/apps_ux/s6_services"
-polaris_s6_home:  "/sw_ux/s6"
+polaris_s6_services_home:     "/apps_ux/s6_services"
+polaris_s6_home:              "/sw_ux/s6"
 polaris_apps_service_s6_home: "{{ polaris_s6_services_home }}/{{polaris_apps_service_name}}"
-polaris_apps_service_s6_name: "{{ polaris_apps_service_name }}"
 
 # systemd - Used if polaris_control_handler == 'systemd'
+polaris_apps_service_systemd_home: "{{ polaris_service_user_home }}/.config/systemd/user"
 
 proxy_env: "dev"
 proxy_env_dev_test:

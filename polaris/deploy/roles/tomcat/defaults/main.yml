@@ -32,8 +32,6 @@ tomcat_ajp_port:            8001
 tomcat_set_as_current:      yes
 tomcat_download_tmp_dir:    "/tmp"
 tomcat_install_user:        "{{ polaris_install_user }}"
-tomcat_run_user:            "{{ polaris_service_user }}"
-tomcat_control_handler:     "{{ polaris_control_handler }}"
 tomcat_download_username:   "{{ artifactory_username }}"
 tomcat_download_password:   "{{ artifactory_password }}"
 tomcat_checksum_protocol:   "sha512"

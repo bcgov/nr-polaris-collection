@@ -41,11 +41,9 @@
   ansible.builtin.include_role:
     name: service_control
   vars:
+    # If handler is 'script', you must set service_control_service_script_start and service_control_service_script_stop
+    # as tomcat has it's own scripts to start/stop the server in "{{ tomcat_install_dir }}/bin/"
     service_control_action: "stop"
-    service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
-    service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
-    service_control_user: "{{ tomcat_run_user }}"
-    service_control_handler: "{{ tomcat_control_handler }}"
 
 - meta: flush_handlers
 
@@ -54,9 +52,6 @@
     name: service_control
   vars:
     service_control_action: "setup"
-    service_control_home: "{{ tomcat_install_root_current }}"
-    service_control_user: "{{ tomcat_run_user }}"
-    service_control_handler: "{{ tomcat_control_handler }}"
 
 - name: required directories
   ansible.builtin.file:
@@ -98,18 +93,18 @@
 - name: load task list for Tomcat {{ tomcat_version }}
   include_tasks: "install-tomcat.yml"
 
-- name: service directory {{ tomcat_service_dir }}
-  ansible.builtin.file:
-    path: "{{ tomcat_service_dir }}"
+- name: startup script
+  ansible.builtin.template:
+    src: "startup.j2"
+    dest: "{{ tomcat_install_dir }}/startup.sh"
     mode: "0775"
-    state: directory
   become: yes
   become_user: "{{ polaris_install_user }}"
 
-- name: run script {{ tomcat_service_dir }}/run
+- name: shutdown script
   ansible.builtin.template:
-    src: "run.j2"
-    dest: "{{ tomcat_service_dir }}/run"
+    src: "shutdown.j2"
+    dest: "{{ tomcat_install_dir }}/shutdown.sh"
     mode: "0775"
   become: yes
   become_user: "{{ polaris_install_user }}"
@@ -135,10 +130,6 @@
     name: service_control
   vars:
     service_control_action: "start"
-    service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
-    service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
-    service_control_user: "{{ tomcat_run_user }}"
-    service_control_handler: "{{ tomcat_control_handler }}"
 
 - name: Mark tomcat as called
   ansible.builtin.set_fact:

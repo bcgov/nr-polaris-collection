@@ -15,7 +15,7 @@ The following variables can be customized in your playbook or inventory:
 | `service_control_target` | `{{ polaris_apps_service_name }}` | The name of the service being controlled. |
 | `service_control_service_user` | `{{ polaris_service_user }}` | User under which the service runs. |
 | `service_control_install_user` | `{{ polaris_install_user }}` | User who installed the service. |
-| `service_control_home` | `{{ polaris_apps_service_current_home }}` | Home directory of the service. |
+| `service_control_service_home` | `{{ polaris_apps_service_current_home }}` | Home directory of the service. |
 | `service_control_service_s6_home` | `{{ polaris_apps_service_s6_home }}` | S6 home directory (for `s6` handler). |
 | `service_control_service_script_start` | `{{ polaris_apps_service_current_home }}/startup.sh` | Start script (for `script` handler). |
 | `service_control_service_script_stop` | `{{ polaris_apps_service_current_home }}/shutdown.sh` | Stop script (for `script` handler). |

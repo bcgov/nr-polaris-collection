@@ -1,9 +1,40 @@
+# ─── COMMON HANDLER ───────────────────────────────────────────────────
+# TODO: Report service status after action
+- name: Start app - common debug
+  block:
+    - ansible.builtin.debug:
+      msg: "Starting service {{ service_control_target }} ({{ service_control_handler }})"
+  listen:
+    - 'start service - s6'
+    - 'start service - script'
+    - 'start service - systemd'
+
+- name: Stop app - common debug
+  block:
+    - ansible.builtin.debug:
+      msg: "Stopping service {{ service_control_target }} ({{ service_control_handler }})"
+  listen:
+    - 'stop service - s6'
+    - 'stop service - script'
+    - 'stop service - systemd'
+
+- name: Restart app - common debug
+  block:
+    - ansible.builtin.debug:
+      msg: "Restarting service {{ service_control_target }} ({{ service_control_handler }})"
+  listen:
+    - 'restart service - s6'
+    - 'restart service - script'
+    - 'restart service - systemd'
+
 # ─── S6 HANDLERS ──────────────────────────────────────────────────────
 - name: start app via s6
   block:
     - name: check s6 run file
       ansible.builtin.stat:
         path: "{{ service_control_service_s6_run_file }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: s6_service_run_file
 
     - name: start app
@@ -20,6 +51,8 @@
     - name: check s6 run file
       ansible.builtin.stat:
         path: "{{ service_control_service_s6_run_file }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: s6_service_run_file
 
     - name: restart app
@@ -36,6 +69,8 @@
     - name: check s6 run file
       ansible.builtin.stat:
         path: "{{ service_control_service_s6_run_file }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: s6_service_run_file
 
     - name: stop app
@@ -52,12 +87,14 @@
   block:
     - name: check script start file
       ansible.builtin.stat:
-        path: "{{ service_control_service_script_start }}"
+        path: "{{ service_control_script_script_start }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: script_start_file
 
     - name: start app
       ansible.builtin.command:
-        cmd: "{{ service_control_service_script_start }}"
+        cmd: "{{ service_control_script_script_start }}"
         chdir: "/"
       become: yes
       become_user: "{{ service_control_service_user }}"
@@ -68,12 +105,14 @@
   block:
     - name: check script stop file
       ansible.builtin.stat:
-        path: "{{ service_control_service_script_stop }}"
+        path: "{{ service_control_script_script_stop }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: script_stop_file
 
     - name: stop app
       ansible.builtin.command:
-        cmd: "{{ service_control_service_script_stop }}"
+        cmd: "{{ service_control_script_script_stop }}"
         chdir: "/"
       become: yes
       become_user: "{{ service_control_service_user }}"
@@ -86,16 +125,20 @@
     - name: check script start file
       ansible.builtin.stat:
         path: "{{ service_control_service_script_start }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: script_start_file
 
     - name: check script stop file
       ansible.builtin.stat:
-        path: "{{ service_control_service_script_stop }}"
+        path: "{{ service_control_script_script_stop }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: script_stop_file
 
     - name: restart app
       ansible.builtin.shell:
-        cmd: "{{ service_control_service_script_stop }}; sleep {{ service_control_restart_delay | default(40) }}; {{ service_control_service_script_start }}"
+        cmd: "{{ service_control_script_script_stop }}; sleep {{ service_control_restart_delay | default(40) }}; {{ service_control_script_script_start }}"
         chdir: "/"
       become: yes
       become_user: "{{ service_control_service_user }}"
@@ -109,6 +152,8 @@
     - name: check systemd config file
       ansible.builtin.stat:
         path: "{{ service_control_service_systemd_file }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: systemd_config_file
 
     - name: start app
@@ -126,6 +171,8 @@
     - name: check systemd config file
       ansible.builtin.stat:
         path: "{{ service_control_service_systemd_file }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: systemd_config_file
 
     - name: stop app
@@ -144,6 +191,8 @@
     - name: check systemd config file
       ansible.builtin.stat:
         path: "{{ service_control_service_systemd_file }}"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
       register: systemd_config_file
 
     - name: restart app
