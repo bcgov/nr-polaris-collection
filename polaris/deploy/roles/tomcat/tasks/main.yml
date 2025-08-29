@@ -37,16 +37,6 @@
     using_alt_app_dir: true
   when: alt_app_dir_name is defined
 
-- name: Check if s6 service run file exists
-  ansible.builtin.stat:
-    path: "{{ polaris_apps_service_s6_home }}/run"
-  register: s6_service_run_file
-
-- name: Debug s6 service run file existence
-  ansible.builtin.debug:
-    msg: "s6 service run file exists."
-  when: s6_service_run_file.stat.exists
-
 - name: "Service: stop"
   ansible.builtin.include_role:
     name: service_control
@@ -55,11 +45,9 @@
     service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
     service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
     service_control_user: "{{ tomcat_run_user }}"
-    service_control_handler: "{{ tomcat_handler_style }}"
-  when: s6_service_run_file.stat.exists
+    service_control_handler: "{{ tomcat_control_handler }}"
 
 - meta: flush_handlers
-  when: s6_service_run_file.stat.exists
 
 - name: "Setup handler {{ nodejs_app_control_handler }}"
   ansible.builtin.include_role:
@@ -68,13 +56,7 @@
     service_control_action: "setup"
     service_control_home: "{{ tomcat_install_root_current }}"
     service_control_user: "{{ tomcat_run_user }}"
-    service_control_handler: "{{ tomcat_handler_style }}"
-
-- name: Scan s6 home directory
-  ansible.builtin.shell: "{{ polaris_s6_home }}/bin/s6-svscanctl -a {{ polaris_s6_services_home }}"
-  become: yes
-  become_user: "{{ polaris_service_user }}"
-  when: not s6_service_run_file.stat.exists
+    service_control_handler: "{{ tomcat_control_handler }}"
 
 - name: required directories
   ansible.builtin.file:
@@ -156,7 +138,7 @@
     service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
     service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
     service_control_user: "{{ tomcat_run_user }}"
-    service_control_handler: "{{ tomcat_handler_style }}"
+    service_control_handler: "{{ tomcat_control_handler }}"
 
 - name: Mark tomcat as called
   ansible.builtin.set_fact:

@@ -1,81 +1,157 @@
----
 # ─── S6 HANDLERS ──────────────────────────────────────────────────────
 - name: start app via s6
-  s6_service:
-    name: "{{ service_control_target }}"
-    state: 'running'
+  block:
+    - name: check s6 run file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_s6_run_file }}"
+      register: s6_service_run_file
+
+    - name: start app
+      s6_service:
+        name: "{{ service_control_target }}"
+        state: 'running'
+      become: yes
+      become_user: "{{ service_control_service_user }}"
+      when: s6_service_run_file.stat.exists
   listen: 'start service - s6'
-  become: yes
-  become_user: "{{ service_control_service_user }}"
 
 - name: restart app via s6
-  s6_service:
-    name: "{{ service_control_target }}"
-    state: 'restarted'
+  block:
+    - name: check s6 run file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_s6_run_file }}"
+      register: s6_service_run_file
+
+    - name: restart app
+      s6_service:
+        name: "{{ service_control_target }}"
+        state: 'restarted'
+      become: yes
+      become_user: "{{ service_control_service_user }}"
+      when: s6_service_run_file.stat.exists
   listen: 'restart service - s6'
-  become: yes
-  become_user: "{{ service_control_service_user }}"
 
 - name: stop app via s6
-  s6_service:
-    name: "{{ service_control_target }}"
-    state: 'stopped'
+  block:
+    - name: check s6 run file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_s6_run_file }}"
+      register: s6_service_run_file
+
+    - name: stop app
+      s6_service:
+        name: "{{ service_control_target }}"
+        state: 'stopped'
+      become: yes
+      become_user: "{{ service_control_service_user }}"
+      when: s6_service_run_file.stat.exists
   listen: 'stop service - s6'
-  become: yes
-  become_user: "{{ service_control_service_user }}"
 
 # ─── SCRIPT HANDLERS ──────────────────────────────────────────────────
 - name: start app using script
-  ansible.builtin.command:
-    cmd: "{{ service_control_service_script_start }}"
-    chdir: "/"
+  block:
+    - name: check script start file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_script_start }}"
+      register: script_start_file
+
+    - name: start app
+      ansible.builtin.command:
+        cmd: "{{ service_control_service_script_start }}"
+        chdir: "/"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
+      when: script_start_file.stat.exists
   listen: 'start service - script'
-  become: yes
-  become_user: "{{ service_control_service_user }}"
 
 - name: stop app using script
-  ansible.builtin.command:
-    cmd: "{{ service_control_service_script_stop }}"
-    chdir: "/"
+  block:
+    - name: check script stop file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_script_stop }}"
+      register: script_stop_file
+
+    - name: stop app
+      ansible.builtin.command:
+        cmd: "{{ service_control_service_script_stop }}"
+        chdir: "/"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
+      ignore_errors: yes
+      when: script_stop_file.stat.exists
   listen: 'stop service - script'
-  become: yes
-  become_user: "{{ service_control_service_user }}"
-  ignore_errors: yes
 
 - name: restart app using script
-  ansible.builtin.shell:
-    cmd: "{{ service_control_service_script_stop }}; sleep {{ service_control_restart_delay | default(40) }}; {{ service_control_service_script_start }}"
-    chdir: "/"
+  block:
+    - name: check script start file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_script_start }}"
+      register: script_start_file
+
+    - name: check script stop file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_script_stop }}"
+      register: script_stop_file
+
+    - name: restart app
+      ansible.builtin.shell:
+        cmd: "{{ service_control_service_script_stop }}; sleep {{ service_control_restart_delay | default(40) }}; {{ service_control_service_script_start }}"
+        chdir: "/"
+      become: yes
+      become_user: "{{ service_control_service_user }}"
+      ignore_errors: yes
+      when: script_stop_file.stat.exists and script_start_file.stat.exists
   listen: 'restart service - script'
-  become: yes
-  become_user: "{{ service_control_service_user }}"
-  ignore_errors: yes
 
 # ─── SYSTEMD HANDLERS ─────────────────────────────────────────────────
 - name: start app via systemd
-  ansible.builtin.systemd:
-    name: "{{ service_control_target }}"
-    state: started
-    scope: user
+  block:
+    - name: check systemd config file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_systemd_file }}"
+      register: systemd_config_file
+
+    - name: start app
+      ansible.builtin.systemd:
+        name: "{{ service_control_target }}"
+        state: started
+        scope: user
+      become: yes
+      become_user: "{{ service_control_service_user }}"
+      when: systemd_config_file.stat.exists
   listen: 'start service - systemd'
-  become: yes
-  become_user: "{{ service_control_service_user }}"
 
 - name: stop app via systemd
-  ansible.builtin.systemd:
-    name: "{{ service_control_target }}"
-    state: stopped
-    scope: user
+  block:
+    - name: check systemd config file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_systemd_file }}"
+      register: systemd_config_file
+
+    - name: stop app
+      ansible.builtin.systemd:
+        name: "{{ service_control_target }}"
+        state: stopped
+        scope: user
+      become: yes
+      become_user: "{{ service_control_service_user }}"
+      ignore_errors: True
+      when: systemd_config_file.stat.exists
   listen: 'stop service - systemd'
-  become: yes
-  become_user: "{{ service_control_service_user }}"
-  ignore_errors: True
 
 - name: restart app via systemd
-  ansible.builtin.systemd:
-    name: "{{ service_control_target }}"
-    state: restarted
-    scope: user
+  block:
+    - name: check systemd config file
+      ansible.builtin.stat:
+        path: "{{ service_control_service_systemd_file }}"
+      register: systemd_config_file
+
+    - name: restart app
+      ansible.builtin.systemd:
+        name: "{{ service_control_target }}"
+        state: restarted
+        scope: user
+      become: yes
+      become_user: "{{ service_control_service_user }}"
+      when: systemd_config_file.stat.exists
   listen: 'restart service - systemd'
-  become: yes
-  become_user: "{{ service_control_service_user }}"
