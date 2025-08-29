@@ -3,29 +3,29 @@
 - name: Start app - common debug
   block:
     - ansible.builtin.debug:
-      msg: "Starting service {{ service_control_target }} ({{ service_control_handler }})"
-  listen:
-    - 'start service - s6'
-    - 'start service - script'
-    - 'start service - systemd'
+        msg: "Starting service {{ service_control_target }} ({{ service_control_handler }})"
+      listen:
+        - 'start service - s6'
+        - 'start service - script'
+        - 'start service - systemd'
 
 - name: Stop app - common debug
   block:
     - ansible.builtin.debug:
-      msg: "Stopping service {{ service_control_target }} ({{ service_control_handler }})"
-  listen:
-    - 'stop service - s6'
-    - 'stop service - script'
-    - 'stop service - systemd'
+        msg: "Stopping service {{ service_control_target }} ({{ service_control_handler }})"
+      listen:
+        - 'stop service - s6'
+        - 'stop service - script'
+        - 'stop service - systemd'
 
 - name: Restart app - common debug
   block:
     - ansible.builtin.debug:
-      msg: "Restarting service {{ service_control_target }} ({{ service_control_handler }})"
-  listen:
-    - 'restart service - s6'
-    - 'restart service - script'
-    - 'restart service - systemd'
+        msg: "Restarting service {{ service_control_target }} ({{ service_control_handler }})"
+      listen:
+        - 'restart service - s6'
+        - 'restart service - script'
+        - 'restart service - systemd'
 
 # ─── S6 HANDLERS ──────────────────────────────────────────────────────
 - name: start app via s6
@@ -36,6 +36,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: s6_service_run_file
+      listen: 'start service - s6'
 
     - name: start app
       s6_service:
@@ -44,7 +45,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       when: s6_service_run_file.stat.exists
-  listen: 'start service - s6'
+      listen: 'start service - s6'
 
 - name: restart app via s6
   block:
@@ -54,6 +55,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: s6_service_run_file
+      listen: 'restart service - s6'
 
     - name: restart app
       s6_service:
@@ -62,7 +64,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       when: s6_service_run_file.stat.exists
-  listen: 'restart service - s6'
+      listen: 'restart service - s6'
 
 - name: stop app via s6
   block:
@@ -72,6 +74,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: s6_service_run_file
+      listen: 'stop service - s6'
 
     - name: stop app
       s6_service:
@@ -80,7 +83,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       when: s6_service_run_file.stat.exists
-  listen: 'stop service - s6'
+      listen: 'stop service - s6'
 
 # ─── SCRIPT HANDLERS ──────────────────────────────────────────────────
 - name: start app using script
@@ -91,6 +94,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: script_start_file
+      listen: 'start service - script'
 
     - name: start app
       ansible.builtin.command:
@@ -99,7 +103,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       when: script_start_file.stat.exists
-  listen: 'start service - script'
+      listen: 'start service - script'
 
 - name: stop app using script
   block:
@@ -109,6 +113,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: script_stop_file
+      listen: 'stop service - script'
 
     - name: stop app
       ansible.builtin.command:
@@ -118,7 +123,7 @@
       become_user: "{{ service_control_service_user }}"
       ignore_errors: yes
       when: script_stop_file.stat.exists
-  listen: 'stop service - script'
+      listen: 'stop service - script'
 
 - name: restart app using script
   block:
@@ -128,6 +133,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: script_start_file
+      listen: 'restart service - script'
 
     - name: check script stop file
       ansible.builtin.stat:
@@ -135,6 +141,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: script_stop_file
+      listen: 'restart service - script'
 
     - name: restart app
       ansible.builtin.shell:
@@ -144,7 +151,7 @@
       become_user: "{{ service_control_service_user }}"
       ignore_errors: yes
       when: script_stop_file.stat.exists and script_start_file.stat.exists
-  listen: 'restart service - script'
+      listen: 'restart service - script'
 
 # ─── SYSTEMD HANDLERS ─────────────────────────────────────────────────
 - name: start app via systemd
@@ -155,6 +162,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: systemd_config_file
+      listen: 'start service - systemd'
 
     - name: start app
       ansible.builtin.systemd:
@@ -164,7 +172,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       when: systemd_config_file.stat.exists
-  listen: 'start service - systemd'
+      listen: 'start service - systemd'
 
 - name: stop app via systemd
   block:
@@ -174,6 +182,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: systemd_config_file
+      listen: 'stop service - systemd'
 
     - name: stop app
       ansible.builtin.systemd:
@@ -184,7 +193,7 @@
       become_user: "{{ service_control_service_user }}"
       ignore_errors: True
       when: systemd_config_file.stat.exists
-  listen: 'stop service - systemd'
+      listen: 'stop service - systemd'
 
 - name: restart app via systemd
   block:
@@ -194,6 +203,7 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       register: systemd_config_file
+      listen: 'restart service - systemd'
 
     - name: restart app
       ansible.builtin.systemd:
@@ -203,4 +213,4 @@
       become: yes
       become_user: "{{ service_control_service_user }}"
       when: systemd_config_file.stat.exists
-  listen: 'restart service - systemd'
+      listen: 'restart service - systemd'
