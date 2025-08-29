@@ -9,19 +9,8 @@
     name: service_control
   vars:
     service_control_action: "stop"
-    service_control_user: "{{ nodejs_app_install_user }}"
-    service_control_handler: "{{ nodejs_app_control_handler }}"
 
 - meta: flush_handlers
-
-- name: "Setup handler {{ nodejs_app_control_handler }}"
-  ansible.builtin.include_role:
-    name: service_control
-  vars:
-    service_control_action: "setup"
-    service_control_home: "{{ nodejs_app_service_current_home }}"
-    service_control_user: "{{ nodejs_app_install_user }}"
-    service_control_handler: "{{ nodejs_app_control_handler }}"
 
 - name: "required directories"
   ansible.builtin.file:
