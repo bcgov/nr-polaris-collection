@@ -44,6 +44,10 @@
     # If handler is 'script', you must set service_control_service_script_start and service_control_service_script_stop
     # as tomcat has it's own scripts to start/stop the server in "{{ tomcat_install_dir }}/bin/"
     service_control_action: "stop"
+    service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
+    service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
+    service_control_user: "{{ tomcat_run_user }}"
+    service_control_handler: "{{ tomcat_control_handler }}"
 
 - meta: flush_handlers
 
@@ -52,6 +56,9 @@
     name: service_control
   vars:
     service_control_action: "setup"
+    service_control_home: "{{ tomcat_install_root_current }}"
+    service_control_user: "{{ tomcat_run_user }}"
+    service_control_handler: "{{ tomcat_control_handler }}"
 
 - name: required directories
   ansible.builtin.file:
@@ -130,6 +137,10 @@
     name: service_control
   vars:
     service_control_action: "start"
+    service_control_service_script_start: "{{ tomcat_install_dir }}/bin/startup.sh"
+    service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
+    service_control_user: "{{ tomcat_run_user }}"
+    service_control_handler: "{{ tomcat_control_handler }}"
 
 - name: Mark tomcat as called
   ansible.builtin.set_fact:

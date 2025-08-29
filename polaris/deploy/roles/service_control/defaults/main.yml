@@ -10,18 +10,14 @@ service_control_install_user:           "{{ polaris_install_user }}"
 service_control_service_home:           "{{ polaris_apps_service_current_home }}"
 
 # handler: s6
-service_control_s6_home:                "{{ polaris_s6_home }}"
-service_control_service_s6_home:        "{{ polaris_apps_service_s6_home }}"
-service_control_service_s6_run_file:    "{{ polaris_apps_service_s6_home }}/run"
-service_control_s6_script_start:        "{{ polaris_apps_service_script_start }}"
-service_control_s6_script_stop:         "{{ polaris_apps_service_script_stop }}"
+service_control_s6_home: "{{ polaris_s6_home }}"
+service_control_service_s6_home: "{{ polaris_apps_service_s6_home }}"
+service_control_service_s6_run_file: "{{ polaris_apps_service_s6_home }}/run"
 
 # handler: script
 service_control_script_script_start:    "{{ polaris_apps_service_script_start }}"
 service_control_script_script_stop:     "{{ polaris_apps_service_script_stop }}"
 
 # handler: systemd
-service_control_systemd_home:           "{{ polaris_apps_service_systemd_home }}"
-service_control_service_systemd_file:   "{{ service_control_systemd_home }}/{{ service_control_target }}.service"
-service_control_systemd_script_start:   "{{ polaris_apps_service_script_start }}"
-service_control_systemd_script_stop:    "{{ polaris_apps_service_script_stop }}"
+service_control_systemd_home: "{{ service_control_service_user_home }}/.config/systemd/user"
+service_control_service_systemd_file: "{{ service_control_systemd_home }}/{{ service_control_target }}.service"
