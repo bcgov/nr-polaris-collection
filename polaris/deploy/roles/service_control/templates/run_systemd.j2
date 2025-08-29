@@ -4,7 +4,15 @@ After=network.target
 
 [Service]
 Type=simple
+{% if nodejs %}
 ExecStart={{ service_control_home }}/start.sh
+{% else %}
+ExecStart=/bin/bash {{ service_control_home }}/bin/catalina.sh start
+KillMode=process
+TimeoutStopSec=30
+Environment=CATALINA_PID={{ tomcat_pid_file }}
+PIDFile={{ tomcat_pid_file }}
+{% endif %}
 Restart=on-failure
 EnvironmentFile=-{{ env_file | default("/etc/myapp.env") }}
 

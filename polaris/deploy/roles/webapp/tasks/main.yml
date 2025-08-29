@@ -29,6 +29,7 @@
     mode: "0755"
   become: yes
   become_user: "{{ polaris_install_user }}"
+  when: tomcat_server_hosts != "localhost"
 
 - name: ""
   ansible.builtin.file:
@@ -114,6 +115,7 @@
     _log_filename: "{{ webapp_log_filename }}"
     _log_level: "{{ webapp_root_log_level }}"
     _log_type: "tomcat"
+  when: tomcat_server_hosts != "localhost"
 
 - name: "deploy {{ webapp_app_dir_name }}"
   ansible.builtin.command: "cp -a {{ webapp_staging_dir }}/.{{ webapp_war.context }}/. {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"

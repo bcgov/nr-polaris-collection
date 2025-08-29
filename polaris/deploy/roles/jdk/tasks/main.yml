@@ -128,6 +128,7 @@
     _jdk_major_version: "{{ jdk_major_version }}"
     _jdk_url: "{{ jdk_package_link }}"
     _jdk_release_name: "{{ jdk_release_name }}"
+  when: tomcat_server_hosts != "localhost"
 
 - name: Mark jdk as called
   ansible.builtin.set_fact:

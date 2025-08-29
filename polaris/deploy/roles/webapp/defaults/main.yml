@@ -11,7 +11,7 @@ webapp_root_log_level:            'INFO'
 webapp_component:                 "{{ polaris_apps_service_name }}"
 webapp_tomcat_webapps_dir:        "{{ polaris_apps_service_install_home }}/webapps"
 
-webapp_staging_dir:               "{{ polaris_apps_service_home}}"
+webapp_staging_dir:               "{{ polaris_apps_service_home }}"
 
 webapp_user:                      "{{ polaris_install_user }}"
 

@@ -36,7 +36,7 @@ tomcat_run_user:            "{{ polaris_service_user }}"
 tomcat_s6_enabled:          "{{ s6_enabled | default('yes') }}"
 tomcat_s6_home:             "{{ polaris_s6_home }}"
 tomcat_s6_services:         "{{ polaris_s6_services_home }}"
-tomcat_handler_style:       "{{ tomcat_s6_enabled | ternary('s6', 'default') }}"
+tomcat_handler_style:       "{{ polaris_control_handler }}"
 tomcat_download_username:   "{{ artifactory_username }}"
 tomcat_download_password:   "{{ artifactory_password }}"
 tomcat_checksum_protocol:   "sha512"
@@ -68,3 +68,8 @@ tomcat_catalina_log_level:            "{{ tomcat_log_level }}"
 tomcat_localhost_log_level:           "{{ tomcat_log_level }}"
 tomcat_manager_log_level:             "{{ tomcat_log_level }}"
 tomcat_host_manager_log_level:        "{{ tomcat_log_level }}"
+
+# systemd service control
+service_control_service_user_home: "{{ polaris_service_user_home }}"
+service_control_target: "{{ polaris_apps_service_name }}"
+nodejs: false

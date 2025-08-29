@@ -42,10 +42,14 @@
     path: "{{ polaris_apps_service_s6_home }}/run"
   register: s6_service_run_file
 
-- name: Debug s6 service run file existence
-  ansible.builtin.debug:
-    msg: "s6 service run file exists."
-  when: s6_service_run_file.stat.exists
+- name: Check if systemd service file exists
+  ansible.builtin.stat:
+    path: "{{ service_control_service_user_home }}/.config/systemd/user/{{ service_control_target }}.service"
+  register: systemd_service_file
+
+- ansible.builtin.debug:
+    msg: "{{ s6_service_run_file.stat.path if s6_service_run_file.stat.exists else systemd_service_file.stat.path }}"
+  when: s6_service_run_file.stat.exists or systemd_service_file.stat.exists
 
 - name: "Service: stop"
   ansible.builtin.include_role:
@@ -56,17 +60,17 @@
     service_control_service_script_stop: "{{ tomcat_install_dir }}/bin/shutdown.sh"
     service_control_user: "{{ tomcat_run_user }}"
     service_control_handler: "{{ tomcat_handler_style }}"
-  when: s6_service_run_file.stat.exists
+  when: s6_service_run_file.stat.exists or systemd_service_file.stat.exists
 
 - meta: flush_handlers
-  when: s6_service_run_file.stat.exists
+  when: s6_service_run_file.stat.exists or systemd_service_file.stat.exists
 
-- name: "Setup handler {{ nodejs_app_control_handler }}"
+- name: "Setup handler {{ tomcat_handler_style }}"
   ansible.builtin.include_role:
     name: service_control
   vars:
     service_control_action: "setup"
-    service_control_home: "{{ tomcat_install_root_current }}"
+    service_control_home: "{{ tomcat_install_root_current if nodejs else tomcat_install_dir_current }}"
     service_control_user: "{{ tomcat_run_user }}"
     service_control_handler: "{{ tomcat_handler_style }}"
 
@@ -74,7 +78,7 @@
   ansible.builtin.shell: "{{ polaris_s6_home }}/bin/s6-svscanctl -a {{ polaris_s6_services_home }}"
   become: yes
   become_user: "{{ polaris_service_user }}"
-  when: not s6_service_run_file.stat.exists
+  when: tomcat_handler_style == "s6" and not s6_service_run_file.stat.exists 
 
 - name: required directories
   ansible.builtin.file:
@@ -138,6 +142,7 @@
   vars:
     _tomcat_version: "{{ tomcat_version }}"
     _tomcat_port: "{{ polaris_apps_service_port }}"
+  when: tomcat_server_hosts != "localhost"
 
 - name: Enable rotation of catalina.out
   blockinfile:
