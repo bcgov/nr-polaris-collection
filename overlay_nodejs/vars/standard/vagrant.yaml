@@ -1,8 +1,8 @@
 tomcat_server_hosts: localhost
 
 polaris_apps_service_install_name: "artifact"
-
 polaris_control_handler: "systemd"
+polaris_broker_patch: false
 
 proxy_env: "none"
 
