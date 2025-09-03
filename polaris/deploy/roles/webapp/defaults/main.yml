@@ -23,5 +23,3 @@ ojdbc_url: "http://apps.nrs.gov.bc.ca/pub/artifactory/ext-binaries-local/com.ora
 skip_ojdbc_install: false
 
 webapp_artifact_name: "{{ lookup('ansible.builtin.env', 'PODMAN_ARTIFACT_NAME') }}"
-
-polaris_broker_patch: true
