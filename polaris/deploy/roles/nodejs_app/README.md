@@ -24,8 +24,6 @@ All variables are prefixed with `nodejs_app_` to indicate they are specific to t
 | `nodejs_app_node_install_dir`            | Directory name where Node.js is installed                    | `nodejs` |
 | `nodejs_app_node_home`                   | Path to the Node.js installation directory                   | `{{ nodejs_app_service_install_home }}/{{ polaris_bin_folder }}/{{ nodejs_app_node_install_dir }}` |
 | `nodejs_app_node_options`                | Additional Node.js runtime options                           | `""` |
-| `nodejs_app_control_handler`             | The service handler used for managing the application        | `{{ polaris_control_handler }}` |
-
 
 ## Tasks
 
@@ -47,7 +45,7 @@ The role performs the following tasks:
    - Copies the application to the installation directory.
 
 6. **Deploy Start and Environment Scripts**
-   - Deploys `start.sh` and `setenv.sh` for launching and configuring the application.
+   - Deploys `startup.sh` and `setenv.sh` for launching and configuring the application.
 
 7. **Start the Service**
    - Uses `service_control` to start the Node.js application.

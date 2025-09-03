@@ -4,8 +4,11 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart={{ service_control_home }}/start.sh
-Restart=on-failure
+ExecStart={{ service_control_systemd_script_start }}
+{% if service_control_systemd_script_stop | default("") | trim != "" %}
+ExecStop={{ service_control_systemd_script_stop }}
+{% endif %}
+Restart=always
 EnvironmentFile=-{{ env_file | default("/etc/myapp.env") }}
 
 [Install]

@@ -42,7 +42,6 @@ All variables are prefixed with `tomcat_`. Key variables include:
 | `tomcat_version_number` | | Tomcat semantic version (e.g., `9.0.100`). If not set, the latest available version for the specified `tomcat_major_version` is used. |
 | `tomcat_java_home` | `{{ tomcat_install_root }}/bin/jdk` | Java home directory |
 | `tomcat_install_user` | `{{ polaris_install_user }}` | Install user |
-| `tomcat_run_user` | `{{ polaris_service_user }}` | Run user |
 | ... | ... | ... |
 
 See the full variable table in the original documentation for more options.

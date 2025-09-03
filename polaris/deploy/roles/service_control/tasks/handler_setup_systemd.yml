@@ -1,7 +1,7 @@
 ---
 - name: Ensure systemd user config directory exists
   ansible.builtin.file:
-    path: "{{ service_control_service_user_home }}/.config/systemd/user"
+    path: "{{ service_control_systemd_home }}"
     state: directory
     mode: '0775'
   become: yes
@@ -10,7 +10,7 @@
 - name: Copy systemd user service file
   ansible.builtin.template:
     src: run_systemd.j2
-    dest: "{{ service_control_service_user_home }}/.config/systemd/user/{{ service_control_target }}.service"
+    dest: "{{ service_control_service_systemd_file }}"
     mode: '0644'
   become: yes
   become_user: "{{ service_control_install_user }}"

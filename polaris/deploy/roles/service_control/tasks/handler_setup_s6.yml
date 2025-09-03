@@ -1,4 +1,14 @@
 ---
+- name: Check if s6 service run file exists
+  ansible.builtin.stat:
+    path: "{{ service_control_service_s6_run_file }}"
+  register: s6_service_run_file
+
+- name: Debug s6 service run file existence
+  ansible.builtin.debug:
+    msg: "s6 service run file exists."
+  when: s6_service_run_file.stat.exists
+
 - name: service directory {{ service_control_service_s6_home }}
   ansible.builtin.file:
     path: "{{ service_control_service_s6_home }}"
@@ -10,7 +20,13 @@
 - name: Deploy s6 run script
   ansible.builtin.template:
     src: "run_s6.j2"
-    dest: "{{ service_control_service_s6_home }}/run"
+    dest: "{{ service_control_service_s6_run_file }}"
     mode: "0755"
   become: yes
   become_user: "{{ service_control_install_user }}"
+
+- name: Scan s6 home directory
+  ansible.builtin.shell: "{{ service_control_s6_home }}/bin/s6-svscanctl -a {{ service_control_service_s6_home }}"
+  become: yes
+  become_user: "{{ service_control_service_user }}"
+  when: not s6_service_run_file.stat.exists
