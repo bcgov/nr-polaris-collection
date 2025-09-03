@@ -13,4 +13,3 @@
 
   # Clear out Tomcat's temp directory
   rm -rf "$CATALINA_BASE"/temp/*
-  
