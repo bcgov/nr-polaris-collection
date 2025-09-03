@@ -25,5 +25,3 @@ service_control_systemd_home:           "{{ polaris_apps_service_systemd_home }}
 service_control_service_systemd_file:   "{{ service_control_systemd_home }}/{{ service_control_target }}.service"
 service_control_systemd_script_start:   "{{ polaris_apps_service_script_start }}"
 service_control_systemd_script_stop:    "{{ polaris_apps_service_script_stop }}"
-
-polaris_broker_patch: true
