@@ -63,5 +63,3 @@ tomcat_catalina_log_level:            "{{ tomcat_log_level }}"
 tomcat_localhost_log_level:           "{{ tomcat_log_level }}"
 tomcat_manager_log_level:             "{{ tomcat_log_level }}"
 tomcat_host_manager_log_level:        "{{ tomcat_log_level }}"
-
-polaris_broker_patch: true
