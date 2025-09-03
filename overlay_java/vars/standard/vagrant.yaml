@@ -4,6 +4,7 @@ polaris_apps_project_name: "OSCAR-JAVA"
 polaris_apps_service_name: "java-maven-pipeline-example"
 polaris_apps_service_install_name: "java-maven-pipeline-example"
 polaris_control_handler: "systemd"
+polaris_broker_patch: false
 
 proxy_env: "none"
 webapp_artifact_name: "java-maven-pipeline-example.war"
