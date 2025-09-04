@@ -114,6 +114,7 @@
     _log_filename: "{{ webapp_log_filename }}"
     _log_level: "{{ webapp_root_log_level }}"
     _log_type: "tomcat"
+  when: polaris_broker_patch
 
 - name: "deploy {{ webapp_app_dir_name }}"
   ansible.builtin.command: "cp -a {{ webapp_staging_dir }}/.{{ webapp_war.context }}/. {{ webapp_tomcat_webapps_dir }}/{{ webapp_app_dir_name }}"

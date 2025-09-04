@@ -54,3 +54,6 @@ proxy_env_dev_test:
 proxy_env_prod:
   https_proxy: "http://forwardproxy.nrs.bcgov:23128"
 
+# Patch by default for pipeline deployments
+# Set to false to disable patching for local deployments
+polaris_broker_patch: true

@@ -95,16 +95,16 @@
 
 - name: startup script
   ansible.builtin.template:
-    src: "startup.j2"
-    dest: "{{ tomcat_install_dir }}/startup.sh"
+    src: "startup.sh.j2"
+    dest: "{{ polaris_apps_service_current_home }}/startup.sh"
     mode: "0775"
   become: yes
   become_user: "{{ polaris_install_user }}"
 
 - name: shutdown script
   ansible.builtin.template:
-    src: "shutdown.j2"
-    dest: "{{ tomcat_install_dir }}/shutdown.sh"
+    src: "shutdown.sh.j2"
+    dest: "{{ polaris_apps_service_current_home }}/shutdown.sh"
     mode: "0775"
   become: yes
   become_user: "{{ polaris_install_user }}"
@@ -115,6 +115,7 @@
   vars:
     _tomcat_version: "{{ tomcat_version }}"
     _tomcat_port: "{{ polaris_apps_service_port }}"
+  when: polaris_broker_patch
 
 - name: Enable rotation of catalina.out
   blockinfile:

@@ -1,19 +1,15 @@
-
   # On startup, rotate catalina.out if larger than $THRESHOLD
-  # ---------------------------------------------------------
-  if [ -e $CATALINA_OUT ]; then
+  if [ -e "$CATALINA_OUT" ]; then
     THRESHOLD=10485760 # 10M
-    SIZE=`wc -c $CATALINA_OUT | awk '{ print $1 }'`
-    if [ $SIZE -gt $THRESHOLD ]; then
-      DATE=`date "+%Y-%m-%d_%H:%M"`
-      NEWFILE=$CATALINA_OUT.$DATE
-      mv $CATALINA_OUT $NEWFILE
-      date > $CATALINA_OUT
-      gzip $NEWFILE &
+    SIZE=$(wc -c "$CATALINA_OUT" | awk '{ print $1 }')
+    if [ "$SIZE" -gt "$THRESHOLD" ]; then
+      DATE=$(date "+%Y-%m-%d_%H:%M")
+      NEWFILE="$CATALINA_OUT.$DATE"
+      mv "$CATALINA_OUT" "$NEWFILE"
+      date > "$CATALINA_OUT"
+      gzip "$NEWFILE" &
     fi
   fi
 
-  # and clear out Tomcat's temp directory
-  # -------------------------------------
-  rm -rf $CATALINA_BASE/temp/*
-
+  # Clear out Tomcat's temp directory
+  rm -rf "$CATALINA_BASE"/temp/*

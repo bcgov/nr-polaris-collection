@@ -98,6 +98,24 @@ export ANSIBLE_LIBRARY=/home/vagrant/polaris/deploy/plugins
 ansible-playbook -e env_vars=vagrant playbook.yaml
 ```
 
+### Run an application playbook locally - Java
+
+```
+vagrant up
+vagrant upload polaris
+vagrant upload <application root>/playbooks polaris/deploy
+vagrant upload overlay_java polaris/deploy
+vagrant ssh
+mkdir -p /ansible/downloads
+cd /ansible/downloads
+sudo curl -L -H "Authorization: token ${GH_TOKEN}" \
+  https://maven.pkg.github.com/bcgov/java-maven-pipeline-example/bcgov/example/java-maven-pipeline-example/1.0.1-main-SNAPSHOT/java-maven-pipeline-example-1.0.1-main-20250818.180118-27.war \
+  -o java-maven-pipeline-example.war
+cd ~/polaris/deploy
+export ANSIBLE_LIBRARY=/home/vagrant/polaris/deploy/plugins
+ansible-playbook -e env_vars=vagrant playbook.yaml
+```
+
 ### Why no container?
 
 We do not provide a container image for use with Podman or Docker because applications are installed into a stateful server. Containers are set up to run a single executable with no system services (like SSH) available. They also have a simplified file system security model.

@@ -27,3 +27,4 @@
       X-Broker-Token: "{{ action_token }}"
       Content-Type: application/json
     body: "{{ decoded_json | to_json }}"
+  when: polaris_broker_patch
