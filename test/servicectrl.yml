@@ -1,0 +1,11 @@
+---
+# file: servicectrl.yml
+- hosts: localhost
+  vars_files:
+    - "vars/all.yml"
+    - "vars/{{ service_control_var }}.yml"
+
+  roles:
+    - role: service_control
+      vars:
+        service_control_action: "{{ service_control_action | default('restart') } }"

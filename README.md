@@ -43,18 +43,24 @@ After this, playbooks call various roles to add binaries, application files, and
 * [NR Repository Composer](https://github.com/bcgov/nr-repository-composer)
 * [Polaris Pipelines](https://github.com/bcgov-nr/polaris-pipelines)
 
-## Development
+# NR Polaris Ansible Collection Development
 
 Developing the roles requires having a machine available to target with Ansible. It is highly recommended to use Vagrant to create a local virtual machine using the provided Vagrantfile. The local VM can be provisioned from scratch in a couple of minutes.
 
 In addition, application developers can use the Vagrant VM to test their playbooks. Most deployment issues can be resolved this way without needing to deploy to real servers.
 
-### Required
+## Required
 
 * [Vagrant](https://developer.hashicorp.com/vagrant)
 * [VirtualBox](https://www.virtualbox.org) (on macOS)
 
-### Running the development box
+## Why no container?
+
+We do not provide a container image for use with Podman or Docker because applications are installed into a stateful server. Containers are set up to run a single executable with no system services (like SSH) available. They also have a simplified file system security model.
+
+In the end, we want to mimic the server and not simply run the application. The VM created by Vagrant operates like a server in ways a container cannot replicate.
+
+## Running the development box
 
 This will set up the development virtual machine. It will take some time to download the image and complete the setup.
 
@@ -62,31 +68,75 @@ This will set up the development virtual machine. It will take some time to down
 vagrant up
 ```
 
-### Copy files to the development box
+This setups the vagrant user to be able to use systemd and sets the following env:
 
 ```
-vagrant upload polaris
-vagrant upload test polaris/deploy
+ANSIBLE_LIBRARY=/home/vagrant/polaris/deploy/plugins
 ```
+
+You now have a running provisioned vm that you can connect to using `vagrant ssh`.
+
+## Upload collection to the development box
+
+Precondition: Running provisioned vm
+
+This first step in all of the following examples is to upload the polaris collection to the vagrant vm.
+
+```
+vagrant ssh -c 'rm -r polaris'
+vagrant upload -c polaris
+```
+
+By default, the `upload` command merges the files in the path. It is recommended that you clear out the polaris folder and start from scratch whenever you want to upload a new playbook as the existing files in `polaris/deploy` may conflict.
 
 ### Use test playbooks
 
-Connect to the virtual machine and run the playbook. You can then check the state of the virtual machine, re-upload files, and re-run as needed.
+Precondition: Upload collection
+
+This will upload the test playbooks to the vm.
+
+```
+vagrant upload test polaris/deploy
+```
+
+Next, connect to the virtual machine and run the test playbooks. You can then check the state of the virtual machine, re-upload files, and re-run as needed. Some examples using the test playbooks are shown next.
+
+#### Test playbooks - Install nodejs
+
+Precondition: Upload collection and test playbooks
 
 ```
 vagrant ssh
-cd polaris/deploy
-export ANSIBLE_LIBRARY=/home/vagrant/polaris/deploy/plugins
+cd ~/polaris/deploy
 ansible-playbook nodejs.yml
 /apps_ux/sample/service/artifact/bin/nodejs/bin/node -v
+# curl app -- port may be different if multiple apps installed
+curl localhost:8080
+```
+#### Test playbooks - control app
+
+Precondition: Upload collection, test playbooks and install app (example assumes test playbook's nodejs)
+
+This shows how to stop an application.
+
+```
+vagrant ssh
+cd ~/polaris/deploy
+# Test service control stop (Change action/var as needed)
+ansible-playbook -e service_control_var=nodejs \
+  -e service_control_action=stop \
+  servicectrl.yml
+# curl app -- port may be different if multiple apps installed (fail expected)
 curl localhost:8080
 ```
 
-### Run an application playbook locally - NodeJs
+If you change the `service_control_action` to `start` then the app should come back.
+
+## Copy app playbook and install - NodeJs
+
+Precondition: Copy collection
 
 ```
-vagrant up
-vagrant upload polaris
 vagrant upload <application root>/playbooks polaris/deploy
 vagrant upload overlay_nodejs polaris/deploy
 vagrant ssh
@@ -94,15 +144,14 @@ mkdir -p polaris/app
 cd polaris/app
 oras pull ghcr.io/bcgov/nodejs-sample/package:v3.1.0
 cd ../deploy
-export ANSIBLE_LIBRARY=/home/vagrant/polaris/deploy/plugins
 ansible-playbook -e env_vars=vagrant playbook.yaml
 ```
 
-### Run an application playbook locally - Java
+## Copy app playbook and install - Java
+
+Precondition: Copy collection
 
 ```
-vagrant up
-vagrant upload polaris
 vagrant upload <application root>/playbooks polaris/deploy
 vagrant upload overlay_java polaris/deploy
 vagrant ssh
@@ -112,15 +161,8 @@ sudo curl -L -H "Authorization: token ${GH_TOKEN}" \
   https://maven.pkg.github.com/bcgov/java-maven-pipeline-example/bcgov/example/java-maven-pipeline-example/1.0.1-main-SNAPSHOT/java-maven-pipeline-example-1.0.1-main-20250818.180118-27.war \
   -o java-maven-pipeline-example.war
 cd ~/polaris/deploy
-export ANSIBLE_LIBRARY=/home/vagrant/polaris/deploy/plugins
 ansible-playbook -e env_vars=vagrant playbook.yaml
 ```
-
-### Why no container?
-
-We do not provide a container image for use with Podman or Docker because applications are installed into a stateful server. Containers are set up to run a single executable with no system services (like SSH) available. They also have a simplified file system security model.
-
-In the end, we want to mimic the server and not simply run the application. The VM created by Vagrant operates like a server in ways a container cannot replicate.
 
 # License
 
