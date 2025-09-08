@@ -55,4 +55,9 @@ Vagrant.configure("2") do |config|
     rm -rf oras_${ORAS_VERSION}_*.tar.gz oras-install/
   SHELL
 
+  config.vm.provision "shell", inline: <<-SHELL
+    echo 'export ANSIBLE_LIBRARY=/home/vagrant/polaris/deploy/plugins' >> /home/vagrant/.bashrc
+    chown vagrant:vagrant /home/vagrant/.bashrc
+  SHELL
+
 end
