@@ -142,7 +142,7 @@ vagrant upload overlay_nodejs polaris/deploy
 vagrant ssh
 mkdir -p polaris/app
 cd polaris/app
-oras pull ghcr.io/bcgov/nodejs-sample/package:v3.1.0
+oras pull ghcr.io/bcgov/nr-nodejs-sample/package:v3.2.0
 cd ../deploy
 ansible-playbook -e env_vars=vagrant playbook.yaml
 ```
