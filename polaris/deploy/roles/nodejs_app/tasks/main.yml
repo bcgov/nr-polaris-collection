@@ -33,7 +33,7 @@
   register: zip_output
 
 - name: Unzip application on remote server
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  environment: "{{ polaris_proxy }}"
   ansible.builtin.unarchive:
     src: "{{ nodejs_app_service_zip_path }}app.zip"
     dest: "{{ nodejs_app_service_install_app_home }}"
