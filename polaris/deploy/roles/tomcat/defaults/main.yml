@@ -22,8 +22,6 @@ tomcat_webapp_dir:          "{{ tomcat_install_root }}/webapps"
 tomcat_webapps:             []
 tomcat_major_version:       '10'
 tomcat_work_dir:            "{{ tomcat_data_dir }}/work"
-tomcat_temp_dir:            "{{ tomcat_data_dir }}/temp"
-tomcat_pid_file:            "{{ tomcat_work_dir }}/catalina.pid"
 tomcat_use_https:           yes
 tomcat_use_ajp:             false
 tomcat_keystore_file:       "{{ tomcat_install_root }}/.keys/key.jks"
@@ -39,7 +37,9 @@ using_alt_app_dir:          false
 default_ssc_keystore_pass:  "{{ lookup('password', '/dev/null length=15 chars=ascii_letters') }}"
 
 # setenv.sh
-tomcat_java_home:         "{{ tomcat_install_root }}/bin/jdk" # educated assumption based on conventions
+tomcat_java_home:         "{{ jdk_home | default(polaris_apps_service_install_bin_home ~ '/jdk') }}"
+tomcat_pid_file:          "{{ tomcat_work_dir }}/catalina.pid"
+tomcat_temp_dir:          "{{ tomcat_data_dir }}/temp"
 tomcat_env_dict:          {}
 
 # server.xml
