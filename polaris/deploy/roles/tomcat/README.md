@@ -9,7 +9,6 @@ This Ansible role automates the installation and configuration of Apache Tomcat 
 - Supports HTTPS out of the box.
 - Allows deployment of multiple web applications.
 - Configures logging and JNDI resources.
-- Integrates with s6 process supervision (optional).
 - Does **not** install a JDK; expects one to be provided.
 
 ## Conventions
@@ -42,9 +41,30 @@ All variables are prefixed with `tomcat_`. Key variables include:
 | `tomcat_version_number` | | Tomcat semantic version (e.g., `9.0.100`). If not set, the latest available version for the specified `tomcat_major_version` is used. |
 | `tomcat_java_home` | `{{ tomcat_install_root }}/bin/jdk` | Java home directory |
 | `tomcat_install_user` | `{{ polaris_install_user }}` | Install user |
+| `tomcat_pid_file` | `{{ tomcat_work_dir }}/catalina.pid` | File that stores the Tomcat process ID |
+| `tomcat_log_dir` | `{{ polaris_apps_service_logs_home }}` | Base folder for application logs |
+| `tomcat_temp_dir` | `{{ tomcat_data_dir }}/temp` | Temp folder for application scratch |
+| `tomcat_catalina_opts` | | Additional JVM options passed to Tomcat |
+| `tomcat_umask` | | File creation mask that defines default file permissions for files created by the Tomcat process |
+| `tomcat_env_dict` | `{}` | Renders out any additional environment variables as key/value pairs for customizing the Tomcat runtime environment |
 | ... | ... | ... |
 
-See the full variable table in the original documentation for more options.
+## Role Variables - setenv.sh
+
+The file `setenv.sh` is rendered out by the role and is used to set Tomcat's environment vars. This table shows the connection between the role variables and the environment variables used by Tomcat.
+
+Services often provide a custom value for the variable `tomcat_catalina_opts` to give settings to the jvm like memory and proxy urls.
+
+| Env Var           | Variable                      | Description                                                                                                         |
+| ----------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `JAVA_HOME`       | `tomcat_java_home`            | Path to the Java installation used to run Tomcat. Must point to the root of the JDK/JRE.                            |
+| `CATALINA_PID`    | `tomcat_pid_file`             | File that stores the Tomcat process ID, used for managing the lifecycle (start/stop) of the server.                 |
+| `CATALINA_OUT`    | `tomcat_log_dir`/catalina.out | Standard output and error log file for Tomcat. By default, all console output from the server is redirected here.   |
+| `CATALINA_TMPDIR` | `tomcat_temp_dir`             | Directory used by Tomcat for temporary files such as compiled JSPs or upload buffers.                               |
+| `CATALINA_OPTS`   | `tomcat_catalina_opts`        | Additional JVM options passed to Tomcat when starting (e.g., memory settings, system properties).                   |
+| `UMASK`           | `tomcat_umask`                | File creation mask that defines default file permissions for files created by the Tomcat process.                   |
+| `...`             | `tomcat_env_dict`             | The key/value pairs are used to set any additional environment variables for customizing the Tomcat runtime environment. |
+
 
 ## Role Tasks
 
