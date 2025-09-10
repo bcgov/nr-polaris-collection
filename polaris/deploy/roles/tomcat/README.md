@@ -1,6 +1,6 @@
 # tomcat - Tomcat installation
 
-This Ansible role automates the installation and configuration of Apache Tomcat on Linux systems. It supports deploying multiple web applications, HTTPS configuration, logging, and JNDI resources.
+This Ansible role automates the installation and configuration of [Apache Tomcat](https://tomcat.apache.org) on Linux systems. It supports deploying multiple web applications, HTTPS configuration, logging, and JNDI resources.
 
 ## Features
 
@@ -9,7 +9,7 @@ This Ansible role automates the installation and configuration of Apache Tomcat 
 - Supports HTTPS out of the box.
 - Allows deployment of multiple web applications.
 - Configures logging and JNDI resources.
-- Does **not** install a JDK; expects one to be provided.
+- Does **not** install a JDK; expects one to be provided. See: [JDK Role](../jdk/README.md)
 
 ## Conventions
 
@@ -20,8 +20,8 @@ This Ansible role automates the installation and configuration of Apache Tomcat 
 - **Webapps Directory:** `tomcat_webapp_dir` (default: `pd_service_install_directory`/webapps)
 - **HTTPS:** Enabled by default (`tomcat_use_https`)
 - **Shutdown Port:** Disabled by default (`tomcat_shutdown_port: -1`)
-- **JDK:** Must be provided externally (e.g., via [jdk role](../jdk))
-- **Default HTTPS Port:** 8001 (override with `tomcat_https_port`)
+- **JDK:** Must be provided by using [JDK Role](../jdk/README.md)
+- **Default HTTPS Port:** 8001 (override with `tomcat_https_port`) See: [Port Manager Role](../port_manager/README.md)
 
 ## Role Variables
 
