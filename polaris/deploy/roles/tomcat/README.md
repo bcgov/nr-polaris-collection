@@ -51,7 +51,7 @@ All variables are prefixed with `tomcat_`. Key variables include:
 
 ## Role Variables - setenv.sh
 
-The file `setenv.sh` is rendered out by the role and is used to set Tomcat's environment vars. This table shows the connection between the role variables and the environment variables used by Tomcat.
+The file `setenv.sh` is rendered out by the role and is used to set Tomcat's environment variables. This table shows the connection between the role variables and the environment variables used by Tomcat.
 
 Services often provide a custom value for the variable `tomcat_catalina_opts` to give settings to the jvm like memory and proxy urls.
 
@@ -65,6 +65,21 @@ Services often provide a custom value for the variable `tomcat_catalina_opts` to
 | `UMASK`           | `tomcat_umask`                | File creation mask that defines default file permissions for files created by the Tomcat process.                   |
 | `...`             | `tomcat_env_dict`             | The key/value pairs are used to set any additional environment variables for customizing the Tomcat runtime environment. |
 
+### Example CATALINA_OPTS
+
+```
+tomcat_catalina_opts: >
+  {%- if polaris_proxy.http_proxy is defined and polaris_proxy.http_proxy|length > 0 -%}
+    -Dhttp.proxyHost={{ polaris_proxy.http_proxy | urlsplit('hostname') }} -Dhttp.proxyPort={{ polaris_proxy.http_proxy | urlsplit('port') }}{{ ' ' }}
+  {%- endif -%}
+  {%- if polaris_proxy.https_proxy is defined and polaris_proxy.https_proxy|length > 0 -%}
+    -Dhttps.proxyHost={{ polaris_proxy.https_proxy | urlsplit('hostname') }} -Dhttps.proxyPort={{ polaris_proxy.https_proxy | urlsplit('port') }}{{ ' ' }}
+  {%- endif -%}
+  {%- if polaris_proxy.no_proxy is defined and polaris_proxy.no_proxy|length > 0 -%}
+  -Dhttp.nonProxyHosts={{ polaris_proxy.no_proxy | regex_replace(',', '|') }}{{ ' ' }}
+  {%- endif -%}
+  -Xmx1024m -Xms128m -server
+```
 
 ## Role Tasks
 

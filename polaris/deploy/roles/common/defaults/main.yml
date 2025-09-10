@@ -48,11 +48,21 @@ polaris_apps_service_s6_home: "{{ polaris_s6_services_home }}/{{polaris_apps_ser
 polaris_apps_service_systemd_home: "{{ polaris_service_user_home }}/.config/systemd/user"
 
 proxy_env: "dev"
-proxy_env_dev_test:
-  https_proxy: "http://test-forwardproxy.nrs.bcgov:23128"
-
+proxy_env_none: {}
+proxy_env_dev:
+  http_proxy:  "{{ polaris_proxy_override_http | default('http://test-forwardproxy.nrs.bcgov:23128')}}"
+  https_proxy: "{{ polaris_proxy_override_https | default('http://test-forwardproxy.nrs.bcgov:23128')}}"
+  no_proxy:    "{{ polaris_proxy_override_no_proxy | default('localhost,127.0.0.1,.bcgov')}}"
+proxy_env_test:
+  http_proxy:  "{{ polaris_proxy_override_http | default('http://test-forwardproxy.nrs.bcgov:23128')}}"
+  https_proxy: "{{ polaris_proxy_override_https | default('http://test-forwardproxy.nrs.bcgov:23128')}}"
+  no_proxy:    "{{ polaris_proxy_override_no_proxy | default('localhost,127.0.0.1,.bcgov')}}"
 proxy_env_prod:
-  https_proxy: "http://forwardproxy.nrs.bcgov:23128"
+  http_proxy:  "{{ polaris_proxy_override_http | default('http://forwardproxy.nrs.bcgov:23128')}}"
+  https_proxy: "{{ polaris_proxy_override_https | default('http://forwardproxy.nrs.bcgov:23128')}}"
+  no_proxy:    "{{ polaris_proxy_override_no_proxy | default('localhost,127.0.0.1,.bcgov')}}"
+
+polaris_proxy: "{{ lookup('vars', 'proxy_env_' + proxy_env) | default({}) }}"
 
 # Patch by default for pipeline deployments
 # Set to false to disable patching for local deployments

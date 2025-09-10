@@ -11,7 +11,7 @@
     status_code: 200
     return_content: no
     timeout: 10
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  environment: "{{ polaris_proxy }}"
   register: tomcat_connection_check
   failed_when: tomcat_connection_check.status != 200
 
@@ -21,7 +21,7 @@
 
 - name: Get Latest Tomcat Minor Version
   ansible.builtin.shell: "curl -s {{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  environment: "{{ polaris_proxy }}"
   register: latest_tomcat_minor_version
 
 - name: Set Tomcat Version number
@@ -73,7 +73,7 @@
 - ansible.builtin.uri:
     url: "{{ tomcat_download_url + '.' + tomcat_checksum_protocol }}"
     return_content: true
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  environment: "{{ polaris_proxy }}"
   register: tomcat_checksum
 
 - ansible.builtin.set_fact:
@@ -86,7 +86,7 @@
     checksum: "{{ tomcat_checksum_protocol }}:{{ tomcat_checksum }}"
     timeout: "{{ timeout | default(100) }}"
     mode: "0755"
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  environment: "{{ polaris_proxy }}"
   become: yes
   become_user: "{{ polaris_install_user }}"
 
