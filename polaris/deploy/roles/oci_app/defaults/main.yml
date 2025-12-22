@@ -1,0 +1,26 @@
+---
+
+oci_app_service_copy_src:     "/ansible/downloads/app/"
+oci_app_service_zip_path:     "/ansible/downloads/"
+oci_app_install_user:         "{{ polaris_install_user }}"
+oci_app_service_user:         "{{ polaris_service_user }}"
+oci_app_service_install_home: "{{ polaris_apps_service_install_home }}"
+oci_app_service_current_home: "{{ polaris_apps_service_current_home }}"
+oci_app_service_install_app_home: "{{ polaris_apps_service_install_app_home }}"
+
+oci_app_service_data_home:    "{{ polaris_apps_service_data_home }}"
+oci_app_service_log_home:     "{{ polaris_apps_service_logs_home }}"
+oci_app_service_install_tmp_home:     "{{ polaris_apps_service_install_tmp_home }}"
+oci_app_service_port:         "{{ polaris_apps_service_port }}"
+
+# Runtime path (relative to bin folder, assumes jdk/nodejs roles installed the runtime)
+# Set to the directory name of the runtime (e.g., "nodejs", "jdk")
+oci_app_runtime_install_dir:  ""
+oci_app_runtime_home:         "{{ oci_app_service_install_home }}/{{ polaris_bin_folder }}/{{ oci_app_runtime_install_dir }}"
+
+# Command to execute the application (e.g., "./app", "{{ oci_app_runtime_home }}/bin/node", "{{ oci_app_runtime_home }}/bin/java")
+oci_app_service_command: "./app"
+# Working directory for the command (relative to install home or absolute path)
+oci_app_service_working_dir: "{{ oci_app_service_install_app_home }}"
+# Additional command-line options to pass to the application
+oci_app_service_options: ""
