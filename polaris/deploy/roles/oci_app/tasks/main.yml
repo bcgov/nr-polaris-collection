@@ -49,6 +49,15 @@
   become: yes
   become_user: "{{ oci_app_install_user }}"
 
+- name: Deploy shutdown script
+  ansible.builtin.template:
+    src: "shutdown.sh.j2"
+    dest: "{{ oci_app_service_install_home }}/shutdown.sh"
+    mode: "0755"
+  become: yes
+  become_user: "{{ oci_app_install_user }}"
+  when: polaris_apps_service_script_stop | default('') | length > 0
+
 - name: Deploy env script
   ansible.builtin.template:
     src: "setenv.sh.j2"

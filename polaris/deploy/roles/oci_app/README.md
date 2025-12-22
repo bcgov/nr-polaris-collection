@@ -22,9 +22,11 @@ All variables are prefixed with `oci_app_` to indicate they are specific to this
 | `oci_app_service_port`                   | Port on which the application runs                           | `{{ polaris_apps_service_port }}` |
 | `oci_app_runtime_install_dir`            | Directory name where the runtime is installed (e.g., `nodejs`, `jdk`) | `""` |
 | `oci_app_runtime_home`                   | Path to the runtime installation directory                   | `{{ oci_app_service_install_home }}/{{ polaris_bin_folder }}/{{ oci_app_runtime_install_dir }}` |
-| `oci_app_service_command`                | Command to execute the application                           | `./app` |
-| `oci_app_service_working_dir`            | Working directory for the command                            | `{{ oci_app_service_install_app_home }}` |
-| `oci_app_service_options`                | Additional command-line options for the application          | `""` |
+| `oci_app_startup_command`                | Startup command to execute the application                   | `./app` |
+| `oci_app_startup_options`                | Additional command-line options for the startup command      | `""` |
+| `oci_app_shutdown_command`               | Shutdown command (optional - if empty, service terminated by signal) | `""` |
+| `oci_app_shutdown_options`               | Additional command-line options for the shutdown command     | `""` |
+| `oci_app_service_working_dir`            | Working directory for startup/shutdown commands              | `{{ oci_app_service_install_app_home }}` |
 | `oci_app_env_dict`                       | Dictionary of environment variables to set (optional)        | *undefined* |
 
 ## Tasks
@@ -43,8 +45,9 @@ The role performs the following tasks:
 4. **Copy Application Files to the Server**
    - Archives and copies the application to the installation directory.
 
-5. **Deploy Start and Environment Scripts**
+5. **Deploy Start, Shutdown, and Environment Scripts**
    - Deploys `startup.sh` and `setenv.sh` for launching and configuring the application.
+   - Deploys `shutdown.sh` only if `oci_app_shutdown_command` is defined (for apps with custom shutdown like Tomcat).
 
 6. **Set Up the Service Handler**
    - Configures the service handler for managing the application lifecycle.
@@ -64,6 +67,7 @@ Additionally, before running this role, ensure that the `create_project_director
 .
 ├─ <oci_app_service_install_home>/
 |   ├─ startup.sh
+|   ├─ shutdown.sh
 |   ├─ setenv.sh
 |   ├─ app/<Your application>
 └─ <oci_app_service_data_home>/
@@ -87,7 +91,7 @@ Additionally, before running this role, ensure that the `create_project_director
     - create_project_directories
     - role: oci_app
       vars:
-        oci_app_service_command: "./myapp"
+        oci_app_startup_command: "./myapp"
 ```
 
 ### Running a Node.js Application
@@ -99,14 +103,15 @@ Additionally, before running this role, ensure that the `create_project_director
     polaris_apps_project_name: "test_project"
     polaris_apps_service_name: "test_service"
     polaris_apps_service_install_name: "v1"
+    polaris_apps_service_script_stop: ""  # Signal-based termination
   roles:
     - create_project_directories
     - nodejs
     - role: oci_app
       vars:
         oci_app_runtime_install_dir: "{{ nodejs_install_dir }}"
-        oci_app_service_command: "{{ oci_app_runtime_home }}/bin/node"
-        oci_app_service_options: "app/dist/main.js"
+        oci_app_startup_command: "{{ oci_app_runtime_home }}/bin/node"
+        oci_app_startup_options: "app/dist/main.js"
         oci_app_env_dict:
           NODE_ENV: "production"
 ```
@@ -120,14 +125,15 @@ Additionally, before running this role, ensure that the `create_project_director
     polaris_apps_project_name: "test_project"
     polaris_apps_service_name: "test_service"
     polaris_apps_service_install_name: "v1"
+    polaris_apps_service_script_stop: ""  # Signal-based termination
   roles:
     - create_project_directories
     - jdk
     - role: oci_app
       vars:
         oci_app_runtime_install_dir: "{{ jdk_install_dir }}"
-        oci_app_service_command: "{{ oci_app_runtime_home }}/bin/java"
-        oci_app_service_options: "-jar app.jar"
+        oci_app_startup_command: "{{ oci_app_runtime_home }}/bin/java"
+        oci_app_startup_options: "-jar app.jar"
         oci_app_env_dict:
           JAVA_OPTS: "-Xmx512m"
 ```
@@ -145,8 +151,35 @@ Additionally, before running this role, ensure that the `create_project_director
     - create_project_directories
     - role: oci_app
       vars:
-        oci_app_service_command: "./app"
+        oci_app_startup_command: "./app"
         oci_app_env_dict:
           DATABASE_URL: "postgres://localhost:5432/mydb"
           LOG_LEVEL: "info"
+```
+
+### Running Apache Tomcat (Catalina)
+```yml
+---
+- hosts: all
+  become: yes
+  vars:
+    polaris_apps_project_name: "test_project"
+    polaris_apps_service_name: "test_service"
+    polaris_apps_service_install_name: "v1"
+  roles:
+    - create_project_directories
+    - jdk
+    - role: oci_app
+      vars:
+        oci_app_runtime_install_dir: "{{ jdk_install_dir }}"
+        oci_app_service_working_dir: "{{ oci_app_service_install_app_home }}/tomcat"
+        oci_app_startup_command: "./bin/catalina.sh"
+        oci_app_startup_options: "run"
+        oci_app_shutdown_command: "./bin/catalina.sh"
+        oci_app_shutdown_options: "stop"
+        oci_app_env_dict:
+          CATALINA_HOME: "{{ oci_app_service_install_app_home }}/tomcat"
+          CATALINA_BASE: "{{ oci_app_service_install_app_home }}/tomcat"
+          JAVA_HOME: "{{ oci_app_runtime_home }}"
+          CATALINA_OPTS: "-Xmx1024m -Xms512m"
 ```

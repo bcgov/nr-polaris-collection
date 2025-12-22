@@ -8,4 +8,4 @@ if [ -f "{{ oci_app_service_install_home }}/setenv-custom.sh" ]; then
     source "{{ oci_app_service_install_home }}/setenv-custom.sh"
 fi
 
-exec {{ oci_app_startup_command }} {{ oci_app_startup_options }}
+exec {{ oci_app_shutdown_command }} {{ oci_app_shutdown_options }}
