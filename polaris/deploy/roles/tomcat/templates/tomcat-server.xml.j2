@@ -79,8 +79,9 @@
                  certificateKeystoreFile="{{ tomcat_keystore_file }}"
                  certificateKeystorePassword="{{ tomcat_keystore_pass }}"
                  type="RSA"
-                keystoreType="JKS" />
+                 keystoreType="JKS" />
            {% endif %}
+            </SSLHostConfig>
          </Connector>
          {% elif tomcat_major_version | int <= 9 %}
             clientAuth="false"
