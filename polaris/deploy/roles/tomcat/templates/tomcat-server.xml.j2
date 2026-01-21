@@ -144,7 +144,9 @@
                     prefix="{{ tomcat_access_log_prefix }}"
                     suffix="{{ tomcat_access_log_extension }}"
                     pattern="{{ tomcat_access_log_pattern }}" />
-
+                <Valve className="org.apache.catalina.valves.ErrorReportValve"
+                  showReport="true"
+                  showServerInfo="false"/>
             </Host>
         </Engine>
     </Service>
