@@ -2,7 +2,7 @@
 
 <Server port="{{ tomcat_shutdown_port }}" shutdown="SHUTDOWN">
     <!-- TODO: are these worth parameterizing? -->
-{% if tomcat_major_version == '9' %}
+{% if tomcat_major_version | int >= 9 %}
     <Listener className="org.apache.catalina.startup.VersionLoggerListener" />
     <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />
 {% endif %}
@@ -43,20 +43,51 @@
             noCompressionUserAgents="{{ tomcat_noCompressionUserAgents | default('gozilla, traviata') }}"
             compressibleMimeType="{{ tomcat_compressibleMimeType | default('text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml') }}"
          {% endif %}
-		 {% if tomcat_max_post_size is defined %}
+		     {% if tomcat_max_post_size is defined %}
             maxPostSize="{{ tomcat_max_post_size | default('2097152') }}"
          {% endif %}
             SSLEnabled="true"
             scheme="https"
             secure="true"
+         {% if tomcat_max_http_header is defined %}
+            maxHttpHeaderSize="{{ tomcat_max_http_header }}"
+         {% endif %}
+         {% if tomcat_major_version | int >= 10 %}
+            >
+            <SSLHostConfig sslProtocol="TLS"
+               certificateVerification="none"
+               ciphers="TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P521,
+                  TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384,
+                  TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256,
+                  TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P521,
+                  TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P384,
+                  TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA_P256,
+                  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P521,
+                  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P384,
+                  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256,
+                  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P521,
+                  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P384,
+                  TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA_P256,
+                  TLS_RSA_WITH_AES_256_GCM_SHA384,
+                  TLS_RSA_WITH_AES_128_GCM_SHA256,
+                  TLS_RSA_WITH_AES_256_CBC_SHA256,
+                  TLS_RSA_WITH_AES_256_CBC_SHA,
+                  TLS_RSA_WITH_AES_128_CBC_SHA256,
+                  TLS_RSA_WITH_AES_128_CBC_SHA">
+           {% if tomcat_keystore_file is defined %}
+              <Certificate
+                 certificateKeystoreFile="{{ tomcat_keystore_file }}"
+                 certificateKeystorePassword="{{ tomcat_keystore_pass }}"
+                 type="RSA"/>
+           {% endif %}
+            </SSLHostConfig>
+         </Connector>
+         {% elif tomcat_major_version | int <= 9 %}
             clientAuth="false"
             sslProtocol="TLS"
             {% if tomcat_keystore_file is defined %}
             keystoreFile="{{ tomcat_keystore_file }}"
             keystorePass="{{ tomcat_keystore_pass }}"
-            {% endif %}
-            {% if tomcat_max_http_header is defined %}
-            maxHttpHeaderSize="{{ tomcat_max_http_header }}"
             {% endif %}
             ciphers="TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P521,
                 TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384,
@@ -78,6 +109,8 @@
                 TLS_RSA_WITH_AES_128_CBC_SHA"
         />
         {% endif %}
+    {% endif %}
+
 
 {% if tomcat_use_ajp %}
         <!-- Define an AJP 1.3 Connector -->
@@ -110,7 +143,9 @@
                     prefix="{{ tomcat_access_log_prefix }}"
                     suffix="{{ tomcat_access_log_extension }}"
                     pattern="{{ tomcat_access_log_pattern }}" />
-
+                <Valve className="org.apache.catalina.valves.ErrorReportValve"
+                  showReport="true"
+                  showServerInfo="false"/>
             </Host>
         </Engine>
     </Service>
