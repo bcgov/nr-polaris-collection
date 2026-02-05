@@ -1,5 +1,5 @@
 ---
-envconsul_version_number: "0.15.0"
+envconsul_version_number: "0.13.4"
 envconsul_install_user: "{{ polaris_install_user }}"
 envconsul_install_dir: "envconsul"
 envconsul_bin_home: "{{ polaris_apps_service_install_bin_home }}"

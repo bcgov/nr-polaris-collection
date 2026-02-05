@@ -8,7 +8,7 @@ If a specific version of Envconsul is required, override `envconsul_version_numb
 
 | Variable Name              | Description                                 | Default Value            |
 |----------------------------|---------------------------------------------|--------------------------|
-| `envconsul_version_number` | The Envconsul version to install            | `0.15.0`                 |
+| `envconsul_version_number` | The Envconsul version to install            | `0.13.4`                 |
 | `envconsul_install_user`   | The system user who will own the installation | `{{ polaris_install_user }}` |
 | `envconsul_install_dir`    | The directory where Envconsul will be installed | `envconsul`           |
 | `envconsul_bin_home`       | The base directory for binaries             | `{{ polaris_apps_service_install_bin_home }}` |
