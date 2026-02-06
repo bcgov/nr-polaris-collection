@@ -1,0 +1,23 @@
+vault {
+  retry {
+    backoff = "1s"
+  }
+}
+
+auto_auth {
+  method {
+    type = "token"
+
+    config = {
+      token = var.vault_token
+    }
+  }
+}
+
+{% for upstream in java_app_envconsul_upstreams %}
+secrets {
+  source = "vault"
+  path = "{{ upstream.path }}"
+}
+
+{% endfor %}
