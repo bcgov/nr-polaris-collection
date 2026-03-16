@@ -29,6 +29,7 @@ polaris_apps_service_install_bin_home: "{{polaris_apps_service_install_home}}/{{
 polaris_apps_service_install_tmp_home: "{{polaris_apps_service_install_home}}/{{ polaris_tmp_folder }}"
 
 polaris_apps_service_data_home: "{{ polaris_apps_data_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
+polaris_apps_service_data_tmp: "{{ polaris_apps_service_data_home }}/temp"
 polaris_apps_service_logs_home: "{{ polaris_apps_logs_home }}/{{polaris_apps_project_name}}/{{polaris_apps_service_name}}"
 
 polaris_apps_service_script_start: "{{ polaris_apps_service_current_home }}/startup.sh"
