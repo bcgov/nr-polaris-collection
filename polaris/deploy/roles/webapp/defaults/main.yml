@@ -1,5 +1,6 @@
 webapp_configure_log4j_enabled:   True
 webapp_configure_context_enabled: True
+webapp_configure_create_data_tmp: False
 
 webapp_log_archive_filename_pattern: "{{ polaris_apps_service_name }}.%d.log.gz"
 webapp_log_dir:                   "{{ polaris_apps_service_logs_home }}"
