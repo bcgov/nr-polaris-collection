@@ -81,7 +81,7 @@
 
 - name: download to {{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}
   ansible.builtin.get_url:
-    url: "{{ tomcat_download_url }}"
+    url: "https://127.0.0.1/tomcat/dist/tomcat-10/v0.0.0/bin/apache-tomcat-10.zip"
     dest: "{{ tomcat_download_tmp_dir }}/{{ tomcat_download_url | basename }}"
     checksum: "{{ tomcat_checksum_protocol }}:{{ tomcat_checksum }}"
     timeout: "{{ timeout | default(100) }}"
