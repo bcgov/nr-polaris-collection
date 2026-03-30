@@ -92,7 +92,7 @@
   register: tomcat_download_result
   retries: 3
   delay: 15
-  until: tomcat_download_result is succeeded
+  until: "tomcat_download_result.status == 200"
 
 
 - name: load task list for Tomcat {{ tomcat_version }}
