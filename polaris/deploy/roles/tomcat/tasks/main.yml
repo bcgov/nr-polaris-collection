@@ -89,6 +89,11 @@
   environment: "{{ polaris_proxy }}"
   become: yes
   become_user: "{{ polaris_install_user }}"
+  register: tomcat_download_result
+  retries: 3
+  delay: 15
+  until: tomcat_download_result is succeeded
+
 
 - name: load task list for Tomcat {{ tomcat_version }}
   include_tasks: "install-tomcat.yml"
