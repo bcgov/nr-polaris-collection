@@ -1,0 +1,13 @@
+---
+envconsul_version_number: "0.13.4"
+envconsul_install_user: "{{ polaris_install_user }}"
+envconsul_install_dir: "envconsul"
+envconsul_bin_home: "{{ polaris_apps_service_install_bin_home }}"
+envconsul_tmp_home: "{{ polaris_apps_service_install_tmp_home }}"
+envconsul_checksum_protocol: "sha256"
+envconsul_mirror: "https://releases.hashicorp.com/envconsul"
+envconsul_os: "linux"
+envconsul_arch: "amd64"
+
+# Derived
+envconsul_home: "{{ envconsul_bin_home }}/{{ envconsul_install_dir }}"
