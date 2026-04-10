@@ -27,7 +27,7 @@ This collection was designed for Red Hat Enterprise Linux 9.
 
 ## Plugins
 
-No external plugins. There is an internal [s6 module](polaris/deploy/plugins/modules/s6_service.py) that the [service_control](polaris/deploy/roles/service_control/README.md) role uses.
+The collection uses no external plugins. There is an internal [s6 module](polaris/deploy/plugins/modules/s6_service.py) that the [service_control](polaris/deploy/roles/service_control/README.md) role may use.
 
 ## Quick Start
 
@@ -36,6 +36,17 @@ Start by reviewing [common](polaris/deploy/roles/common/README.md), as every rol
 Next, [create_project_directories](polaris/deploy/roles/create_project_directories/README.md) is used to create the directory structure for a service. Other roles require that this role be called first.
 
 After this, playbooks call various roles to add binaries, application files, and configure the application as required.
+
+### Quick Start - Vars
+
+All global variables defined in the [common](polaris/deploy/roles/common/README.md) role are prefixed with `polaris_`. The collection's roles other than common generally prefix their variables with the name of the role. Roles will use the global "polaris" variables to derive their own variables. So, a developer can override the global variable to change a value across many roles.
+
+Developers should prefix their own variables with their service or project name and treat the role names (and polaris) as reserved prefixes for the collection. Example: An developer should not define `webapp_app_tmp_dir` because `webapp` is used by the `webapp` role as its prefix.
+
+The general advice is that developers should:
+
+* Not define collection role variables unless required to
+* Use polaris global variables to derive their own variables
 
 ## Related Products
 
