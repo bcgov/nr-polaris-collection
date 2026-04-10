@@ -1,0 +1,25 @@
+---
+# file: proxy.yml
+# Call using: -eproxy_env=none|dev|test|prod
+- hosts: localhost
+  vars_files:
+    - "vars/all.yml"
+    - "vars/nodejs.yml"
+
+  roles:
+    - role: common
+  tasks:
+    - ansible.builtin.debug:
+        msg: "{{ polaris_proxy }}"
+    - ansible.builtin.debug:
+        msg: >
+          {%- if polaris_proxy.http_proxy is defined and polaris_proxy.http_proxy|length > 0 -%}
+            -Dhttp.proxyHost={{ polaris_proxy.http_proxy | urlsplit('hostname') }} -Dhttp.proxyPort={{ polaris_proxy.http_proxy | urlsplit('port') }}{{ ' ' }}
+          {%- endif -%}
+          {%- if polaris_proxy.https_proxy is defined and polaris_proxy.https_proxy|length > 0 -%}
+            -Dhttps.proxyHost={{ polaris_proxy.https_proxy | urlsplit('hostname') }} -Dhttps.proxyPort={{ polaris_proxy.https_proxy | urlsplit('port') }}{{ ' ' }}
+          {%- endif -%}
+          {%- if polaris_proxy.no_proxy is defined and polaris_proxy.no_proxy|length > 0 -%}
+          -Dhttp.nonProxyHosts={{ polaris_proxy.no_proxy | regex_replace(',', '|') }}{{ ' ' }}
+          {%- endif -%}
+          -Xmx1024m -Xms128m -server

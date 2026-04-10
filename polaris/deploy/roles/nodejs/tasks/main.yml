@@ -19,7 +19,7 @@
 - name: Get Node.js Package Name
   ansible.builtin.shell: "curl -sL {{ nodejs_mirror }}/{{ nodejs_version_number }}/ | grep -oP 'node-v\\d+\\.\\d+\\.\\d+-linux-x64.tar.xz' | head -n1"
   register: nodejs_package_name
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  environment: "{{ polaris_proxy }}"
   failed_when: nodejs_package_name.stdout | length == 0
 
 - name: Set Node.js Package Name
@@ -39,7 +39,7 @@
     url: "{{ nodejs_mirror }}/{{ nodejs_version_number }}/SHASUMS256.txt"
     return_content: true
   register: nodejs_checksum_all
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  environment: "{{ polaris_proxy }}"
 
 - name: "Show checksum information"
   ansible.builtin.debug:
@@ -58,7 +58,7 @@
     mode: "0755"
   become: yes
   become_user: "{{ nodejs_install_user }}"
-  environment: "{{ (proxy_env_dev_test if proxy_env == 'dev' or proxy_env == 'test') or (proxy_env_prod if proxy_env == 'prod') | default({}) }}"
+  environment: "{{ polaris_proxy }}"
 
 - name: 'Extract the downloaded archive'
   ansible.builtin.unarchive:

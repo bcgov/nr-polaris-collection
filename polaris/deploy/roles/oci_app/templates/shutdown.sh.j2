@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+cd "{{ oci_app_service_working_dir }}"
+
+source "{{ oci_app_service_install_home }}/setenv.sh"
+
+if [ -f "{{ oci_app_service_install_home }}/setenv-custom.sh" ]; then
+    source "{{ oci_app_service_install_home }}/setenv-custom.sh"
+fi
+
+exec {{ oci_app_shutdown_command }} {{ oci_app_shutdown_options }}

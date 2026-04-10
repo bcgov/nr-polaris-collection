@@ -18,16 +18,16 @@
     state: directory
     mode: "0775"
   with_items:
-    - "{{ nodejs_app_service_install_app_home }}"
-    - "{{ nodejs_app_service_data_home }}"
-    - "{{ nodejs_app_service_log_home }}"
+    - "{{ oci_app_service_install_app_home }}"
+    - "{{ oci_app_service_data_home }}"
+    - "{{ oci_app_service_log_home }}"
   become: yes
-  become_user: "{{ nodejs_app_install_user }}"
+  become_user: "{{ oci_app_install_user }}"
 
 - name: Archive the pulled package locally
   archive:
-    path: "{{ nodejs_app_service_copy_src }}"
-    dest: "{{ nodejs_app_service_zip_path }}app.zip"
+    path: "{{ oci_app_service_copy_src }}"
+    dest: "{{ oci_app_service_zip_path }}app.zip"
     format: zip
   delegate_to: localhost
   register: zip_output
@@ -35,29 +35,38 @@
 - name: Unzip application on remote server
   environment: "{{ polaris_proxy }}"
   ansible.builtin.unarchive:
-    src: "{{ nodejs_app_service_zip_path }}app.zip"
-    dest: "{{ nodejs_app_service_install_app_home }}"
+    src: "{{ oci_app_service_zip_path }}app.zip"
+    dest: "{{ oci_app_service_install_app_home }}"
     extra_opts: [ "-o" ]  # Overwrite existing files if needed
   become: yes
-  become_user: "{{ nodejs_app_install_user }}"
+  become_user: "{{ oci_app_install_user }}"
 
 - name: Deploy start script
   ansible.builtin.template:
     src: "startup.sh.j2"
-    dest: "{{ nodejs_app_service_install_home }}/startup.sh"
+    dest: "{{ oci_app_service_install_home }}/startup.sh"
     mode: "0755"
   become: yes
-  become_user: "{{ nodejs_app_install_user }}"
+  become_user: "{{ oci_app_install_user }}"
+
+- name: Deploy shutdown script
+  ansible.builtin.template:
+    src: "shutdown.sh.j2"
+    dest: "{{ oci_app_service_install_home }}/shutdown.sh"
+    mode: "0755"
+  become: yes
+  become_user: "{{ oci_app_install_user }}"
+  when: polaris_apps_service_script_stop | default('') | length > 0
 
 - name: Deploy env script
   ansible.builtin.template:
     src: "setenv.sh.j2"
-    dest: "{{ nodejs_app_service_install_home }}/setenv.sh"
+    dest: "{{ oci_app_service_install_home }}/setenv.sh"
     mode: "0755"
   become: yes
-  become_user: "{{ nodejs_app_install_user }}"
+  become_user: "{{ oci_app_install_user }}"
 
-- name: "Setup handler {{ nodejs_app_control_handler }}"
+- name: "Setup handler {{ oci_app_control_handler }}"
   ansible.builtin.include_role:
     name: service_control
   vars:

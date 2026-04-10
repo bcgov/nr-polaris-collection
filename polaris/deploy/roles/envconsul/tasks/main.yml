@@ -1,0 +1,60 @@
+---
+- name: Ensure create_project_directories was called before
+  ansible.builtin.fail:
+    msg: "Error: create_project_directories must be called before!"
+  when: not role_create_project_directories_called | default(false) | bool
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0775"
+  become: yes
+  become_user: "{{ envconsul_install_user }}"
+  loop:
+    - "{{ envconsul_bin_home }}"
+    - "{{ envconsul_home }}"
+    - "{{ envconsul_tmp_home }}"
+
+- name: Set envconsul package name
+  ansible.builtin.set_fact:
+    envconsul_package: "envconsul_{{ envconsul_version_number }}_{{ envconsul_os }}_{{ envconsul_arch }}.zip"
+
+- name: Set envconsul download URL
+  ansible.builtin.set_fact:
+    envconsul_download_url: "{{ envconsul_mirror }}/{{ envconsul_version_number }}/{{ envconsul_package }}"
+
+- name: Get envconsul SHA256SUMS
+  ansible.builtin.uri:
+    url: "{{ envconsul_mirror }}/{{ envconsul_version_number }}/envconsul_{{ envconsul_version_number }}_SHA256SUMS"
+    return_content: true
+  register: envconsul_checksum_all
+
+- name: Extract envconsul checksum
+  ansible.builtin.set_fact:
+    envconsul_checksum: "{{ (envconsul_checksum_all.content | split('\n') | select('search', envconsul_package))[0].split(' ')[0] }}"
+
+- name: Download envconsul
+  ansible.builtin.get_url:
+    url: "{{ envconsul_download_url }}"
+    dest: "{{ envconsul_tmp_home }}/{{ envconsul_package }}"
+    checksum: "{{ envconsul_checksum_protocol }}:{{ envconsul_checksum }}"
+    mode: "0755"
+  become: yes
+  become_user: "{{ envconsul_install_user }}"
+
+- name: Unarchive envconsul
+  ansible.builtin.unarchive:
+    src: "{{ envconsul_tmp_home }}/{{ envconsul_package }}"
+    dest: "{{ envconsul_home }}"
+    remote_src: yes
+    extra_opts: []
+  become: yes
+  become_user: "{{ envconsul_install_user }}"
+
+- name: Remove the downloaded archive
+  ansible.builtin.file:
+    path: "{{ envconsul_tmp_home }}/{{ envconsul_package }}"
+    state: absent
+  become: yes
+  become_user: "{{ envconsul_install_user }}"
