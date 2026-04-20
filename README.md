@@ -14,6 +14,8 @@ This collection was designed for Red Hat Enterprise Linux 9.
 
 - [common](polaris/deploy/roles/common/README.md) - Defines variables used by the rest of the collection
 - [create_project_directories](polaris/deploy/roles/create_project_directories/README.md) - Creates the directory structure for a service
+- [envconsul](polaris/deploy/roles/envconsul/README.md) - Installs envconsul
+- [java_app](polaris/deploy/roles/java_app/README.md) - Installs a Java application (Spring Boot)
 - [jdk](polaris/deploy/roles/jdk/README.md) - Installs and configures Adoptium OpenJDK
 - [nodejs](polaris/deploy/roles/nodejs/README.md) - Installs and configures Node.js
 - [nodejs_app](polaris/deploy/roles/nodejs_app/README.md) - Installs a Node.js application
