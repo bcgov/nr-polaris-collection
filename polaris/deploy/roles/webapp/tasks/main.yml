@@ -24,7 +24,7 @@
 - name: "copy webapp war from controller"
   environment: "{{ polaris_proxy }}"
   ansible.builtin.copy:
-    src: "/ansible/downloads/{{ webapp_artifact_name }}"
+    src: "{{ webapp_copy_src }}/{{ webapp_artifact_name }}"
     dest: "{{ webapp_staging_dir }}/{{ webapp_artifact_name }}"
     mode: "0755"
   become: yes
