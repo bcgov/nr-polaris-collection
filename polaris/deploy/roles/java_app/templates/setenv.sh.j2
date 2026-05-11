@@ -1,0 +1,9 @@
+export SERVICE_DATA_HOME="{{ java_app_service_data_home }}"
+export SERVICE_LOG_HOME="{{ java_app_service_log_home }}"
+export SERVICE_TMP_HOME="{{ java_app_service_install_tmp_home }}"
+export SERVICE_PORT={{ java_app_service_port }}
+{% if java_app_env_dict is defined %}
+{% for key, value in java_app_env_dict.items() %}
+export {{ key }}="{{ value }}"
+{% endfor %}
+{% endif %}

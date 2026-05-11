@@ -1,0 +1,28 @@
+---
+
+java_app_artifact_url:          ""
+java_app_artifact_md5:          ""
+java_app_artifact_name:         ""
+java_app_artifact_download_dir: "/ansible/downloads/"
+
+java_app_install_user:          "{{ polaris_install_user }}"
+java_app_service_user:          "{{ polaris_service_user }}"
+java_app_service_install_home:  "{{ polaris_apps_service_install_home }}"
+java_app_service_current_home:  "{{ polaris_apps_service_current_home }}"
+java_app_service_install_app_home: "{{ polaris_apps_service_install_app_home }}"
+
+java_app_service_data_home:     "{{ polaris_apps_service_data_home }}"
+java_app_service_log_home:      "{{ polaris_apps_service_logs_home }}"
+java_app_service_install_tmp_home: "{{ polaris_apps_service_install_tmp_home }}"
+java_app_service_port:          "{{ polaris_apps_service_port }}"
+
+java_app_jdk_install_dir:       "jdk"
+java_app_jdk_home:              "{{ java_app_service_install_home }}/{{ polaris_bin_folder }}/{{ java_app_jdk_install_dir }}"
+
+java_app_properties_dir:        "{{ java_app_service_install_app_home }}"
+java_app_properties_files:      []
+java_app_jvm_options:           "-Xms128m -Xmx512m"
+
+java_app_use_envconsul:         true
+java_app_envconsul_config_dir:  "{{ java_app_service_install_home }}/envconsul.d"
+java_app_envconsul_upstreams:   []

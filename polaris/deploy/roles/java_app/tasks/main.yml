@@ -1,0 +1,102 @@
+---
+- name: Ensure create_project_directories was called before
+  ansible.builtin.fail:
+    msg: "Error: create_project_directories must be called before!"
+  when: not role_create_project_directories_called | default(false) | bool
+
+- name: "Ensure Java application service is stopped"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "stop"
+
+- meta: flush_handlers
+
+- name: "Create required directories"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0775"
+  with_items:
+    - "{{ java_app_service_install_app_home }}"
+    - "{{ java_app_service_data_home }}"
+    - "{{ java_app_service_log_home }}"
+  become: yes
+  become_user: "{{ java_app_install_user }}"
+
+- name: "Download artifact from GitHub Maven packages"
+  ansible.builtin.get_url:
+    url: "{{ java_app_artifact_url }}"
+    dest: "{{ java_app_artifact_download_dir }}{{ java_app_artifact_name }}"
+    checksum: "md5:{{ java_app_artifact_md5 }}"
+    mode: "0755"
+    force: no
+  environment: "{{ polaris_proxy }}"
+  when: java_app_artifact_url != ""
+
+- name: "Copy artifact to application home"
+  ansible.builtin.copy:
+    src: "{{ java_app_artifact_download_dir }}{{ java_app_artifact_name }}"
+    dest: "{{ java_app_service_install_app_home }}/app.jar"
+    mode: "0755"
+  become: yes
+  become_user: "{{ java_app_install_user }}"
+  when: java_app_artifact_url != ""
+
+- name: "Copy properties files to application home"
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ java_app_properties_dir }}/"
+    mode: "0644"
+  become: yes
+  become_user: "{{ java_app_install_user }}"
+  with_items: "{{ java_app_properties_files }}"
+  when: java_app_properties_files | length > 0
+
+- name: "Deploy startup script"
+  ansible.builtin.template:
+    src: "startup.sh.j2"
+    dest: "{{ java_app_service_install_home }}/startup.sh"
+    mode: "0755"
+  become: yes
+  become_user: "{{ java_app_install_user }}"
+
+- name: "Deploy environment setup script"
+  ansible.builtin.template:
+    src: "setenv.sh.j2"
+    dest: "{{ java_app_service_install_home }}/setenv.sh"
+    mode: "0755"
+  become: yes
+  become_user: "{{ java_app_install_user }}"
+
+- name: "Create envconsul config directory if using envconsul"
+  ansible.builtin.file:
+    path: "{{ java_app_envconsul_config_dir }}"
+    state: directory
+    mode: "0755"
+  become: yes
+  become_user: "{{ java_app_install_user }}"
+  when: java_app_use_envconsul | bool
+
+- name: "Deploy envconsul configuration if configured"
+  ansible.builtin.template:
+    src: "envconsul.hcl.j2"
+    dest: "{{ java_app_envconsul_config_dir }}/app.hcl"
+    mode: "0644"
+  become: yes
+  become_user: "{{ java_app_install_user }}"
+  when: 
+    - java_app_use_envconsul | bool
+    - java_app_envconsul_upstreams | length > 0
+
+- name: "Setup service handler"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "setup"
+
+- name: "Start service"
+  ansible.builtin.include_role:
+    name: service_control
+  vars:
+    service_control_action: "start"

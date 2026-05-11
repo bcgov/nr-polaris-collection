@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+cd "{{ java_app_service_install_home }}"
+
+source ./setenv.sh
+
+if [ -f "./setenv-custom.sh" ]; then
+    source "./setenv-custom.sh"
+fi
+
+{% if java_app_use_envconsul | bool %}
+ENVCONSUL_BIN="{{ java_app_service_install_home }}/{{ polaris_bin_folder }}/envconsul/envconsul"
+exec "$ENVCONSUL_BIN" -config="{{ java_app_envconsul_config_dir }}/app.hcl" \
+  "{{ java_app_jdk_home }}/bin/java" {{ java_app_jvm_options }} -jar "{{ java_app_service_install_app_home }}/app.jar"
+{% else %}
+exec "{{ java_app_jdk_home }}/bin/java" {{ java_app_jvm_options }} -jar "{{ java_app_service_install_app_home }}/app.jar"
+{% endif %}
