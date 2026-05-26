@@ -1,0 +1,14 @@
+---
+- name: 'configure logging log4j v2'
+  ansible.builtin.template:
+    src: 'log4j2.xml.j2'
+    dest: "{{ polaris_apps_service_install_home }}/webapps/{{ context }}/WEB-INF/classes/log4j2.xml"
+  become: yes
+  become_user: "{{ polaris_install_user }}"
+  register: log4j2_template_result
+
+- name: 'Log log4j2 template replacement'
+  ansible.builtin.debug:
+    msg: "Warning! Replaced existing log4j2.xml"
+  when: log4j2_template_result.changed
+
