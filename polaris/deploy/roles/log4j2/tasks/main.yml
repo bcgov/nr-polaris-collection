@@ -2,7 +2,7 @@
 - name: 'configure logging log4j v2'
   ansible.builtin.template:
     src: 'log4j2.xml.j2'
-    dest: "{{ polaris_apps_service_install_home }}/webapps/{{ context }}/WEB-INF/classes/log4j2.xml"
+    dest: "{{ polaris_apps_service_install_home }}/webapps/{{ alt_app_dir_name | default(context) }}/WEB-INF/classes/log4j2.xml"
   become: yes
   become_user: "{{ polaris_install_user }}"
   register: log4j2_template_result
