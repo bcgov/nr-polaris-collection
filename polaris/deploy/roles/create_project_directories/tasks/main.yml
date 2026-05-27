@@ -19,15 +19,18 @@
 
 - name: Create project directories
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ item.path }}"
     state: directory
     mode: "0775"
   become: yes
   become_user: "{{ pd_install_user }}"
-  with_items:
-    - "{{ pd_apps_project_home }}"
-    - "{{ pd_apps_service_home }}"
-    - "{{ pd_apps_service_install_home }}"
+  loop:
+    - path: "{{ pd_apps_project_home }}"
+    - path: "{{ pd_apps_service_home }}"
+    - path: "{{ pd_apps_service_install_home }}"
+    - path: "{{ polaris_apps_service_data_tmp }}"
+      enabled: pd_configure_create_data_tmp | default(false)
+  when: item.enabled | default(true)
 
 - name: "set version {{ pd_apps_service_install_home }} as current"
   ansible.builtin.file:
