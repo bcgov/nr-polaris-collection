@@ -2,7 +2,7 @@
 
 This Ansible role automates the deployment of a generic application by ensuring proper directory creation, copying application files, and managing the service lifecycle using the `service_control` role.
 
-This role is designed to be runtime-agnostic and can run any executable application (binaries, scripts, etc.) by configuring the `oci_app_service_command` variable. It integrates with the `jdk` and `nodejs` roles by providing pre-configured paths to runtimes installed by those roles.
+This role is designed to be runtime-agnostic and can run any executable application (binaries, scripts, etc.) by configuring the `oci_app_startup_command` variable. It integrates with the `jdk` and `nodejs` roles by providing pre-configured paths to runtimes installed by those roles.
 
 ## Role Variables
 
