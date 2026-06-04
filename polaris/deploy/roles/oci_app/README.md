@@ -111,7 +111,7 @@ Additionally, before running this role, ensure that the `create_project_director
       vars:
         oci_app_runtime_install_dir: "{{ nodejs_install_dir }}"
         oci_app_startup_command: "{{ oci_app_runtime_home }}/bin/node"
-        oci_app_startup_options: "app/dist/main.js"
+        oci_app_startup_options: "dist/main.js"
         oci_app_env_dict:
           NODE_ENV: "production"
 ```
@@ -182,4 +182,23 @@ Additionally, before running this role, ensure that the `create_project_director
           CATALINA_BASE: "{{ oci_app_service_install_app_home }}/tomcat"
           JAVA_HOME: "{{ oci_app_runtime_home }}"
           CATALINA_OPTS: "-Xmx1024m -Xms512m"
+```
+
+### Running Java Webapp in Apache Tomcat (Catalina)
+```yml
+---
+- hosts: all
+  become: yes
+  vars:
+    polaris_apps_project_name: "test_project"
+    polaris_apps_service_name: "test_service"
+    polaris_apps_service_install_name: "v1"
+  roles:
+    - role: create_project_directories
+    - role: jdk
+    - role: tomcat
+    - role: oci_app
+      vars:
+        oci_app_service_install_app_home: "{{ oci_app_service_install_home }}/webapps/{{ context }}"
+        oci_app_startup_command: "{{ tomcat_install_dir_current }}/bin/catalina.sh run"
 ```
