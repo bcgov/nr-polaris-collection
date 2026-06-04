@@ -13,7 +13,9 @@ All variables are prefixed with `pd_` to indicate they are specific to this role
 | `pd_apps_service_home`            | Path to the service directory              | `{{polaris_apps_service_home}}`         |
 | `pd_apps_service_current_home`    | Path to the "current" service symlink      | `{{polaris_apps_service_current_home}}` |
 | `pd_apps_service_install_home`    | Path to the installation directory         | `{{polaris_apps_service_install_home}}` |
+| `pd_apps_service_data_tmp`        | Path to the data temp directory            | `{{polaris_apps_service_data_tmp}}` |
 | `pd_remove_existing`              | If truthy wipe existing directories        | `no`                                    |
+| `pd_configure_create_data_tmp `   | If truthy create data temp directory       | `false`                                 |
 
 ## Tasks
 

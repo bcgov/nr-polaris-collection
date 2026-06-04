@@ -28,7 +28,7 @@
     - path: "{{ pd_apps_project_home }}"
     - path: "{{ pd_apps_service_home }}"
     - path: "{{ pd_apps_service_install_home }}"
-    - path: "{{ polaris_apps_service_data_tmp }}"
+    - path: "{{ pd_apps_service_data_tmp }}"
       enabled: "{{ pd_configure_create_data_tmp | default(false) }}"
   when: item.enabled | default(true)
 
