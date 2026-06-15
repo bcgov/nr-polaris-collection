@@ -5,4 +5,6 @@ pd_apps_project_home: "{{ polaris_apps_project_home }}"
 pd_apps_service_home: "{{ polaris_apps_service_home }}"
 pd_apps_service_current_home: "{{ polaris_apps_service_current_home }}"
 pd_apps_service_install_home: "{{ polaris_apps_service_install_home }}"
+pd_apps_service_data_tmp: "{{ polaris_apps_service_data_tmp }}"
 pd_remove_existing: "no"
+pd_configure_create_data_tmp: false

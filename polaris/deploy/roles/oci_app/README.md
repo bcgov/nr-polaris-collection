@@ -1,8 +1,10 @@
 # oci_app - Generic OCI Application Runner
 
-This Ansible role automates the deployment of a generic application by ensuring proper directory creation, copying application files, and managing the service lifecycle using the `service_control` role.
+This Ansible role automates the deployment of a generic application by ensuring proper directory creation, downloading OCI artifacts, and copying application files.
 
-This role is designed to be runtime-agnostic and can run any executable application (binaries, scripts, etc.) by configuring the `oci_app_service_command` variable. It integrates with the `jdk` and `nodejs` roles by providing pre-configured paths to runtimes installed by those roles.
+The calling playbook is responsible for handling the service lifecycle using the [`service_control`](polaris/deploy/roles/service_control/README.md) role.
+
+This role is designed to be runtime-agnostic and can run any executable application (binaries, scripts, etc.) by configuring the `oci_app_startup_command` variable. It integrates with the `jdk` and `nodejs` roles by providing pre-configured paths to runtimes installed by those roles.
 
 ## Role Variables
 
@@ -36,24 +38,15 @@ The role performs the following tasks:
 1. **Ensure Prerequisite Role Execution**
    - Checks if `create_project_directories` was executed; fails otherwise.
 
-2. **Stop the Running Application**
-   - Stops the application before copying new files to prevent conflicts.
-
-3. **Create Required Directories**
+2. **Create Required Directories**
    - Ensures the necessary directories exist for the application, logs, and data storage.
 
-4. **Copy Application Files to the Server**
+3. **Copy Application Files to the Server**
    - Archives and copies the application to the installation directory.
 
-5. **Deploy Start, Shutdown, and Environment Scripts**
+4. **Deploy Start, Shutdown, and Environment Scripts**
    - Deploys `startup.sh` and `setenv.sh` for launching and configuring the application.
    - Deploys `shutdown.sh` only if `oci_app_shutdown_command` is defined (for apps with custom shutdown like Tomcat).
-
-6. **Set Up the Service Handler**
-   - Configures the service handler for managing the application lifecycle.
-
-7. **Start the Service**
-   - Uses `service_control` to start the application.
 
 ## Dependencies
 
@@ -111,7 +104,7 @@ Additionally, before running this role, ensure that the `create_project_director
       vars:
         oci_app_runtime_install_dir: "{{ nodejs_install_dir }}"
         oci_app_startup_command: "{{ oci_app_runtime_home }}/bin/node"
-        oci_app_startup_options: "app/dist/main.js"
+        oci_app_startup_options: "dist/main.js"
         oci_app_env_dict:
           NODE_ENV: "production"
 ```
@@ -182,4 +175,23 @@ Additionally, before running this role, ensure that the `create_project_director
           CATALINA_BASE: "{{ oci_app_service_install_app_home }}/tomcat"
           JAVA_HOME: "{{ oci_app_runtime_home }}"
           CATALINA_OPTS: "-Xmx1024m -Xms512m"
+```
+
+### Running Java Webapp in Apache Tomcat (Catalina)
+```yml
+---
+- hosts: all
+  become: yes
+  vars:
+    polaris_apps_project_name: "test_project"
+    polaris_apps_service_name: "test_service"
+    polaris_apps_service_install_name: "v1"
+  roles:
+    - role: create_project_directories
+    - role: jdk
+    - role: tomcat
+    - role: oci_app
+      vars:
+        oci_app_service_install_app_home: "{{ oci_app_service_install_home }}/webapps/{{ context }}"
+        oci_app_startup_command: "{{ tomcat_install_dir_current }}/bin/catalina.sh run"
 ```
