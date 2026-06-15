@@ -1,6 +1,8 @@
 # oci_app - Generic OCI Application Runner
 
-This Ansible role automates the deployment of a generic application by ensuring proper directory creation, copying application files, and managing the service lifecycle using the `service_control` role.
+This Ansible role automates the deployment of a generic application by ensuring proper directory creation, downloading OCI artifacts, and copying application files.
+
+The calling playbook is responsible for handling the service lifecycle using the [`service_control`](polaris/deploy/roles/service_control/README.md) role.
 
 This role is designed to be runtime-agnostic and can run any executable application (binaries, scripts, etc.) by configuring the `oci_app_startup_command` variable. It integrates with the `jdk` and `nodejs` roles by providing pre-configured paths to runtimes installed by those roles.
 
@@ -36,24 +38,15 @@ The role performs the following tasks:
 1. **Ensure Prerequisite Role Execution**
    - Checks if `create_project_directories` was executed; fails otherwise.
 
-2. **Stop the Running Application**
-   - Stops the application before copying new files to prevent conflicts.
-
-3. **Create Required Directories**
+2. **Create Required Directories**
    - Ensures the necessary directories exist for the application, logs, and data storage.
 
-4. **Copy Application Files to the Server**
+3. **Copy Application Files to the Server**
    - Archives and copies the application to the installation directory.
 
-5. **Deploy Start, Shutdown, and Environment Scripts**
+4. **Deploy Start, Shutdown, and Environment Scripts**
    - Deploys `startup.sh` and `setenv.sh` for launching and configuring the application.
    - Deploys `shutdown.sh` only if `oci_app_shutdown_command` is defined (for apps with custom shutdown like Tomcat).
-
-6. **Set Up the Service Handler**
-   - Configures the service handler for managing the application lifecycle.
-
-7. **Start the Service**
-   - Uses `service_control` to start the application.
 
 ## Dependencies
 
