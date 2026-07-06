@@ -59,6 +59,16 @@
   args:
     chdir: "{{ webade_build_dir }}/jar-files"
 
+# Ensure the install dir exists
+# -----------------------------
+- name: Ensure install dir exists
+  ansible.builtin.file:
+    path: "{{ webade_install_dir }}"
+    state: directory
+    mode: "0775"
+  become: yes
+  become_user: "{{ pd_install_user }}"
+
 # Install the JAR file
 # --------------------
 - name: Install JAR file

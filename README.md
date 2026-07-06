@@ -19,6 +19,7 @@ This collection was designed for Red Hat Enterprise Linux 9.
 - [jdk](polaris/deploy/roles/jdk/README.md) - Installs and configures Adoptium OpenJDK
 - [nodejs](polaris/deploy/roles/nodejs/README.md) - Installs and configures Node.js
 - [nodejs_app](polaris/deploy/roles/nodejs_app/README.md) - Installs a Node.js application
+- [oci_app](polaris/deploy/roles/oci_app/README.md) - Installs an OCI application (Java / Node.js)
 - [patch_intention](polaris/deploy/roles/patch_intention/README.md) - Sends a patch request to NR Broker to update the catalog
 - [port_manager](polaris/deploy/roles/port_manager/README.md) - Automates the assignment and management of service ports
 - [self_signed_cert](polaris/deploy/roles/self_signed_cert/README.md) - Creates a self-signed certificate for the service

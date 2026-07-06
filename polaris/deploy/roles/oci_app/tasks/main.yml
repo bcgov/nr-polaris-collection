@@ -4,14 +4,6 @@
     msg: "Error: create_project_directories must be called before!"
   when: not role_create_project_directories_called | default(false) | bool
 
-- name: "Ensuring service is stopped"
-  ansible.builtin.include_role:
-    name: service_control
-  vars:
-    service_control_action: "stop"
-
-- meta: flush_handlers
-
 - name: "required directories"
   ansible.builtin.file:
     path: "{{ item }}"
@@ -66,14 +58,3 @@
   become: yes
   become_user: "{{ oci_app_install_user }}"
 
-- name: "Setup handler {{ oci_app_control_handler }}"
-  ansible.builtin.include_role:
-    name: service_control
-  vars:
-    service_control_action: "setup"
-
-- name: "Start service"
-  ansible.builtin.include_role:
-    name: service_control
-  vars:
-    service_control_action: "start"

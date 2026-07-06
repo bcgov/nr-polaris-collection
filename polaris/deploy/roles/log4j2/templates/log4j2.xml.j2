@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+  <Appenders>
+    <RollingFile name="file"
+      fileName="{{ log4j2_log_dir }}/{{ log4j2_log_filename }}"
+      encoding="UTF-8"
+      filePattern="{{ log4j2_log_dir }}/{{ log4j2_log_archive_filename_pattern }}"
+      ignoreExceptions="false">
+      <PatternLayout>
+        <!-- The log message pattern -->
+        <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %X{requestId} %c{1}:%L - %m%n</Pattern>
+      </PatternLayout>
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+      </Policies>
+    </RollingFile>
+
+    {% if log4j2_log_quartzdesk_enabled %}
+    <!--
+    Appender that passes all received log events to the QuartzDesk JVM Agent for
+    processing. Log events that are not produced by Quartz scheduler threads are
+    silently ignored.
+    -->
+    <QuartzDeskJvmAgent name="QUARTZDESK_JVM_AGENT">
+      <PatternLayout pattern="[%d{ISO8601}] %-5p [%t] [%C:%L] - %m%n"/>
+      <filters>
+        <ThresholdFilter level="info"/>
+      </filters>
+    </QuartzDeskJvmAgent>
+    {% endif %}
+
+  </Appenders>
+  <Loggers>
+    {% for logger in log4j2_loggers %}
+    <Logger name="{{ logger.name }}" level="{{ logger.level | default('INFO') }}"/>
+    {% endfor %}
+
+    <Root level="{{ log4j2_root_log_level | default('INFO') }}">
+      <AppenderRef ref="file"/>
+      {% if log4j2_log_quartzdesk_enabled %}
+      <AppenderRef ref="QUARTZDESK_JVM_AGENT"/>
+      {% endif %}
+    </Root>
+  </Loggers>
+</Configuration>

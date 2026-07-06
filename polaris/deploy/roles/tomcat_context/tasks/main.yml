@@ -1,0 +1,14 @@
+---
+- name: 'configure context'
+  ansible.builtin.template:
+    src: 'context.xml.j2'
+    dest: "{{ polaris_apps_service_install_home }}/webapps/{{ alt_app_dir_name | default(context) }}/META-INF/context.xml"
+  become: yes
+  become_user: "{{ polaris_install_user }}"
+  register: tomcat_context_template_result
+
+- name: 'Log template replacement'
+  ansible.builtin.debug:
+    msg: "Warning! Replaced existing context.xml"
+  when: tomcat_context_template_result.changed
+

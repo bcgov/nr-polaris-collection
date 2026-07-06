@@ -91,7 +91,6 @@ This role includes tasks to automate the full lifecycle of Tomcat installation a
 - **Webapp deployment:** Downloads and deploys web applications as defined in `tomcat_webapps`.
 - **JNDI resources:** Configures JNDI resources in `context.xml` or as specified.
 - **HTTPS setup:** Configures HTTPS connector and keystore if enabled.
-- **Service integration:** Optionally sets up s6 supervision for Tomcat process management.
 - **Permissions:** Ensures correct ownership and permissions for all files and directories.
 
 All tasks are idempotent and can be customized via role variables.

@@ -1,0 +1,7 @@
+log4j2_log_archive_filename_pattern:  "{{ polaris_apps_service_name }}.%d.log.gz"
+log4j2_log_dir:                       "{{ polaris_apps_service_logs_home }}"
+log4j2_log_filename:                  "{{ polaris_apps_service_name }}.log"
+log4j2_log_quartzdesk_enabled:        False
+log4j2_loggers:                       "{{ webapp_loggers | default([]) }}"
+log4j2_root_log_level:                "{{ webapp_root_log_level | default('INFO') }}"
+
