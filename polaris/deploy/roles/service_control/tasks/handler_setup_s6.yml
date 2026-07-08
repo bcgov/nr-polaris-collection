@@ -36,7 +36,7 @@
   delay: 2
 
 - name: Scan s6 home directory
-  ansible.builtin.shell: "{{ service_control_s6_home }}/bin/s6-svscanctl -a {{ service_control_service_s6_home }}"
+  ansible.builtin.shell: "{{ service_control_s6_home }}/bin/s6-svscanctl -a {{ service_control_s6_service_home }}"
   become: yes
   become_user: "{{ service_control_service_user }}"
   when: not s6_service_run_file.stat.exists
