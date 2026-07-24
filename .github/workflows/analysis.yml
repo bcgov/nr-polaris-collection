@@ -19,6 +19,9 @@ jobs:
     name: Trivy Security Scan
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-22.04
+    permissions:
+      contents: read          # Required to checkout and read repo files
+      security-events: write  # Required to upload SARIF files to Security tab
     timeout-minutes: 1
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +32,7 @@ jobs:
           output: "trivy-results.sarif"
           ignore-unfixed: true
           scan-type: "fs"
-          scanners: "vuln,secret,config"
+          scanners: "vuln,secret,misconfig"
           severity: "CRITICAL,HIGH"
 
       - name: Upload Trivy scan results to GitHub Security tab
