@@ -11,6 +11,7 @@ service_control_service_home:           "{{ polaris_apps_service_current_home }}
 
 # handler: s6
 service_control_s6_home:                "{{ polaris_s6_home }}"
+service_control_s6_service_home:        "{{ polaris_s6_services_home }}"
 service_control_service_s6_home:        "{{ polaris_apps_service_s6_home }}"
 service_control_service_s6_run_file:    "{{ polaris_apps_service_s6_home }}/run"
 service_control_s6_script_start:        "{{ polaris_apps_service_script_start }}"
