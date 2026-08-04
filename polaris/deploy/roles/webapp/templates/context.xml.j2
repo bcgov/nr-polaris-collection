@@ -1,4 +1,4 @@
-<Context allowCasualMultipartParsing="{{ allow_casual_multipart_parsing | default('false') }}">
+<Context allowCasualMultipartParsing="{{ allow_casual_multipart_parsing | default('false') }}" antiResourceLocking="{{ allow_resource_locking | default('false') }}" antiJARLocking="{{ allow_anti_jar_locking | default('false') }}" >
 {% for resource in webapp_war.jndi_resources | default([]) %}
     <Resource auth="Container" 
 {% if resource.factory is defined %}
