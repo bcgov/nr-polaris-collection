@@ -1,15 +1,15 @@
 # tomcat - Tomcat installation
 
-This Ansible role automates the installation and configuration of [Apache Tomcat](https://tomcat.apache.org) on Linux systems. It supports deploying multiple web applications, HTTPS configuration, logging, and JNDI resources.
+This Ansible role automates the installation and configuration of [Apache Tomcat](https://tomcat.apache.org) on Linux systems. It supports HTTPS configuration, logging, and JNDI resources.
 
 ## Features
 
 - Installs Tomcat to a configurable directory.
 - Separates data, logs, and application directories for easier management and upgrades.
 - Supports HTTPS out of the box.
-- Allows deployment of multiple web applications.
 - Configures logging and JNDI resources.
 - Does **not** install a JDK; expects one to be provided. See: [JDK Role](../jdk/README.md)
+- Does **not** deploy web applications; deploy WARs with the separate [webapp Role](../webapp/README.md).
 
 ## Conventions
 
@@ -29,7 +29,6 @@ All variables are prefixed with `tomcat_`. Key variables include:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `tomcat_webapps` | `[]` | List of webapps to deploy ([see below](#webapps)) |
 | `tomcat_jndi_resources` | `[]` | List of JNDI resources ([see below](#jndi-resources)) |
 | `tomcat_install_root` | `{{ polaris_apps_service_install_home }}` | Root install directory |
 | `tomcat_data_dir` | `{{ polaris_apps_service_data_home }}/tomcat` | Data directory |
@@ -88,8 +87,6 @@ This role includes tasks to automate the full lifecycle of Tomcat installation a
 - **Download and extract Tomcat:** Retrieves the specified Tomcat version and unpacks it to the target directory.
 - **Directory setup:** Creates required directories for installation, data, logs, and webapps with appropriate permissions.
 - **Configuration:** Templates and deploys configuration files (e.g., `server.xml`, `setenv.sh`) based on provided variables.
-- **Webapp deployment:** Downloads and deploys web applications as defined in `tomcat_webapps`.
-- **JNDI resources:** Configures JNDI resources in `context.xml` or as specified.
 - **HTTPS setup:** Configures HTTPS connector and keystore if enabled.
 - **Permissions:** Ensures correct ownership and permissions for all files and directories.
 
@@ -103,18 +100,7 @@ Additionally, before running this role, ensure that the `create_project_director
 
 ## Webapps
 
-Deploy web applications by specifying a list of maps in `tomcat_webapps`. Each map should include:
-
-| Key | Example | Description |
-|-----|---------|-------------|
-| `url` | `https://.../app.war` | Artifact URL |
-| `md5` | `e73043...` | MD5 checksum |
-| `context` | `int#app##1.0.0` | Tomcat context name |
-| `clean` | `yes` | Remove existing deployment (default: yes) |
-
-Webapps are extracted to the Tomcat webapps directory. Additional configuration is the responsibility of the playbook.
-
-## JNDI Resources
+Web applications are deployed separately by the [webapp Role](../webapp/README.md), which places WARs into `tomcat_webapp_dir`
 
 Define JNDI resources in `tomcat_jndi_resources` as a list of maps:
 
