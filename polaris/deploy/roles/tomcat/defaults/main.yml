@@ -2,7 +2,6 @@
 # Optional properties
 # #####################
 # tomcat_service_dir    required if using s6
-# tomcat_webapps
 
 # Convention over configuration
 tomcat_install_root:          "{{ polaris_apps_service_install_home }}"
@@ -19,7 +18,6 @@ tomcat_mirror:              "https://archive.apache.org"
 tomcat_install_dir:         "{{ tomcat_install_root }}/tomcat"
 tomcat_install_dir_current: "{{ tomcat_install_root_current }}/tomcat"
 tomcat_webapp_dir:          "{{ tomcat_install_root }}/webapps"
-tomcat_webapps:             []
 tomcat_major_version:       '10'
 tomcat_work_dir:            "{{ tomcat_data_dir }}/work"
 tomcat_use_https:           yes

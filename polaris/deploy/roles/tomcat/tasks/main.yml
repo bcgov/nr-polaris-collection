@@ -23,10 +23,23 @@
   ansible.builtin.shell: "curl -s {{ tomcat_mirror }}/dist/tomcat/tomcat-{{ tomcat_major_version }}/ | grep -oP '(?<=v){{ tomcat_major_version }}\\.\\d+\\.\\d+' | sort -Vr | head -n1"
   environment: "{{ polaris_proxy }}"
   register: latest_tomcat_minor_version
+  changed_when: false
+  # Only discover the latest version when one was not pinned.
+  when: tomcat_version_number | default('', true) | length == 0
+
+- name: Fail if Tomcat version could not be discovered
+  ansible.builtin.fail:
+    msg: "Could not determine the latest Tomcat {{ tomcat_major_version }} minor version from {{ tomcat_mirror }}. Set tomcat_version_number to pin a specific version."
+  when:
+    - tomcat_version_number | default('', true) | length == 0
+    - latest_tomcat_minor_version.stdout | default('') | trim | length == 0
 
 - name: Set Tomcat Version number
   ansible.builtin.set_fact:
-    tomcat_version: "{{ tomcat_version_number | default(latest_tomcat_minor_version.stdout, true) }}"
+    # Use the pinned version when provided; otherwise the discovered latest.
+    # The else branch only runs when the discovery task executed, so
+    # latest_tomcat_minor_version is always defined there.
+    tomcat_version: "{{ (tomcat_version_number | default('', true)) if (tomcat_version_number | default('', true) | length > 0) else (latest_tomcat_minor_version.stdout | trim) }}"
 
 - name: "Show download info"
   ansible.builtin.debug:
