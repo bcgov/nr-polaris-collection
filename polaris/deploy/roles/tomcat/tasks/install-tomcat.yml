@@ -18,10 +18,45 @@
   become: yes
   become_user: "{{ tomcat_install_user }}"
 
+- name: Find Tomcat installation directories
+  ansible.builtin.find:
+    paths: "{{ tomcat_install_dir }}"
+    file_type: directory
+    recurse: true
+  register: tomcat_install_directories
+  become: yes
+  become_user: "{{ tomcat_install_user }}"
+
+- name: Set Tomcat installation directory permissions
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ tomcat_install_directories.files }}"
+  become: yes
+  become_user: "{{ tomcat_install_user }}"
+
+- name: Find Tomcat configuration files
+  ansible.builtin.find:
+    paths: "{{ tomcat_install_dir }}/conf"
+    file_type: file
+    recurse: true
+  register: tomcat_configuration_files
+  become: yes
+  become_user: "{{ tomcat_install_user }}"
+
+- name: Set Tomcat configuration file permissions
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    mode: '0644'
+  loop: "{{ tomcat_configuration_files.files }}"
+  become: yes
+  become_user: "{{ tomcat_install_user }}"
+
 - name: configuration directories
   ansible.builtin.file:
     path: "{{ item }}"
-    mode: '0775'
+    mode: '0755'
     state: directory
   become: yes
   become_user: "{{ tomcat_install_user }}"
@@ -44,7 +79,7 @@
   ansible.builtin.template:
     src: "tomcat-server.xml.j2"
     dest: "{{ tomcat_install_dir }}/conf/server.xml"
-    mode: '0755'
+    mode: '0644'
   when: tomcat_configure_server_xml
   become: yes
   become_user: "{{ tomcat_install_user }}"
@@ -54,7 +89,7 @@
   ansible.builtin.template:
     src: "logging.properties.j2"
     dest: "{{ tomcat_install_dir }}/conf/logging.properties"
-    mode: '0775'
+    mode: '0644'
   when: tomcat_configure_logging_properties
   become: yes
   become_user: "{{ tomcat_install_user }}"

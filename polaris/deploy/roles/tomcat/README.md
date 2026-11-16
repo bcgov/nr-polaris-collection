@@ -92,6 +92,8 @@ This role includes tasks to automate the full lifecycle of Tomcat installation a
 
 All tasks are idempotent and can be customized via role variables.
 
+After extracting Tomcat, the role sets installation directories to `0755` and regular files under `conf` to `0644`. Executable files retain their archive permissions; role-managed configuration scripts are set executable as needed.
+
 ## Dependencies
 
 This role depends on values from the common role for default variable settings.
