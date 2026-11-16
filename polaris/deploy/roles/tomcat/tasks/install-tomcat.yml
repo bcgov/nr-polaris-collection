@@ -18,38 +18,12 @@
   become: yes
   become_user: "{{ tomcat_install_user }}"
 
-- name: Find Tomcat installation directories
-  ansible.builtin.find:
-    paths: "{{ tomcat_install_dir }}"
-    file_type: directory
-    recurse: true
-  register: tomcat_install_directories
-  become: yes
-  become_user: "{{ tomcat_install_user }}"
-
-- name: Set Tomcat installation directory permissions
+- name: Restore Tomcat installation permissions
   ansible.builtin.file:
-    path: "{{ item.path }}"
+    path: "{{ tomcat_install_dir }}"
     state: directory
-    mode: '0755'
-  loop: "{{ tomcat_install_directories.files }}"
-  become: yes
-  become_user: "{{ tomcat_install_user }}"
-
-- name: Find Tomcat configuration files
-  ansible.builtin.find:
-    paths: "{{ tomcat_install_dir }}/conf"
-    file_type: file
     recurse: true
-  register: tomcat_configuration_files
-  become: yes
-  become_user: "{{ tomcat_install_user }}"
-
-- name: Set Tomcat configuration file permissions
-  ansible.builtin.file:
-    path: "{{ item.path }}"
-    mode: '0644'
-  loop: "{{ tomcat_configuration_files.files }}"
+    mode: 'u=rwX,go=rX'
   become: yes
   become_user: "{{ tomcat_install_user }}"
 
