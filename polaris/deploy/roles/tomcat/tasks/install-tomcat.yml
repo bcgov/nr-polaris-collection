@@ -18,10 +18,19 @@
   become: yes
   become_user: "{{ tomcat_install_user }}"
 
+- name: Restore Tomcat installation permissions
+  ansible.builtin.file:
+    path: "{{ tomcat_install_dir }}"
+    state: directory
+    recurse: true
+    mode: 'u=rwX,go=rX'
+  become: yes
+  become_user: "{{ tomcat_install_user }}"
+
 - name: configuration directories
   ansible.builtin.file:
     path: "{{ item }}"
-    mode: '0775'
+    mode: '0755'
     state: directory
   become: yes
   become_user: "{{ tomcat_install_user }}"
@@ -44,7 +53,7 @@
   ansible.builtin.template:
     src: "tomcat-server.xml.j2"
     dest: "{{ tomcat_install_dir }}/conf/server.xml"
-    mode: '0755'
+    mode: '0644'
   when: tomcat_configure_server_xml
   become: yes
   become_user: "{{ tomcat_install_user }}"
@@ -54,7 +63,7 @@
   ansible.builtin.template:
     src: "logging.properties.j2"
     dest: "{{ tomcat_install_dir }}/conf/logging.properties"
-    mode: '0775'
+    mode: '0644'
   when: tomcat_configure_logging_properties
   become: yes
   become_user: "{{ tomcat_install_user }}"

@@ -92,6 +92,8 @@ This role includes tasks to automate the full lifecycle of Tomcat installation a
 
 All tasks are idempotent and can be customized via role variables.
 
+After copying the extracted Tomcat files, the role recursively applies `u=rwX,go=rX` to the installation directory: directories and existing executable files become `0755`, and non-executable files (including configuration files and JARs) become `0644`. This restores read access for runtime accounts outside the install user's group, including for cached extractions. Configuration files are therefore readable by other local users. Later script-specific tasks retain their explicit modes, and separately managed work and temp directories remain `0775`.
+
 ## Dependencies
 
 This role depends on values from the common role for default variable settings.
